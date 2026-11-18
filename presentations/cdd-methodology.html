@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Context Driven Development</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff; --panel: #f6f8fc; --line: #d5ddea; --ink: #1b2333; --dim: #5b6b85;
+    --red: #d0102b; --green: #178a4c; --blue: #1f6fd1; --gold: #b7791f;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #e9edf3; color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; overflow: hidden; }
+  #stage { position: absolute; width: 1280px; height: 720px; left: 0; top: 0;
+    transform-origin: 0 0; background: var(--bg); border-radius: 6px; overflow: hidden; box-shadow: 0 10px 40px rgba(20,30,50,.12); }
+  .slide { position: absolute; inset: 0; padding: 48px 64px; display: none; }
+  .slide.on { display: block; }
+  h1 { font-size: 46px; margin: 0 0 6px; letter-spacing: -0.5px; }
+  h1 .tag { color: var(--red); }
+  .sub { font-size: 22px; color: var(--dim); margin: 0 0 28px; }
+  .f { opacity: 0; transform: translateY(8px); transition: opacity .45s, transform .45s; }
+  .f.show { opacity: 1; transform: none; }
+  .mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  #bar { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--red); transition: width .3s; }
+  #count { position: absolute; right: 18px; bottom: 12px; color: var(--dim); font-size: 14px; }
+
+  /* 1 intro */
+  .flow3 { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: stretch; margin-top: 30px; }
+  .col { padding: 18px 20px; min-height: 230px; }
+  .col .lbl { font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--dim); margin-bottom: 10px; }
+  .loose { margin: 0; font-size: 18px; line-height: 1.5; color: var(--dim); font-style: italic; }
+  .same { text-align: center; font-size: 24px; margin-top: 44px; }
+  .same b { color: var(--red); }
+  .pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 10px; }
+  .pil { padding: 18px; min-height: 150px; }
+  .pil h4 { margin: 0 0 8px; font-size: 21px; }
+  .pil p { margin: 0; font-size: 17px; line-height: 1.45; color: var(--dim); }
+  .arr { align-self: center; text-align: center; font-size: 36px; color: var(--dim); }
+  /* 2 forms */
+  .nest { border: 2px solid var(--line); border-radius: 12px; padding: 8px 14px 10px; margin-top: 6px; }
+  .nest > .lbl { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+  .nest > .name { font-size: 19px; margin: 0 0 2px; }
+  .n1 { border-color: #5b47d6; } .n1 > .lbl { color: #5b47d6; }
+  .n2 { border-color: var(--blue); } .n2 > .lbl { color: var(--blue); }
+  .n3 { border-color: #0b8c80; } .n3 > .lbl { color: #0b8c80; }
+  .n4 { border-color: var(--gold); } .n4 > .lbl { color: var(--gold); }
+  .n5 { border-color: var(--red); } .n5 > .lbl { color: #d0102b; }
+  .gherkin { font-size: 15px; line-height: 1.4; color: #1b2333; margin: 4px 0 0; white-space: pre; }
+  .gherkin b { color: var(--green); font-weight: 600; }
+  .n6 { border-color: #7a8699; border-style: dashed; } .n6 > .lbl { color: #5b6b85; }
+  .row .lbl { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--blue); }
+  .row .name { font-size: 19px; }
+  .role { font-size: 13px; padding: 2px 9px; margin-left: 8px; border-radius: 999px; background: #f1eefe; color: #5b47d6; vertical-align: middle; }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cps { display: flex; gap: 8px; margin-top: 4px; }
+  .cp { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: #eaf2fd; color: var(--blue); border: 1px solid #b9d3f5; white-space: nowrap; }
+  .actout { display: flex; gap: 10px; align-items: center; font-size: 17px; margin: 2px 0 2px; }
+  .actout i { font-style: normal; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #0b8c80; font-weight: 700; margin-right: 4px; }
+  .actout .to { color: var(--dim); }
+  .ctx { font-size: 14px; color: var(--dim); margin-left: 10px; }
+  .side p { margin: 0 0 12px; }
+
+  /* 2b architecture */
+  .arch { display: grid; grid-template-columns: 330px 90px 1fr; grid-template-rows: auto auto auto auto auto auto; column-gap: 0; row-gap: 10px; align-items: center; }
+  .acol-h { grid-row: 1; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--dim); }
+  .dfeat { grid-column: 1; padding: 12px 14px; font-size: 17px; }
+  .link { grid-column: 2; text-align: center; font-size: 22px; letter-spacing: -2px; }
+  .twin { color: var(--blue); font-weight: 700; }
+  .list { color: #7a8699; }
+  .sys { border: 2px solid #5b47d6; border-radius: 12px; padding: 10px 14px; align-self: stretch; }
+  .sysh { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: #5b47d6; }
+  .sysline { font-size: 14px; color: var(--dim); margin: 2px 0 8px; }
+  .afeat { font-size: 16px; line-height: 1.45; background: #f6f8fc; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .nohead { font-size: 14px; color: var(--dim); margin-top: 6px; font-style: italic; }
+  .hl2.show { background: rgba(183,121,31,.15); border-radius: 4px; padding: 0 3px; color: var(--ink); }
+  .hl2 { opacity: 1 !important; transform: none !important; }
+  .afound, .awhy { padding: 10px 14px; font-size: 16px; border-color: var(--gold); }
+  .dimtxt { color: var(--dim); font-size: 14px; margin-left: 6px; }
+  .legend { position: absolute; left: 64px; right: 64px; bottom: 34px; font-size: 17px; text-align: center; color: var(--dim); }
+  .legend b { color: var(--ink); }
+  .side { position: absolute; right: 54px; top: 160px; width: 280px; font-size: 18px; line-height: 1.5; color: var(--dim); }
+  .side b { color: var(--ink); }
+
+  .q2 { fill: #5b6b85 !important; font-size: 15px; font-style: italic; }
+  .tk td, .tk th { padding: 9px 18px; font-size: 19px; }
+  .tk td small { display: block; font-size: 14px; color: var(--dim); font-weight: 400; margin-top: 2px; }
+  .bdd { font-size: 11px; letter-spacing: .5px; text-transform: none; font-weight: 600; padding: 2px 8px; margin-left: 8px; border-radius: 999px; background: #e8f5ee; color: var(--green); }
+  .tk td.mono { font-size: 17px; color: var(--blue); }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 10px; }
+  .tchain { margin-top: 18px; display: flex; align-items: center; gap: 12px; font-size: 15px; flex-wrap: wrap; }
+  .tsrc { background: #fdecef; border: 1px solid #f3b6bf; padding: 6px 10px; border-radius: 6px; }
+  .tname { background: #eaf2fd; border: 1px solid #b9d3f5; padding: 6px 10px; border-radius: 6px; }
+  .to { color: var(--dim); font-size: 22px; }
+  .rgrid { display: grid; grid-template-columns: 430px 50px 260px 50px 1fr; align-items: stretch; }
+  .rcol { display: flex; flex-direction: column; gap: 10px; }
+  .rh { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--dim); }
+  .rin, .rout { padding: 10px 14px; font-size: 15px; line-height: 1.4; color: var(--dim); }
+  .rin b, .rout b, .rmid b { color: var(--ink); font-size: 17px; }
+  .rmid { padding: 18px; font-size: 16px; line-height: 1.5; text-align: center; border-color: var(--gold); }
+  .rarrow { align-self: center; text-align: center; font-size: 34px; color: var(--dim); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chips span { font-size: 13px; padding: 3px 9px; border-radius: 999px; background: #eaf2fd; color: var(--blue); }
+  .chips .hot { background: #fff3dc; color: var(--gold); font-weight: 600; }
+  .ngrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .ncard { padding: 22px; min-height: 330px; border-style: dashed; }
+  .nh { font-size: 26px; font-weight: 700; margin-bottom: 18px; }
+  .nflow { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--dim); flex-wrap: wrap; margin-bottom: 18px; }
+  .nflow span { padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
+  .nflow .nb { border-color: var(--blue); color: var(--blue); font-weight: 600; }
+  .nflow .nr { border-color: var(--red); color: var(--red); font-weight: 600; }
+  .nflow .ng { border-color: var(--green); color: var(--green); font-weight: 600; }
+  .ncard p { font-size: 18px; line-height: 1.5; color: var(--dim); margin: 0; }
+  /* 3 stream */
+  svg text { fill: var(--ink); font-family: inherit; }
+  .q { fill: var(--dim) !important; font-size: 18px; font-style: italic; }
+  .bad { animation: flash 0.8s steps(2) infinite; }
+  @keyframes flash { 50% { opacity: .25; } }
+  .caption { position: absolute; left: 64px; right: 64px; bottom: 40px; font-size: 22px; text-align: center; }
+  .caption b { color: var(--green); }
+
+  /* 4 tests */
+  .tdd { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 10px; }
+  .tdd pre { margin: 0; padding: 18px; font-size: 16px; line-height: 1.55; white-space: pre-wrap; }
+  .hl { background: rgba(183,121,31,.12); border-radius: 4px; outline: 1px solid rgba(183,121,31,.5); }
+  .pill { display: inline-block; padding: 8px 18px; border-radius: 999px; font-weight: 700; font-size: 20px; margin-top: 18px; }
+  .pill.red { background: rgba(208,16,43,.08); color: #d0102b; border: 1px solid var(--red); }
+  .pill.green { background: rgba(23,138,76,.08); color: var(--green); border: 1px solid var(--green); }
+  .arrow { text-align: center; font-size: 30px; color: var(--dim); }
+
+  /* 5 readable */
+  .wordy { padding: 22px; font-size: 19px; line-height: 1.6; color: var(--dim); transition: all .6s; }
+  .wordy.squash { opacity: .15; filter: blur(2px); transform: scale(.92); }
+  table.t { border-collapse: collapse; font-size: 21px; width: 100%; }
+  table.t th, table.t td { text-align: left; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  table.t th { color: var(--dim); font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
+  .wc { font-size: 18px; color: var(--dim); margin-top: 14px; }
+  .wc b { color: var(--green); }
+  .onefile { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 17px; }
+  .onefile b { margin-right: 6px; }
+  .onefile span { padding: 5px 12px; border-radius: 999px; background: #eaf2fd; color: var(--blue); font-size: 15px; }
+
+  /* 6 context */
+  .grid6 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 8px; }
+  .sec { padding: 10px 12px; font-size: 15px; transition: opacity .6s, border-color .6s, box-shadow .6s; }
+  .sec small { display: block; color: var(--dim); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .dimmed .sec { opacity: .25; }
+  .dimmed .sec.lit { opacity: 1; border-color: var(--gold); box-shadow: 0 0 18px rgba(183,121,31,.35); }
+  .ticket { position: absolute; right: 64px; bottom: 40px; width: 560px; padding: 16px 20px; font-size: 17px;
+    border-color: var(--gold); }
+  .ticket b { color: var(--gold); }
+  .meter { height: 14px; background: var(--line); border-radius: 7px; margin-top: 10px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--gold); width: 100%; transition: width 1s; }
+
+  /* 7 loop */
+  .loopnote { position: absolute; right: 64px; top: 170px; width: 360px; font-size: 19px; line-height: 1.5; }
+  .loopnote .card { padding: 16px 18px; margin-bottom: 14px; }
+  .loopnote b { color: var(--gold); }
+
+  /* 8 recap */
+  .values { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 30px; }
+  .val { padding: 22px 16px; text-align: center; min-height: 220px; }
+  .val .ic { font-size: 44px; }
+  .val h4 { margin: 12px 0 8px; font-size: 21px; }
+  .val p { margin: 0; color: var(--dim); font-size: 16px; line-height: 1.45; }
+  .closer { text-align: center; font-size: 30px; margin-top: 44px; }
+  .closer b { color: var(--red); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide">
+  <h1 style="font-size:58px; margin-top:10px">Context Driven <span class="tag">Development</span></h1>
+  <p class="sub" style="font-size:24px">An approach to building a product. People, agents and tests read the same docs.</p>
+  <svg class="f" data-f="1" width="1150" height="150" viewBox="0 0 1150 150">
+    <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6b85"/></marker></defs>
+    <g font-size="24" font-weight="700" text-anchor="middle">
+      <rect x="200" y="10" width="190" height="60" rx="30" fill="#eaf2fd" stroke="#1f6fd1" stroke-width="2"/><text x="295" y="48" style="fill:#1f6fd1">Plan</text>
+      <rect x="480" y="10" width="190" height="60" rx="30" fill="#e8f5ee" stroke="#178a4c" stroke-width="2"/><text x="575" y="48" style="fill:#178a4c">Deliver</text>
+      <rect x="760" y="10" width="190" height="60" rx="30" fill="#fff3dc" stroke="#b7791f" stroke-width="2"/><text x="855" y="48" style="fill:#b7791f">Learn</text>
+    </g>
+    <g stroke="#5b6b85" stroke-width="2.5" fill="none" marker-end="url(#ah1)">
+      <path d="M 392 40 L 476 40"/><path d="M 672 40 L 756 40"/>
+      <path d="M 855 72 C 855 135, 295 135, 295 75"/>
+    </g>
+    <text x="575" y="140" text-anchor="middle" font-size="15" style="fill:#5b6b85">each miss teaches the next plan</text>
+  </svg>
+  <div class="pillars">
+    <div class="card pil f" data-f="2"><h4>Documentation</h4><p>Each doc answers one question. Each fact lives in one place.</p></div>
+    <div class="card pil f" data-f="3"><h4>Context engineering</h4><p>An agent loads only what its ticket names.</p></div>
+    <div class="card pil f" data-f="4"><h4>Acceptance criteria</h4><p>Each case is a test, written failing before any code.</p></div>
+    <div class="card pil f" data-f="5"><h4>A learning loop</h4><p>Each retro measures the miss and shapes the next plan.</p></div>
+  </div>
+  <div class="same f" data-f="6" style="margin-top:28px"><b>It runs as the team's workflow, one ticket at a time.</b></div>
+</section>
+
+<!-- stream -->
+<section class="slide">
+  <h1>No <span class="tag">stale docs</span></h1>
+  <p class="sub" style="margin-bottom:6px">Each doc answers one question. It names only the docs above it.</p>
+  <svg width="1150" height="440" viewBox="0 0 1150 440">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6fd1"/></marker>
+      <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d0102b"/></marker>
+      <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b7791f"/></marker>
+    </defs>
+    <g class="f" data-f="1">
+      <rect x="130" y="4" width="370" height="62" rx="10" fill="#fff8ec" stroke="#b7791f" stroke-width="2"/>
+      <text x="315" y="31" text-anchor="middle" font-size="20" font-weight="700">Foundations</text>
+      <text x="315" y="54" text-anchor="middle" class="q2">Who, What, When, Where, Why and How?</text>
+      <rect x="530" y="4" width="260" height="62" rx="10" fill="#fff8ec" stroke="#b7791f" stroke-width="2"/>
+      <text x="660" y="31" text-anchor="middle" font-size="20" font-weight="700">Roadmap</text>
+      <text x="660" y="54" text-anchor="middle" class="q2">What's next? The phase's goal</text>
+      <text x="830" y="30" font-size="15" style="fill:#5b6b85">Name nothing.</text>
+      <text x="830" y="50" font-size="15" style="fill:#5b6b85">Everyone reads foundations.</text>
+    </g>
+    <g class="f" data-f="2">
+      <rect x="330" y="100" width="360" height="62" rx="10" fill="#f6f8fc" stroke="#d5ddea" stroke-width="2"/>
+      <text x="510" y="127" text-anchor="middle" font-size="20" font-weight="700">Design</text>
+      <text x="510" y="150" text-anchor="middle" class="q2">What does the product need, and why?</text>
+      <path d="M 660 66 L 640 97" stroke="#b7791f" stroke-width="2.5" stroke-dasharray="5 5" fill="none" marker-end="url(#ahg)"/>
+      <text x="676" y="88" font-size="14" style="fill:#b7791f">the goal starts each design</text>
+    </g>
+    <g class="f" data-f="3">
+      <rect x="330" y="196" width="360" height="62" rx="10" fill="#f6f8fc" stroke="#d5ddea" stroke-width="2"/>
+      <text x="510" y="223" text-anchor="middle" font-size="20" font-weight="700">Architecture</text>
+      <text x="510" y="246" text-anchor="middle" class="q2">How is it built?</text>
+      <path d="M 510 196 L 510 165" stroke="#1f6fd1" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+    </g>
+    <g class="f" data-f="4">
+      <rect x="330" y="292" width="360" height="62" rx="10" fill="#f6f8fc" stroke="#d5ddea" stroke-width="2"/>
+      <text x="510" y="319" text-anchor="middle" font-size="20" font-weight="700">Ticket</text>
+      <text x="510" y="342" text-anchor="middle" class="q2">What gets built in one session?</text>
+      <path d="M 510 292 L 510 261" stroke="#1f6fd1" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+      <path d="M 690 315 C 790 300, 790 150, 693 135" stroke="#1f6fd1" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+      <rect x="330" y="376" width="360" height="56" rx="10" fill="#f6f8fc" stroke="#d5ddea" stroke-width="2"/>
+      <text x="510" y="401" text-anchor="middle" font-size="20" font-weight="700">Code</text>
+      <text x="510" y="422" text-anchor="middle" class="q2">What runs?</text>
+      <path d="M 510 376 L 510 357" stroke="#1f6fd1" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+    </g>
+    <g class="f" data-f="5">
+      <g class="bad" stroke="#d0102b" stroke-width="3" fill="none" stroke-dasharray="7 6" marker-end="url(#ahr)">
+        <path d="M 330 131 C 230 140, 230 215, 327 225"/>
+      </g>
+      <text x="40" y="172" font-size="16" font-weight="600" style="fill:#d0102b">✗ design names architecture</text>
+      <text x="40" y="194" font-size="16" style="fill:#d0102b">the check fails</text>
+    </g>
+    <g class="f" data-f="2" font-size="14">
+      <line x1="860" y1="400" x2="900" y2="400" stroke="#1f6fd1" stroke-width="2.5"/><text x="910" y="405" style="fill:#5b6b85">names the doc above</text>
+      <line x1="860" y1="424" x2="900" y2="424" stroke="#b7791f" stroke-width="2.5" stroke-dasharray="5 5"/><text x="910" y="429" style="fill:#5b6b85">feeds, never named</text>
+    </g>
+  </svg>
+  <div class="caption f" data-f="6" style="bottom:30px">Each fact lives in one doc. <b>Change it there, and nothing else goes out of date.</b></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h1>The design <span class="tag">zooms in</span></h1>
+  <p class="sub" style="margin-bottom:10px">What the product needs, from many people down to one path.</p>
+  <div style="width: 860px">
+    <div class="nest n1 f" data-f="1"><div class="lbl">Journey</div><div class="name">A phase from feedback to retro <span class="role">Product Owner · Designer · Developer</span></div>
+      <div class="nest n2 f" data-f="2"><div class="row"><div><div class="lbl">Workflow</div><div class="name">Working a ticket <span class="role">Developer</span></div></div>
+          <div class="cps"><span class="cp">Start ▸ Plan signed off</span><span class="cp">End ▸ Ready for review</span></div></div>
+        <div class="nest n3 f" data-f="3"><div class="lbl">Step 2</div>
+          <div class="actout"><span><i>act</i> Write each of the ticket's tests</span><span class="to">→</span><span><i>outcome</i> each fails on its assertion</span></div>
+          <div class="nest n4 f" data-f="4"><div class="lbl">Feature</div><div class="name">Going red first <span class="ctx">shared context · A ticket's tests go red before its code</span></div>
+            <div class="nest n6 f" data-f="5"><div class="lbl">Rule · optional</div><div class="name">Every test is written failing before the code</div>
+              <div class="nest n5 f" data-f="6"><div class="lbl">Scenario · one way the step goes <span class="bdd">Gherkin, borrowed from BDD</span></div>
+<pre class="gherkin mono"><b>Given</b> a new test that passes before the code
+<b>When</b>  the Developer fixes the test
+<b>Then</b>  it fails on the assertion it names</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="side f" data-f="7">
+    <p><b>Journey</b> many roles, chained by checkpoints.</p>
+    <p><b>Workflow</b> one role, checkpoint to checkpoint.</p>
+    <p><b>Step</b> an act and the outcome it leaves.</p>
+    <p><b>Feature</b> the scenarios of a step that can go more than one way.</p>
+    <p><b>Scenario</b> one way it goes. It's a test.</p>
+  </div>
+</section>
+
+<!-- 2b -->
+<section class="slide">
+  <h1>The architecture <span class="tag">mirrors it, then groups it</span></h1>
+  <p class="sub" style="margin-bottom:14px">How it's built. Same names as the design. Systems are its own.</p>
+  <div class="arch">
+    <div class="acol-h" style="grid-column:1">Design</div>
+    <div class="acol-h" style="grid-column:3">Architecture</div>
+
+    <div class="card afound f" data-f="4" style="grid-column:3; grid-row:2"><b>Foundations</b> · stack · constraints · testing strategy <span class="dimtxt">every system shares these</span></div>
+
+    <div class="card dfeat f" data-f="1" style="grid-row:3">Feature: Going red first</div>
+    <div class="link twin f" data-f="2" style="grid-row:3">═══▶</div>
+    <div class="card dfeat f" data-f="1" style="grid-row:4">Feature: Editing prose</div>
+    <div class="link list f" data-f="3" style="grid-row:4">───▶</div>
+    <div class="sys f" data-f="2" style="grid-column:3; grid-row:3 / 5">
+      <div class="sysh">System: Skills</div>
+      <div class="sysline">Placing feedback · Splitting the work · … · Going red first · <span class="f hl2" data-f="3">Editing prose</span></div>
+      <div class="afeat"><b>Feature: Going red first</b><br>• The red rule runs inside the ticket-working skill.<sup>[1]</sup></div>
+      <div class="f nohead" data-f="3">Editing prose is on the line, with no heading. It has no decision of its own.</div>
+    </div>
+
+    <div class="card dfeat f" data-f="1" style="grid-row:5">Feature: Keeping each fact in its place</div>
+    <div class="link twin f" data-f="2" style="grid-row:5">═══▶</div>
+    <div class="sys f" data-f="2" style="grid-column:3; grid-row:5">
+      <div class="sysh">System: Checks</div>
+      <div class="afeat"><b>Feature: Keeping each fact in its place</b><br>• A system lists each of its features on its opening line.</div>
+    </div>
+
+    <div class="card awhy f" data-f="4" style="grid-column:3; grid-row:6"><b>Why</b> <span class="dimtxt" style="margin:0 6px 0 0">footnotes</span> [1] No check can see a test's first run. <span class="dimtxt">Beat: a check over the test files' history.</span></div>
+  </div>
+  <div class="legend f" data-f="5"><span class="twin">═══</span> same name, mirrors the design &nbsp;&nbsp; <span class="list">───</span> listed on its system's line only &nbsp;&nbsp; <b>The design never names a system.</b></div>
+</section>
+
+<!-- tests -->
+<section class="slide">
+  <h1>Test <span class="tag">driven</span></h1>
+  <p class="sub" style="margin-bottom:14px">Every form has a kind of test. Each goes red before the code.</p>
+  <table class="t card tk">
+    <tr><th>Form</th><th>Its test asserts</th><th>Name starts</th></tr>
+    <tr class="f" data-f="1"><td><span class="dot" style="background:#5b47d6"></span>Journey</td><td><b>Checkpoints</b><small>each workflow's End is the next one's Start</small></td><td class="mono">journey_</td></tr>
+    <tr class="f" data-f="2"><td><span class="dot" style="background:#1f6fd1"></span>Workflow</td><td><b>Outcomes</b><small>each step's outcome holds, on every branch</small></td><td class="mono">workflow_</td></tr>
+    <tr class="f" data-f="3"><td><span class="dot" style="background:#d0102b"></span>Scenario</td><td><b>Its Then</b><small>once per Examples row</small></td><td class="mono">scenario_</td></tr>
+    <tr class="f" data-f="4"><td><span class="dot" style="background:#7a8699"></span>Rule</td><td><b>Its fact</b><small>holds across all its scenarios</small></td><td class="mono">rule_</td></tr>
+  </table>
+  <div class="tchain f" data-f="5">
+    <span class="mono tsrc">Scenario: A test that passes before the code is not yet red</span>
+    <span class="to">→</span>
+    <span class="mono tname">test_scenario_a_test_that_passes_before_the_code_is_not_yet_red</span>
+  </div>
+  <div class="f" data-f="6" style="margin-top:14px"><span class="pill red">● FAIL &nbsp;on its assertion</span> <span class="to" style="font-size:24px; margin:0 10px">→</span> <span class="f pill green" data-f="7">● PASS &nbsp;after the code</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <h1>Human <span class="tag">readable</span></h1>
+  <p class="sub">Plain words a five-year-old could follow. People and agents read the same thing.</p>
+  <div id="wordy" class="card wordy">
+    The design document is where we try to capture what the product needs and the reasons behind
+    it, while the architecture document, which is maintained by developers, describes the technical
+    approach we've taken, and of course the code itself is ultimately what runs in production,
+    although the ticket is the place where we describe what gets built in a single session.
+  </div>
+  <div class="f" data-f="1" style="margin-top:-150px; position:relative">
+    <table class="t card">
+      <tr><th>Doc</th><th>Answers</th></tr>
+      <tr><td>Design</td><td>What does the product need, and why?</td></tr>
+      <tr><td>Architecture</td><td>How is it built?</td></tr>
+      <tr><td>Code</td><td>What runs?</td></tr>
+      <tr><td>Ticket</td><td>What gets built in one session?</td></tr>
+    </table>
+    <div class="wc">61 words → <b>25 words</b>. Writing outside the forms gets cut by a quarter before it merges. Forms have caps instead.</div>
+    <div class="onefile"><b>One file, every job.</b><span>the doc people read</span><span>the agent's context</span><span>the tests' names</span><span>the ticket's acceptance criteria</span><span>the reviewer's checklist</span></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <h1>Agents use <span class="tag">less context</span></h1>
+  <p class="sub">A ticket names only the sections it needs. The rest stays closed.</p>
+  <div id="g6" class="grid6">
+    <div class="card sec"><small>Workflow</small>Interviewing the customer</div>
+    <div class="card sec"><small>Workflow</small>Meeting the customer</div>
+    <div class="card sec"><small>Workflow</small>Scoping a phase</div>
+    <div class="card sec"><small>Workflow</small>Designing a phase</div>
+    <div class="card sec"><small>Workflow</small>Architecting a phase</div>
+    <div class="card sec"><small>Workflow</small>Writing the tickets</div>
+    <div class="card sec lit"><small>Workflow</small>Working a ticket</div>
+    <div class="card sec"><small>Workflow</small>Reviewing a ticket</div>
+    <div class="card sec"><small>Workflow</small>Releasing</div>
+    <div class="card sec"><small>Workflow</small>Closing a phase</div>
+    <div class="card sec"><small>Workflow</small>Planning ad hoc</div>
+    <div class="card sec"><small>Feature</small>Placing feedback</div>
+    <div class="card sec"><small>Feature</small>Keeping each fact in its place</div>
+    <div class="card sec"><small>Feature</small>Splitting the work</div>
+    <div class="card sec lit"><small>Feature</small>Going red first</div>
+    <div class="card sec"><small>Feature</small>Signing off a change</div>
+    <div class="card sec"><small>Feature</small>Running the playbook</div>
+    <div class="card sec"><small>Feature</small>Deciding a planning miss</div>
+    <div class="card sec"><small>Feature</small>Editing prose</div>
+  </div>
+  <div class="card ticket f" data-f="1">
+    <b>Ticket</b> names: Working a ticket · Going red first<br>
+    <span style="color:var(--dim)">The agent reads 2 of 19 sections. The scenarios are its acceptance criteria, and they're already tests.</span>
+    <div class="meter"><i id="m6"></i></div>
+  </div>
+</section>
+
+<!-- retro -->
+<section class="slide">
+  <h1>Learns <span class="tag">every cycle</span></h1>
+  <p class="sub" style="margin-bottom:16px">The retro measures delivery against the plan. Each miss teaches the next plan.</p>
+  <div class="rgrid">
+    <div class="rcol">
+      <div class="rh">What it reads</div>
+      <div class="card rin f" data-f="1"><b>A retro entry per ticket</b><br>What changed from the plan, and the plan that missed it</div>
+      <div class="card rin f" data-f="1"><b>The diff from the plan's tag</b><br>A change no entry explains is a miss</div>
+      <div class="card rin f" data-f="2" style="border-color:var(--blue)"><b>Every agent session, mined</b>
+        <div class="chips">
+          <span>cost and time per ticket</span><span>skill steps skipped</span><span>steps run twice or out of turn</span><span>the owner's corrections</span><span class="hot">scratch scripts written twice</span>
+        </div>
+      </div>
+    </div>
+    <div class="rarrow f" data-f="3">→</div>
+    <div class="rcol" style="justify-content:center">
+      <div class="card rmid f" data-f="3"><b>Planning misses</b><br>grouped by kind<br><span class="dimtxt" style="margin:0">Seen in two tickets? Propose fixing it.</span></div>
+    </div>
+    <div class="rarrow f" data-f="4">→</div>
+    <div class="rcol">
+      <div class="rh">What changes</div>
+      <div class="card rout f" data-f="4" style="border-color:var(--red)"><b>Action item</b><br>Lands in a doc or skill before the next phase</div>
+      <div class="card rout f" data-f="4"><b>Deferred</b><br>Its own file, with when to revisit it</div>
+      <div class="card rout f" data-f="4"><b>Dropped</b><br>No longer holds. Stays in its entry</div>
+    </div>
+  </div>
+  <div class="caption f" data-f="5" style="bottom:30px">A skipped step <b>sharpens its skill</b>. A scratch script written twice <b>becomes a real script</b>.</div>
+</section>
+
+<!-- next -->
+<section class="slide">
+  <h1>Where it <span class="tag">could go</span></h1>
+  <p class="sub" style="margin-bottom:22px">Ideas, not built yet. Each grows out of what the retro already mines.</p>
+  <div class="ngrid">
+    <div class="card ncard f" data-f="1">
+      <div class="nh">Router</div>
+      <div class="nflow"><span>Checkpoint</span>→<span class="nb">Router</span>→<span>Next skill</span></div>
+      <p>Reads where the work stands and starts the right workflow. Today the owner reads the checkpoint table and picks.</p>
+    </div>
+    <div class="card ncard f" data-f="2">
+      <div class="nh">Skill evals</div>
+      <div class="nflow"><span>Fixed case</span>→<span class="nb">Skill</span>→<span>Score each step</span></div>
+      <p>Run a skill on a known case and check each step happened. Deferred today, since evals cost tokens every run.</p>
+    </div>
+    <div class="card ncard f" data-f="3">
+      <div class="nh">Test-driven skills</div>
+      <div class="nflow"><span>Missed step</span>→<span class="nr">Failing eval</span>→<span class="ng">Skill fixed</span></div>
+      <p>A step the miner finds skipped becomes an eval that fails first. The skill changes until it passes. Red first, for skills.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <h1>Context Driven <span class="tag">Development</span></h1>
+  <p class="sub">One structure for how we work and for what we build.</p>
+  <div class="values">
+    <div class="card val f" data-f="1"><div class="ic">🧊</div><h4>No stale docs</h4><p>Facts flow one way. Each lives in one place.</p></div>
+    <div class="card val f" data-f="1"><div class="ic">🔴</div><h4>Test driven</h4><p>Scenarios name the tests. Red before code.</p></div>
+    <div class="card val f" data-f="1"><div class="ic">📖</div><h4>Human readable</h4><p>Plain words. Tables over paragraphs.</p></div>
+    <div class="card val f" data-f="1"><div class="ic">🎯</div><h4>Less context</h4><p>A ticket loads only what it names.</p></div>
+    <div class="card val f" data-f="1"><div class="ic">🔁</div><h4>Learns</h4><p>Every miss shapes the next plan.</p></div>
+  </div>
+  <div class="closer f" data-f="2">Small, slow and simple.</div>
+</section>
+
+<div id="bar"></div><div id="count"></div>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let s = 0, step = 0;
+  const maxStep = el => Math.max(0, ...[...el.querySelectorAll('[data-f]')].map(e => +e.dataset.f));
+
+  function render() {
+    slides.forEach((el, i) => el.classList.toggle('on', i === s));
+    slides[s].querySelectorAll('[data-f]').forEach(e => e.classList.toggle('show', +e.dataset.f <= step));
+    const cur = slides[s];
+    if (cur.contains(document.getElementById('wordy'))) document.getElementById('wordy').classList.toggle('squash', step >= 1);
+    if (cur.contains(document.getElementById('g6'))) {
+      document.getElementById('g6').classList.toggle('dimmed', step >= 1);
+      document.getElementById('m6').style.width = step >= 1 ? '10.5%' : '100%';
+    }
+    document.getElementById('bar').style.width = ((s + 1) / slides.length * 100) + '%';
+    document.getElementById('count').textContent = `${s + 1} / ${slides.length}`;
+    history.replaceState(null, '', `#${s + 1}.${step}`);
+  }
+  function next() {
+    const max = maxStep(slides[s]);
+    if (step < max) step++; else if (s < slides.length - 1) { s++; step = 0; }
+    render();
+  }
+  function prev() {
+    if (step > 0) step--; else if (s > 0) { s--; step = maxStep(slides[s]); }
+    render();
+  }
+  addEventListener('keydown', e => {
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { s = 0; step = 0; render(); }
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('click', next);
+  function fit() {
+    const k = Math.min(innerWidth / 1280, innerHeight / 720);
+    const st = document.getElementById('stage');
+    st.style.left = (innerWidth - 1280 * k) / 2 + 'px';
+    st.style.top = (innerHeight - 720 * k) / 2 + 'px';
+    st.style.transform = `scale(${k})`;
+  }
+  const [hs, hf] = location.hash.slice(1).split('.').map(Number);
+  if (hs >= 1 && hs <= slides.length) { s = hs - 1; step = Math.min(hf || 0, maxStep(slides[s])); }
+  addEventListener('resize', fit); fit(); render();
+</script>
+</body>
+</html>

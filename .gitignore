@@ -1,0 +1,5 @@
+.DS_Store
+docs/retro/raw/
+__pycache__/
+.pytest_cache/
+.claude/worktrees/

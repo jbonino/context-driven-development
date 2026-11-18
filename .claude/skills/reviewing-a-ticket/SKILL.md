@@ -26,7 +26,7 @@ Start: **Ready for review**. End: **Signed off**. The goal is zero rounds.
       goes.
    1. Write its failing test first, per `superpowers:test-driven-development`,
       except for copy or style. Run only the tests you touched.
-   1. For a page change, run the team repo's local harness and screenshot it.
+   1. For a page change, run the team repo's app locally and screenshot it.
    1. Add the change to the retro's **Changed after sign-off**. Commit the
       code in the team repo's branch as `{ticket} — round N: {what changed}`,
       and the docs here. Push the team branch and give the team PR's link.

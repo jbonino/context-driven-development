@@ -156,7 +156,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-a-test-asserts-only-its-kind]: One test per fact means a change breaks one test. Review holds this rule. A check can't tell what an assertion proves. **Other considerations:** A design scenario per layer, which put a decision into the design.
 
-[^why-the-checks-are-deferred]: The check scripts walk a code tree. This repo holds no code. A known gap goes in the ticket's retro entry until the checks are ported. **Other considerations:** Porting the scripts now, before the docs hold a workflow to check.
+[^why-the-checks-are-deferred]: The check scripts walk a code tree. This repo holds no code. A known gap goes in the ticket's retro entry until the checks are written. **Other considerations:** Writing the scripts now, before the docs hold a workflow to check.
 
 [^why-a-skill-s-tests-wait]: A skill's tests wait until evals cost less than the bugs they'd catch. **Other considerations:** Skill evals now, which cost tokens on every run. A check that a skill lists its workflow's steps, which proves the words and not the work.
 

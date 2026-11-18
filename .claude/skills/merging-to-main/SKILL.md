@@ -12,7 +12,7 @@ the branch gone.
    Copilot sessions. Claude Code deletes them after 30 days.
 1. **Wait for a ticket's team PR to merge.** This repo's docs branch merges
    after it. A plan's branch has no team PR. See
-   [Two repos](../README.md#two-repos).
+   [Two repos](../../../README.md#two-repos).
 1. **Merge the branch from the main checkout.** `git pull`, then
    `git merge --no-ff {branch} -m "{branch name without its prefix} — {title}"`.
    The merge keeps the branch's own commits, which show what happened. On

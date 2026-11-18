@@ -18,7 +18,7 @@ Start: **Architecture signed off**. End: **Plan signed off**.
    that step's outcome.
 1. **Check each scenario until each way a bug could break it has a row or a
    scenario in the design.** The ways are running again, being undone or
-   redone, meeting a locked or done day, bad input, and the users' real
+   redone, meeting work that is locked or done, bad input, and the users' real
    numbers. A feature holds 8 scenarios and 4 rules at most. Past either,
    the owner decides.
 1. **Grep the backlog until each model attribute the architecture adds sits

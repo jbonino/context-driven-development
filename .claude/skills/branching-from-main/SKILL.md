@@ -19,6 +19,6 @@ Start: `main` up to date. End: the branch claimed, in its own worktree.
 1. **Claim the name.** A branch of that name in `git branch -a` or
    `git worktree list` is someone else's. With an `origin`, push `main`
    under the name. Without one, the local branch claims it. See
-   [Two repos](../README.md#two-repos).
+   [Two repos](../../../README.md#two-repos).
 1. **Invoke `superpowers:using-git-worktrees` for the branch, under
    `.claude/worktrees/`.**

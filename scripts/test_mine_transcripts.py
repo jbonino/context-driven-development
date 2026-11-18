@@ -84,7 +84,7 @@ entry = """**Code review**
 | Critical | C | Fixed | Tests |
 
 **Changed after sign-off**
-- The dialog lists the cooler lots. Planning miss: the wireframe.
+- The dialog lists the draft items. Planning miss: the wireframe.
 - Gray the closing steps.
 
 **Next**
@@ -101,7 +101,7 @@ check("tool result is not typed", tu.typed_text(
 check("skill body is not typed", tu.typed_text(
     {"type": "user", "message": {"content": [{"type": "text", "text": "Base directory for this skill: /a/b"}]}}),
     None)
-check("correction caught", bool(tu.CORRECTION.search("No, that's the wrong lot")), True)
+check("correction caught", bool(tu.CORRECTION.search("No, that's the wrong item")), True)
 check("go-ahead is no correction", bool(tu.CORRECTION.search("yes, go ahead")), False)
 
 # The same command three times running is one retry loop.
@@ -110,17 +110,17 @@ check("model family", tu.family("claude-sonnet-5-5"), "sonnet")
 
 # A redesign drops what a doc said; adding or rewording is not one.
 check("addition is no redesign", tu.is_redesign([], ["new rule"]), False)
-check("rewording is no redesign", tu.is_redesign(["A day locks at print."], ["A day locks when printed."]), False)
-check("replacing is a redesign", tu.is_redesign(["Review holds the cooler step."], ["Complete lists the lots."]), True)
+check("rewording is no redesign", tu.is_redesign(["An order locks at send."], ["An order locks when sent."]), False)
+check("replacing is a redesign", tu.is_redesign(["Review holds the draft step."], ["Complete lists the items."]), True)
 check("rewording one line and appending is no redesign", tu.is_redesign(
-    ["A day locks at print."], ["A day locks when printed."] + [f"New rule {i}, with its reason." for i in range(10)]),
+    ["An order locks at send."], ["An order locks when sent."] + [f"New rule {i}, with its reason." for i in range(10)]),
     False)
 check("slash command is not typed", tu.typed_text(
     {"type": "user", "message": {"content": "<command-name>/clear</command-name>"}}), None)
 diff = "+++ b/docs/architecture.md\n@@ -12,2 +12 @@\n-old one\n-old two\n+new\n"
 check("hunks read", tu.hunks(diff), [("docs/architecture.md", 12, ["old one", "old two"], ["new"])])
-check("heading above a line", tu.heading_at("# Top\n## Cooler\ntext\nmore", 4), "Cooler")
-check("owner round trigger", tu.trigger("005-148 — round 3: drop Review's cooler step"), "owner")
+check("heading above a line", tu.heading_at("# Top\n## Drafts\ntext\nmore", 4), "Drafts")
+check("owner round trigger", tu.trigger("005-42 — round 3: drop Review's draft step"), "owner")
 
 
 

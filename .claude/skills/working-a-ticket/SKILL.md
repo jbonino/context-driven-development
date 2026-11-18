@@ -15,7 +15,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      `git branch -a` or `git worktree list`. A group's tickets can run in
      separate chats.
    - Invoke `branching-from-main` for the ticket's docs branch here. Open
-     its code branch in the team repo, per that repo's conventions. See [Two repos](../README.md#two-repos).
+     its code branch in the team repo, per that repo's conventions. See [Two repos](../../../README.md#two-repos).
    - Stop for the owner's review, unless the args say to go on. Give the
      Estimate's model, a Remote Control reminder, the wireframes, and the
      acceptance criteria with the ticket's link.
@@ -50,7 +50,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      scenario whose outcome proves it, a scenario into the step that walks
      it. Record each in the ticket's Gherkin with what it replaces.
 1. **Write the code in the team repo's branch until each test passes.**
-   For a page change, run the team repo's local harness and screenshot it.
+   For a page change, run the team repo's app locally and screenshot it.
 1. **Update each doc the change touches**
    ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
    - Fold the Release plan into `docs/release/phase-{n}.md` per the
@@ -85,7 +85,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      - Whether a user or the team sees or does the change. If none
        does, the code review signs it off.
      - For a page change, the sign-off link and screenshots from
-       the local harness.
+       the app run locally.
      - The steps to walk the change, one click each.
      - The tests added, by kind.
      - Each case, merge and redesign, for the owner's call.

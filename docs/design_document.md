@@ -328,7 +328,6 @@ Feature: Keeping each fact in its place
         | the code             | nothing                                               |
         | the roadmap          | nothing                                               |
         | a deferred entry     | the design                                            |
-        | a ticket             | the design and the architecture and the code's files  |
         | the backlog README   | its own tickets                                       |
         | the release playbook | the tickets and the architecture's systems            |
 

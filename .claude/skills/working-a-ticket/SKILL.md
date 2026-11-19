@@ -58,7 +58,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      **Deviations from the plan and design**.
    - Run `editing-prose` over the branch's prose.
 1. **Run the checks until they pass.**
-   - Run the checks once, in the background. After a fix,
+   - Run `uv run --script scripts/check.py` once, in the background. After a fix,
      run only the tests it touched.
    - Check by hand that each doc names only docs above it, per `CLAUDE.md`.
 1. **Another Developer reviews the change.**

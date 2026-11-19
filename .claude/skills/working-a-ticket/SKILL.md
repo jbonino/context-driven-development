@@ -38,8 +38,9 @@ Start: **Plan signed off**. End: **Ready for review**.
    - Write it into its scenario's Examples or the design, then any
      decision it changes. A new feature or workflow is a ticket, per
      `planning-ad-hoc`.
-   - Count the ticket's new scenarios by hand. A third goes to the owner. One the phase's goal needs redesigns the
-     ticket. One it can spare goes under **Past its caps** in the retro
+   - Count the ticket's new scenarios with
+     `uv run --script scripts/check-caps.py`. A third goes to the owner.
+     One the phase's goal needs redesigns the ticket. One it can spare goes under **Past its caps** in the retro
      entry.
    - A case a rule covers becomes a proposed rule in the ticket's Gherkin,
      its test `rule_` plus the rule's title. A rule for every feature of
@@ -60,7 +61,6 @@ Start: **Plan signed off**. End: **Ready for review**.
 1. **Run the checks until they pass.**
    - Run `uv run --script scripts/check.py` once, in the background. After a fix,
      run only the tests it touched.
-   - Check by hand that each doc names only docs above it, per `CLAUDE.md`.
 1. **Another Developer reviews the change.**
    - Invoke `superpowers:requesting-code-review` over the branch. Ask the
      reviewer whether:

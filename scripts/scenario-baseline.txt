@@ -1,0 +1,36 @@
+# A skill runs it. Its tests wait for evals, per docs/deferred/skill-evals.md
+Feature: Placing feedback: New scope the Product Owner wants starts an ad hoc plan
+Feature: Placing feedback: A blocker starts an ad hoc plan
+Feature: Placing feedback: An entry the goal fits is taken up
+Feature: Placing feedback: A deferred entry the goal fits is taken up
+Feature: Placing feedback: An entry that can wait is deferred
+Feature: Placing feedback: An entry that no longer holds is dropped
+Feature: Splitting the work: An unverified outside system gets a spike first
+Feature: Splitting the work: A prerequisite with no screen gets a ticket first
+Feature: Splitting the work: A workflow whose steps name no feature of its system gets a ticket of its steps
+Feature: Splitting the work: A spike's finding updates the plan
+Feature: Splitting the work: A feature past 5 points splits by scenario
+Feature: Splitting the work: A single scenario past 5 points goes to the owner
+Feature: Splitting the work: A feature across two systems splits by system
+Feature: Splitting the work: A scenario that needs another ticket built first gets its own ticket
+Feature: Going red first: A test that doesn't fail on its assertion is not yet red
+Feature: Signing off a change: A way a bug could break a scenario joins the design
+Feature: Signing off a change: A change a user sees or does is signed off by the Product Owner
+Feature: Signing off a change: A change no user sees or does signs off at review
+Feature: Signing off a change: A new Examples row joins the design
+Feature: Signing off a change: A new rule joins the design
+Feature: Signing off a change: A third scenario the phase's goal needs redesigns the ticket
+Feature: Signing off a change: A third scenario the phase's goal can spare waits
+Feature: Running the playbook: Running the playbook again starts at the first unchecked box
+Feature: Running the playbook: Running the playbook after a merge starts at the ticket's lines
+Feature: Running the playbook: A failed step the Developer fixes
+Feature: Running the playbook: A failed step the Product Owner skips
+Feature: Deciding a planning miss: A miss the next phase must fix becomes an action item
+Feature: Deciding a planning miss: A miss that can wait is deferred
+Feature: Deciding a planning miss: A miss that no longer holds stays in its retro entry
+Feature: Deciding a planning miss: A kind seen once is proposed to stay in its entry
+Feature: Deciding a planning miss: A kind seen twice or more is proposed as an action item
+Feature: Editing prose: Prose is cut by a quarter
+Feature: Editing prose: A form takes the sentence rules alone
+Feature: Editing prose: The owner keeps a cut short of a quarter
+Feature: Editing prose: Review finds a line that breaks a sentence rule

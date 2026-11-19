@@ -42,7 +42,9 @@ Start: **Phase scoped**. End: **Design signed off**.
    - One act a scenario. Givens every scenario shares go in a Background.
    - An outline holds three Examples rows at least. Fewer cases are
      separate scenarios.
-   - Bring each form past its cap to the owner.
+   - Run `uv run --script scripts/check-docs.py` until it passes, and
+     `uv run --script scripts/check-caps.py`. Bring each cap warning to
+     the owner.
 1. **Wireframe each screen a feature changes, with its copy.** The
    wireframe fills the feature's slot.
 1. **Write the retro entry and sign off the design.**

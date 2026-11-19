@@ -27,7 +27,9 @@ Start: **Design signed off**. End: **Architecture signed off**.
    heading of its own name.**
    - A workflow or feature with no decision takes no heading.
    - Facts flow down. A decision names only the design.
-   - Check by hand that each doc names only docs above it, per `CLAUDE.md`.
+   - Run `uv run --script scripts/check-docs.py` until it passes, and
+     `uv run --script scripts/check-caps.py`. Bring each cap warning to
+     the owner.
 1. **Give each decision that's hard to undo a why.** Write a footnote under
    **Why** that names each option it beat.
 1. **Write the retro entry and sign off the architecture.**

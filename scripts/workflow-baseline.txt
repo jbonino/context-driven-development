@@ -1,0 +1,12 @@
+# A skill runs it. Its tests wait for evals, per docs/deferred/skill-evals.md
+Architecting a phase
+Closing a phase
+Designing a phase
+Interviewing the customer
+Meeting the customer
+Planning ad hoc
+Releasing
+Reviewing a ticket
+Scoping a phase
+Working a ticket
+Writing the tickets

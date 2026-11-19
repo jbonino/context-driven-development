@@ -28,7 +28,7 @@ Start: **Phase scoped**. End: **Design signed off**.
    - Follow the Workflow form in the foundations.
    - Each step names its act and its outcome. The outcome holds on every
      branch, and a test asserts it.
-   - Wide then deep. Walk two or three real cases from the team's repos and data
+   - Wide then deep. Walk two or three real cases from the repo and its data
      through each, with a verdict.
    - A workflow past its cap goes to the owner.
 1. **Name each branch of a changed step as a scenario, and group the

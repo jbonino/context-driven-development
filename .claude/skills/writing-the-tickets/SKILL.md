@@ -12,7 +12,7 @@ Start: **Architecture signed off**. End: **Plan signed off**.
    `docs/design_document.md`, and their decisions in `docs/architecture.md`.
    Splitting the work in the design says how.
    Each ticket copies `docs/templates/ticket.md`
-   into `docs/backlog/`, named for its team issue. Fill every slot and delete the comment. Its
+   into `docs/backlog/`, named `{phase}-{number}-{short-name}.md`. Fill every slot and delete the comment. Its
    acceptance criteria link each scenario to its feature. A wireframe
    stays in its feature. Its Workflow steps names each step it builds and
    that step's outcome.

@@ -14,7 +14,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Feature: Running the playbook](#feature-running-the-playbook)
   - [Feature: Deciding a planning miss](#feature-deciding-a-planning-miss)
   - [Feature: Going red first](#feature-going-red-first)
-- [Checks](#checks)
+- [Scripts](#scripts)
   - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
 - [Why](#why)
 
@@ -25,8 +25,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 | Unit | Tech | Carries |
 |---|---|---|
 | Skills | Claude Code skills in Markdown | Workflow skills and the helpers they share |
-| Checks | Deferred here. See `docs/deferred/check-docs.md` | Keeping each fact in its place |
-| Session mining | Python scripts under `uv`, tested with pytest | Closing a phase |
+| Scripts | Python scripts under `uv`, tested with pytest | Keeping each fact in its place and Closing a phase |
 | Git | Branches and tags | A claimed ticket and a plan's sign-off |
 | Docs | Markdown, Gherkin and Mermaid | The design, the architecture, feedback, tickets, retros |
 
@@ -61,7 +60,7 @@ A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is it
 - **A decision** takes no test. Its feature's scenarios cover it.
 - **A test's name** runs its kind's prefix, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
 - **A test's kind** is the only part it asserts. Review moves a stray assertion.[^why-a-test-asserts-only-its-kind]
-- **The checks** are deferred in this repo. Each is a manual check until `docs/deferred/check-docs.md` is taken up.[^why-the-checks-are-deferred]
+- **A known gap** sits in a baseline line with its reason, as does each workflow and scenario a skill runs. The check fails on a line whose reason is gone.[^why-a-known-gap-sits-in-a-baseline]
 
 ## Checkpoints
 
@@ -122,22 +121,22 @@ bridges CDD and the product, so it may name the product's things.[^why-a-skill-n
 
 - **The red rule** runs inside the ticket-working skill.[^why-red-runs-in-the-skill]
 
-## Checks
+## Scripts
 
 Keeping each fact in its place
 
-Deferred in this repo. See `docs/deferred/check-docs.md`. Until then each
-check below runs by hand in the skill that names it.
+The check scripts run here. `scripts/check.py` runs them all. A failure exits 1. A warning exits 0.
+A baseline is `scripts/{kind}-baseline.txt`, one per Testing strategy kind.
 
-The session scripts run here. One saves the Claude Code and Copilot sessions
+The session scripts run here too. One saves the Claude Code and Copilot sessions
 before a merge. One mines a phase's sessions at its close.
 
 ### Feature: Keeping each fact in its place
 
 - **A form past its cap** warns. A form's cap is read from the Examples of the outline that warns, and a ticket's from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
 - **A system** lists each of its features on its opening line. A feature takes a heading only for its decisions.
-- **Naming one below** means a link to it or a code file's path. Doc paths and tag formats pass.
-- **A test's source** is matched by its prefix and name.[^why-a-test-s-name-says-its-kind-and-source]
+- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
+- **A home** is found by name. A test matches its source by its prefix and title. A deferred thing matches its file's title. An architecture heading matches a design heading.[^why-a-test-s-name-says-its-kind-and-source]
 
 ## Why
 
@@ -147,7 +146,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-a-test-asserts-only-its-kind]: One test per fact means a change breaks one test. Review holds this rule. A check can't tell what an assertion proves. **Other considerations:** A design scenario per layer, which put a decision into the design.
 
-[^why-the-checks-are-deferred]: The check scripts walk a code tree. This repo holds no code. A known gap goes in the ticket's retro entry until the checks are written. **Other considerations:** Writing the scripts now, before the docs hold a workflow to check.
+[^why-a-known-gap-sits-in-a-baseline]: A line names the gap and why. A line whose reason is gone fails, so it leaves. A baseline that empties is deleted with the code that reads it. **Other considerations:** A doc's list of untested items, which keeps two lists of one thing. A check that skips what a skill runs, which hides the gap. A check that fails until a skill is tested, which never passes.
 
 [^why-a-plan-is-a-git-tag]: A tag marks the exact plan. The retro diffs what shipped against it. Every other checkpoint already shows in a file. **Other considerations:** A tag at every stage. A signed-off line in the plan's docs, which a later edit can carry along unseen. The plan's merge commit found by its message, which breaks on a reworded message.
 
@@ -159,7 +158,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-two-systems]: A system says what its features run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave Keeping each fact in its place between two.
 
-[^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 8 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
+[^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 9 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
 
 [^why-a-separate-reviewer]: An agent reads its own work with the reasoning that wrote it. It misses what that reasoning missed. **Other considerations:** The building agent reviewing itself, which is cheaper and sees less.
 

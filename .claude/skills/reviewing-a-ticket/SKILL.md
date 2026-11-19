@@ -10,7 +10,7 @@ Start: **Ready for review**. End: **Signed off**. The goal is zero rounds.
 1. **Walk the change.**
    - Give the prompt for a new chat:
      `/reviewing-a-ticket {ticket} {worktree absolute path}`. It reads the
-     ticket, its retro, the team PR, and `git diff --stat main...`.
+     ticket, its retro, its PR, and `git diff --stat main...`.
    - When a user or the team sees or does the change, the owner and
      the Designer walk it on the sign-off link. Otherwise the code review
      signs it off. Go to step 3.
@@ -26,17 +26,17 @@ Start: **Ready for review**. End: **Signed off**. The goal is zero rounds.
       goes.
    1. Write its failing test first, per `superpowers:test-driven-development`,
       except for copy or style. Run only the tests you touched.
-   1. For a page change, run the team repo's app locally and screenshot it.
-   1. Add the change to the retro's **Changed after sign-off**. Commit the
-      code in the team repo's branch as `{ticket} — round N: {what changed}`,
-      and the docs here. Push the team branch and give the team PR's link.
+   1. For a page change, run the app locally and screenshot it.
+   1. Add the change to the retro's **Changed after sign-off**. Commit it
+      as `{ticket} — round N: {what changed}`, push, and give
+      `https://github.com/{owner}/{repo}/compare/{last sha}...{branch}`.
       Stop.
 1. **Sign off the change** when the owner says "sign off", or from step 1.
    Ask the owner's verdict on each open proposed rule and write it per
    step 2. If any round ran, invoke `superpowers:requesting-code-review`
    over the rounds. Fix Critical and Important findings and record each in
-   the retro's **Sign-off review**. Run the team repo's checks until they
+   the retro's **Sign-off review**. Run the checks until they
    pass. With no rounds, `working-a-ticket`'s run covers it.
 1. **Merge to main and delete the ticket.** `git rm` the ticket. A scenario
    whose test waits, such as a skill's, goes in the retro entry. Invoke
-   `merging-to-main`, which waits for the team PR to merge.
+   `merging-to-main`.

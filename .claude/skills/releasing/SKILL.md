@@ -5,7 +5,7 @@ description: Use when the owner says to release, deploy or ship, and when workin
 
 # Releasing
 
-Start: **Signed off**, the team PR merged. End: **Released**, every box in
+Start: **Signed off**. End: **Released**, every box in
 the phase's playbook checked.
 
 Work `docs/release/phase-{n}.md`. The deploy runs through the team's own

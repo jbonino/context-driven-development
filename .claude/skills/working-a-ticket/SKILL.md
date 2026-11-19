@@ -14,8 +14,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      ticket, one with no branch or worktree of its name in
      `git branch -a` or `git worktree list`. A group's tickets can run in
      separate chats.
-   - Invoke `branching-from-main` for the ticket's docs branch here. Open
-     its code branch in the team repo, per that repo's conventions. See [Two repos](../../../README.md#two-repos).
+   - Invoke `branching-from-main` for the ticket's branch.
    - Stop for the owner's review, unless the args say to go on. Give the
      Estimate's model, a Remote Control reminder, the wireframes, and the
      acceptance criteria with the ticket's link.
@@ -28,8 +27,8 @@ Start: **Plan signed off**. End: **Ready for review**.
    - The **Release rules** atop `docs/release/phase-{n}.md`. They win over
      the ticket's Release plan.
    - If the approach is unclear, invoke `superpowers:brainstorming`.
-1. **Write each of the ticket's tests in the team repo's branch until it
-   fails on its assertion.**
+1. **Write each of the ticket's tests until it fails
+   on its assertion.**
    - Invoke `superpowers:test-driven-development`. The Gherkin is the spec.
      Each test asserts only its kind's part, per the Testing strategy.
    - Stub anything new first. A test over built code goes red against a
@@ -48,22 +47,22 @@ Start: **Plan signed off**. End: **Ready for review**.
    - Merge up the chain. Fold rules into a broader rule, a rule into the
      scenario whose outcome proves it, a scenario into the step that walks
      it. Record each in the ticket's Gherkin with what it replaces.
-1. **Write the code in the team repo's branch until each test passes.**
-   For a page change, run the team repo's app locally and screenshot it.
+1. **Write the code until each test passes.**
+   For a page change, run the app locally and screenshot it.
 1. **Update each doc the change touches.**
    - Fold the Release plan into `docs/release/phase-{n}.md` per the
      playbook template. Add its lines unchecked. `releasing` checks them
-     after the team PR merges.
+     after the branch merges.
    - Edit `docs/architecture.md` where a decision changed.
    - Write the retro entry, per `writing-a-retro-entry`, with its
      **Deviations from the plan and design**.
    - Run `editing-prose` over the branch's prose.
 1. **Run the checks until they pass.**
-   - Run the team repo's own checks once, in the background. After a fix,
+   - Run `uv run --script scripts/check.py` once, in the background. After a fix,
      run only the tests it touched.
    - Check by hand that each doc names only docs above it, per `CLAUDE.md`.
 1. **Another Developer reviews the change.**
-   - Invoke `superpowers:requesting-code-review` over both branches. Ask the
+   - Invoke `superpowers:requesting-code-review` over the branch. Ask the
      reviewer whether:
      - each new or changed test asserts only its kind's part
      - a rule or design change would fold each case
@@ -74,10 +73,9 @@ Start: **Plan signed off**. End: **Ready for review**.
    - Fix Critical and Important findings. Record every finding in the
      retro's **Code review**.
 1. **Hand off to the Product Owner.**
-   - Push the code branch and open the team PR, per the team repo's
-     conventions. Commit the docs branch here.
+   - Push and run `gh pr create --base main --title "{ticket} — {title}" --body ""`.
    - Give in chat:
-     - What shipped, in one line, with the team PR's link.
+     - What shipped, in one line, with the PR's link.
      - Whether a user or the team sees or does the change. If none
        does, the code review signs it off.
      - For a page change, the sign-off link and screenshots from
@@ -88,6 +86,5 @@ Start: **Plan signed off**. End: **Ready for review**.
      - Each proposed rule and the tests it folds, to accept, reword or
        refuse.
      - What waits on the owner.
-   - Tell the owner the ticket is ready for review. In Claude Code, send
-     `PushNotification`.
+   - Send `PushNotification` with the ticket and "ready for review".
    - Invoke `reviewing-a-ticket`.

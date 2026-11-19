@@ -290,73 +290,90 @@ Feature: Placing feedback
 Feature: Keeping each fact in its place
   Each fact holds its place down the stream.
 
-  Scenario Outline: Each part has its home
-    Given <part> with no <home>
-    When the Developer runs the checks
-    Then the checks fail on the part
+  Rule: Each part has its home
 
-    Examples:
-      | part                                | home                                      |
-      | a model                             | feature that owns it                      |
-      | an attribute the architecture adds  | ticket that carries it                    |
-      | a rule                              | two scenarios under it                    |
-      | a journey                           | test named for it                         |
-      | a workflow                          | test named for it                         |
-      | a scenario                          | test named for it                         |
-      | a rule                              | test named for it                         |
-      | a test                              | source it names                           |
-      | a deferred entry                    | `Revisit when` line                       |
+    Scenario Outline: A part with no home fails the check
+      Given <part> with no <home>
+      When the Developer runs the checks
+      Then the checks fail on the part
 
-  Scenario Outline: A file that names one it may not fails the check
-    Given <file> names a doc other than the foundations or <may>
-    When the Developer runs the checks
-    Then the checks fail on that line
+      Examples:
+        | part                                | home                                      |
+        | a model                             | feature that owns it                      |
+        | an attribute the architecture adds  | ticket that carries it                    |
+        | a rule                              | two scenarios under it                    |
+        | a journey                           | test named for it                         |
+        | a workflow                          | test named for it                         |
+        | a scenario                          | test named for it                         |
+        | a rule                              | test named for it                         |
+        | a test                              | source it names                           |
+        | a deferred entry                    | `Revisit when` line                       |
 
-    Examples:
-      | file                 | may                                                   |
-      | the design           | nothing                                               |
-      | the architecture     | the design                                            |
-      | the code             | nothing                                               |
-      | the roadmap          | nothing                                               |
-      | a deferred entry     | the design                                            |
-      | a ticket             | the design and the architecture and the code's files  |
-      | the backlog README   | its own tickets                                       |
-      | the release playbook | the tickets and the architecture's systems            |
+    Scenario: A deferred thing described outside its file fails
+      Given a doc other than its deferred/ file describes a deferred thing
+      When the Developer runs the checks
+      Then the checks fail on that line
 
-  Scenario: An architecture heading with no design heading fails the check
-    Given the architecture heads decisions with a workflow or feature the design doesn't have
-    When the Developer runs the checks
-    Then the checks fail on the heading
+  Rule: A doc names only what's above it
 
-  Scenario: A design feature no system lists fails the check
-    Given a design feature that sits on no system's opening line in the architecture
-    When the Developer runs the checks
-    Then the checks fail on the feature
+    Scenario Outline: A file that names one it may not fails the check
+      Given <file> names a doc other than the foundations or <may>
+      When the Developer runs the checks
+      Then the checks fail on that line
 
-  Scenario: A deferred thing described outside its file fails
-    Given a doc other than its deferred/ file describes a deferred thing
-    When the Developer runs the checks
-    Then the checks fail on that line
+      Examples:
+        | file                 | may                                                   |
+        | the design           | nothing                                               |
+        | the architecture     | the design                                            |
+        | the code             | nothing                                               |
+        | the roadmap          | nothing                                               |
+        | a deferred entry     | the design                                            |
+        | the backlog README   | its own tickets                                       |
+        | the release playbook | the tickets and the architecture's systems            |
 
-  Scenario: An outline under three rows warns
-    Given a scenario outline with two Examples rows
-    When the Developer runs the checks
-    Then the checks warn
-    And the owner decides whether to split it into scenarios
+    Scenario: An architecture heading with no design heading fails the check
+      Given the architecture heads decisions with a workflow or feature the design doesn't have
+      When the Developer runs the checks
+      Then the checks fail on the heading
 
-  Scenario Outline: One more than the cap warns
-    Given a <form> at its cap of <cap>
-    When one more is added
-    Then the checks warn
-    And the owner decides whether to redesign <upstream>
+    Scenario: A design feature no system lists fails the check
+      Given a design feature that sits on no system's opening line in the architecture
+      When the Developer runs the checks
+      Then the checks fail on the feature
 
-    Examples:
-      | form                 | cap                    | upstream              |
-      | journey              | 7 workflows            | the journey           |
-      | workflow             | 8 steps                | its journey           |
-      | workflow step        | 1 feature              | the step              |
-      | feature              | 8 scenarios or 4 rules | its workflows         |
-      | architecture section | 4 decisions            | its feature or system |
+  Rule: Every link resolves
+
+    Scenario: A link to a missing file fails the check
+      Given a doc links to a file that doesn't exist
+      When the Developer runs the checks
+      Then the checks fail on the link
+
+    Scenario: A link to a missing heading fails the check
+      Given a doc links to an anchor no heading in its file makes
+      When the Developer runs the checks
+      Then the checks fail on the link
+
+  Rule: Each form stays under its cap
+
+    Scenario: An outline under three rows warns
+      Given a scenario outline with two Examples rows
+      When the Developer runs the checks
+      Then the checks warn
+      And the owner decides whether to split it into scenarios
+
+    Scenario Outline: One more than the cap warns
+      Given a <form> at its cap of <cap>
+      When one more is added
+      Then the checks warn
+      And the owner decides whether to redesign <upstream>
+
+      Examples:
+        | form                 | cap                    | upstream              |
+        | journey              | 7 workflows            | the journey           |
+        | workflow             | 8 steps                | its journey           |
+        | workflow step        | 1 feature              | the step              |
+        | feature              | 8 scenarios or 4 rules | its workflows         |
+        | architecture section | 4 decisions            | its feature or system |
 ```
 
 ### Feature: Splitting the work

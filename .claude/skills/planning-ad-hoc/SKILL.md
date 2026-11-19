@@ -6,7 +6,7 @@ description: Use when the open phase takes on scope it didn't plan, from the pla
 # Planning ad hoc
 
 Start: **Feedback in** that adds scope to the open phase. End: **Plan
-signed off.**
+signed off**.
 
 1. **Open the plan's branch off main.**
    - Number the first ticket with the phase's next free number. Invoke

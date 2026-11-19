@@ -5,7 +5,7 @@ description: Use when the architecture is signed off and the phase's tickets nee
 
 # Writing the tickets
 
-Start: **Architecture signed off**. End: **Plan signed off.**
+Start: **Architecture signed off**. End: **Plan signed off**.
 
 1. **Split the planned work until each ticket is one feature on one system
    and 5 points or less.** Read the changed features and workflows in

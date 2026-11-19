@@ -5,7 +5,7 @@ description: Use when a phase's design is signed off and its architecture needs 
 
 # Architecting a phase
 
-Start: **Design signed off**. End: **Architecture signed off.**
+Start: **Design signed off**. End: **Architecture signed off**.
 
 1. **Brainstorm with the Product Owner until a build meets the design's
    changes and the phase's goal.**

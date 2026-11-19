@@ -5,7 +5,7 @@ description: Use when picking up and implementing a backlog ticket, from claim t
 
 # Working a ticket
 
-Start: **Plan signed off**. End: **Ready for review.**
+Start: **Plan signed off**. End: **Ready for review**.
 
 1. **Claim the next open ticket on its own branch, and read the sections
    it names.**
@@ -56,7 +56,7 @@ Start: **Plan signed off**. End: **Ready for review.**
      after the team PR merges.
    - Edit `docs/architecture.md` where a decision changed.
    - Write the retro entry, per `writing-a-retro-entry`, with its
-     **Deviations from the plan and design.**
+     **Deviations from the plan and design**.
    - Run `editing-prose` over the branch's prose.
 1. **Run the checks until they pass.**
    - Run the team repo's own checks once, in the background. After a fix,
@@ -72,7 +72,7 @@ Start: **Plan signed off**. End: **Ready for review.**
      - `editing-prose`'s cut ran, and each changed line follows its
        sentence rules
    - Fix Critical and Important findings. Record every finding in the
-     retro's **Code review.**
+     retro's **Code review**.
 1. **Hand off to the Product Owner.**
    - Push the code branch and open the team PR, per the team repo's
      conventions. Commit the docs branch here.

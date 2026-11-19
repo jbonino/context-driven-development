@@ -34,6 +34,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 
 | Doc | Path |
 |---|---|
+| Foundations | `docs/foundations.md` |
 | Design | `docs/design_document.md` |
 | Architecture | `docs/architecture.md` |
 | Roadmap | `docs/product_roadmap.md` |

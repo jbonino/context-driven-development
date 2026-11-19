@@ -5,7 +5,7 @@ description: Use when the Product Owner sets the next phase's goal from the feed
 
 # Scoping a phase
 
-Start: **Feedback in** and **Retro in**. End: **Phase scoped.**
+Start: **Feedback in** and **Retro in**. End: **Phase scoped**.
 
 1. **Read the feedback, the last retro's action items, and each deferred
    entry whose Revisit when now holds.**

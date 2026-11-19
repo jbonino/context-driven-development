@@ -299,8 +299,6 @@ Feature: Keeping each fact in its place
 
       Examples:
         | part                                | home                                      |
-        | a model                             | feature that owns it                      |
-        | an attribute the architecture adds  | ticket that carries it                    |
         | a rule                              | two scenarios under it                    |
         | a journey                           | test named for it                         |
         | a workflow                          | test named for it                         |

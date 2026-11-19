@@ -124,7 +124,8 @@ check("owner round trigger", tu.trigger("005-42 — round 3: drop Review's draft
 
 
 
-def test_every_check_passes():
+def test_workflow_closing_a_phase():
+    """Step 4 mines the sessions for their cost and time."""
     assert not failures
 
 

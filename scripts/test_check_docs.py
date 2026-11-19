@@ -94,6 +94,7 @@ def test_rule_each_part_has_its_home():
     assert cd.baseline("scripts/w.txt", "Closing\n")[1] == [
         "scripts/w.txt: Closing gives no reason; add \" — {reason}\", or a # line at the file's top"]
     assert cd.baseline("scripts/w.txt", "# A skill runs it\nClosing\n") == ({"Closing"}, [])
+    rename_keeps_each_home()
 
 
 def test_rule_a_doc_names_only_what_s_above_it():
@@ -109,7 +110,8 @@ def test_rule_every_link_resolves():
     assert cd.broken_links(files, lambda path: True) == []
 
 
-def test_rule_a_rename_carries_a_name_to_its_tests_and_links():
+def rename_keeps_each_home():
+    """A rename carries a name to its tests, links and baselines."""
     files = {"docs/design_document.md": "## Feature: Old\n\n```gherkin\nScenario: Old thing\n```\n"
                                         "[x](#feature-old) Old things.\n",
              "scripts/test_x.py": "def test_scenario_old_thing():\n",

@@ -25,7 +25,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - Verdict: With fixes.
 
 **Signed off**
-- 
+- 2026-11-18 by the Product Owner.
 
 **Changed after sign-off**
 - None.

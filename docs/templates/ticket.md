@@ -24,7 +24,7 @@ Copy this into the backlog. Delete this comment.
 |---|---|
 | Title | What the ticket ships in the user's words. No commas |
 | Filename | `{phase}-{number}-{short-name}.md` in `docs/backlog/`, like `001-001-check-docs.md`. A ticket that turns out to be two takes letters, `031a` and `031b`, so every number after it stays put |
-| Feature | The one feature it builds |
+| Feature | The one feature it builds. A ticket that changes only its system drops the Feature slot |
 | System | The one system it builds in as the architecture names it |
 | Points | Fibonacci. Past 5 it splits by scenario |
 | Model | The cheapest model and effort that still reach zero feedback. Effort is low, medium, high, xhigh or max. A well-patterned change takes a faster model and less effort |

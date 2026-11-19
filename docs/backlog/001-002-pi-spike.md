@@ -1,6 +1,6 @@
 # 001-002 — Spike: what the skills need from Pi
 
-**Feature.** None. It changes the Stack · **System.** [Skills](../architecture.md#skills) · **Estimate.** 2 — a timeboxed spike · **Model.** Sonnet 5.5, medium — reading and counting, no design calls
+**System.** [Skills](../architecture.md#skills) · **Estimate.** 2 — a timeboxed spike · **Model.** Sonnet 5.5, medium — reading and counting, no design calls
 
 Find out whether Pi can run CDD's skills on a Copilot sign-in, and which
 Claude Code tools the skills need it to replace.

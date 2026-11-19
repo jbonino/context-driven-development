@@ -24,7 +24,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 
 | Unit | Tech | Carries |
 |---|---|---|
-| Skills | Agent skills in Markdown, run in Claude Code or Pi | Workflow skills and the helpers they share |
+| Skills | Claude Code skills in Markdown | Workflow skills and the helpers they share |
 | Scripts | Python scripts under `uv`, tested with pytest | Keeping each fact in its place and Closing a phase |
 | Git | Branches and tags | A claimed ticket and a plan's sign-off |
 | Docs | Markdown, Gherkin and Mermaid | The design, the architecture, feedback, tickets, retros |

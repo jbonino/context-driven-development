@@ -46,6 +46,10 @@ flowchart LR
 Make the team's workflow something agents can run and people can read, so
 the work goes to plan with no surprises.
 
+The goal is zero feedback. The owner's review and the code review both find
+nothing. A finding that matters is a planning miss, and the retro names the
+doc that should have caught it. Token cost counts beside feedback.
+
 Three ethics (borrowed from permaculture) are used to score choices.
 
 | Ethic | Means |

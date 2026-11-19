@@ -73,9 +73,9 @@ Start: **Plan signed off**. End: **Ready for review**.
    - Fix Critical and Important findings. Record every finding in the
      retro's **Code review**.
 1. **Hand off to the Product Owner.**
-   - Commit and push the branch.
+   - Push and run `gh pr create --base main --title "{ticket} — {title}" --body ""`.
    - Give in chat:
-     - What shipped, in one line, with the branch's compare link.
+     - What shipped, in one line, with the PR's link.
      - Whether a user or the team sees or does the change. If none
        does, the code review signs it off.
      - For a page change, the sign-off link and screenshots from
@@ -86,6 +86,5 @@ Start: **Plan signed off**. End: **Ready for review**.
      - Each proposed rule and the tests it folds, to accept, reword or
        refuse.
      - What waits on the owner.
-   - Tell the owner the ticket is ready for review. In Claude Code, send
-     `PushNotification`.
+   - Send `PushNotification` with the ticket and "ready for review".
    - Invoke `reviewing-a-ticket`.

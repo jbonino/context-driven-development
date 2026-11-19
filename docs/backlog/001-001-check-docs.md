@@ -33,3 +33,4 @@ or a broken link, and it warns on a form past its cap.
 - Seed `scripts/workflow-baseline.txt` and `scripts/scenario-baseline.txt` with each workflow and scenario a skill runs. Each baseline opens with one `#` line for the reason.
 - Point step 6 of `.claude/skills/working-a-ticket/SKILL.md` at `uv run --script scripts/check.py`, in place of the check by hand.
 - Add the command to the README's Commands.
+- Point the skills at the scripts. Architecting and designing run `check-docs.py` and bring each cap warning to the owner. Working a ticket counts new scenarios with `check-caps.py`. Reviewing renames a reworded rule's test with `check-docs.py rename`, and a skill's untested scenario joins `scripts/scenario-baseline.txt`.

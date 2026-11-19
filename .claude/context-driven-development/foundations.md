@@ -18,13 +18,12 @@ a plan that delivers a product and learns from each cycle.
 |---|---|---|---|
 | Form | A defined structure in English. Each form fits a different scope or zoom | — | Its name carries no commas or colons |
 | Journey | What many users do together to reach a checkpoint | Numbered steps that chain workflows with the checkpoint each leaves | For what travels from start to end |
-| Workflow | What one user role does to reach a checkpoint | Numbered steps from a Start checkpoint to an End. Each step names its act and its outcome. A step that can go more than one way links its one feature in brackets | By a verb phrase |
+| Workflow | What one user role does to reach a checkpoint | Numbered steps from a Start checkpoint to an End. Each step names its act and the outcome that holds however it goes. A step that can go more than one way links its one feature in brackets | By a verb phrase |
 | Checkpoint | A state of the work that one workflow leaves and the next starts from. Usually a handoff between roles | A row in a table of checkpoints | For how the work stands |
-| Outcome | The state a workflow step leaves and the next starts from. A checkpoint at a workflow step's scope | The part of a workflow step after its act. It holds on every branch of the step's feature | — |
-| Scenario | One way a workflow step can go. It illustrates a rule | [Gherkin](https://cucumber.io/docs/gherkin/reference) Given, When and Then in 3 to 5 steps. A Scenario Outline holds its cases as Examples rows, three at least | By a sentence of the case and what follows |
+| Scenario | One way a workflow step can go, so a step has one or more. It illustrates a rule | [Gherkin](https://cucumber.io/docs/gherkin/reference) Given, When and Then in 3 to 5 steps. A Scenario Outline holds its cases as Examples rows, three at least | By a sentence of the case and what follows |
 | Feature | Scenarios grouped by shared context | One Gherkin `Feature`. Its Background holds the shared context. Its scenarios sit directly under it or under a Rule | By a verb phrase for what happens at the fork |
 | Rule | One fact a feature's scenarios illustrate. Optional | A Gherkin `Rule` holding the scenarios that illustrate it, two at least | By the fact as a sentence |
-| Decision | How one workflow or feature is built | A paragraph in the architecture under its workflow's or feature's name. One that's hard to undo carries a why that names the options it beat | By what it settles |
+| Decision | How one part is built | A sentence in the architecture under the form it settles, most often a system or a feature. One that's hard to undo carries a why footnote that names the options it beat | By its subject, in bold at the sentence's start |
 | System | Features grouped by what they run on | A section of the architecture | By a noun for what its features run on |
 | Phase | One cycle of plan, deliver, and learn over a set of tickets | A goal in the roadmap | — |
 | Plan | What a phase or an ad hoc blocker signs off before building. Its goal and design and architecture and tickets. The retro measures delivery against it | A snapshot of those docs at sign-off | — |
@@ -35,7 +34,6 @@ a plan that delivers a product and learns from each cycle.
 flowchart LR
   Checkpoint -->|starts and ends| Workflow
   Workflow -->|chained into| Journey
-  Outcome -->|chained into| Workflow
   Workflow -->|a branching step names| Feature
   Scenario -->|grouped into| Feature
   Scenario -.->|illustrates| Rule
@@ -45,10 +43,8 @@ flowchart LR
 
 ## Why
 
-Plan, deliver and learn in short cycles. Each cycle plans in forms so its tests are self-evident. 
-It then delivers against that plan and measures how close delivery came. 
-The unattainable goal is zero feedback from product owner and customer. Each miss teaches the next
-plan.
+Make the team's workflow something agents can run and people can read, so
+the work goes to plan with no surprises.
 
 Three ethics (borrowed from permaculture) are used to score choices.
 
@@ -65,7 +61,7 @@ Users have accountabilities and responsibilities. A Role is a group of those. Ag
 | Role | Hands over | Reads |
 |---|---|---|
 | **Customer** | Feedback on what shipped | The product |
-| **Product Owner** | What's next and sign-off | The retros and the roadmap |
+| **Product Owner** (the owner) | What's next and sign-off | The retros and the roadmap |
 | **Designer** | What to build and why | The roadmap's phase and the design |
 | **Developer** | How it's built. Working and tested code | The design and the architecture. Or a ticket and the sections it names |
 | **Agent** | Plays any role. The person in that role stays accountable | What its role reads |

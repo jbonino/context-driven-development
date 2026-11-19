@@ -104,7 +104,7 @@ Responsible: Product Owner · Weekly or every other week
 Start: **Released**
 
 1. Demo each change that shipped until the customer has seen it
-1. Write what the customer says into the feedback ([Placing feedback](#feature-placing-feedback))
+1. Write what the customer says into the feedback
 
 End: **Feedback in**
 
@@ -290,13 +290,13 @@ Feature: Placing feedback
 Feature: Keeping each fact in its place
   Each fact holds its place down the stream.
 
-  Scenario Outline: Each part has its owner
-    Given <part> with no <owner>
+  Scenario Outline: Each part has its home
+    Given <part> with no <home>
     When the Developer runs the checks
     Then the checks fail on the part
 
     Examples:
-      | part                                | owner                                     |
+      | part                                | home                                      |
       | a model                             | feature that owns it                      |
       | an attribute the architecture adds  | ticket that carries it                    |
       | a rule                              | two scenarios under it                    |

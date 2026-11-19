@@ -4,7 +4,7 @@ description: Use when a skill says to write a retro entry, for a ticket, a desig
 ---
 
 1. Open the retro file the skill names. When it's new, copy
-   `.claude/context-driven-development/templates/retro-entry.md` into it.
+   `docs/templates/retro-entry.md` into it.
 1. An edge case the owner waves off is one line under **Owner's calls**,
    with no test.
 1. Record every code review finding in the **Code review** table, fixed

@@ -6,8 +6,7 @@ description: Use on every chat reply, and before finishing prose meant to last- 
 A chat reply runs step 2 alone.
 
 1. **List each file the diff's prose touches, with its word count.**
-1. **Fix each line until it passes the sentence rules**
-   ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
+1. **Fix each line until it passes the sentence rules.**
    - One fact per sentence. Write two short sentences, not one joined by a
      comma, a colon or an em dash. A form's own syntax keeps its colons.
    - Say what is, in present tense. History belongs in git. A why-comment

@@ -22,8 +22,7 @@ Start: **Released**. End: **Retro in**. The entry is
    of acts. A restart, a step out of order or a retry points at a skill
    step. Extend the miner rather than write a scratch script.
 1. **Walk every planning miss with the Product Owner, by kind**,
-   grouped by pattern with a proposed call each, in one message
-   ([Deciding a planning miss](../../context-driven-development/design.md#feature-deciding-a-planning-miss)).
+   grouped by pattern with a proposed call each, in one message.
    A miss's kind is its `Planning miss` cell on a severity row, or a
    bullet's last line. Each **Past its caps** line is a miss too. A
    kind seen once is proposed to stay. A kind seen in two tickets or
@@ -35,8 +34,7 @@ Start: **Released**. End: **Retro in**. The entry is
    | Can wait | A file in `docs/deferred/`, from its template |
    | No longer holds | It stays in its entry |
 
-1. **Write the retro** in `docs/retro/{n}/retro.md`, from its template
-   ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
+1. **Write the retro** in `docs/retro/{n}/retro.md`, from its template.
    - Invoke `editing-prose`. Act on an action item once the owner says
      so.
    - `git mv` a fully checked `docs/release/phase-{n}.md` to

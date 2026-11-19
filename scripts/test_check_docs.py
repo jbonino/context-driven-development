@@ -87,6 +87,24 @@ def test_scenario_a_link_to_a_missing_heading_fails_the_check():
     assert cd.broken_links(files, lambda path: False) == ["docs/a.md links b.md#nope, which has no such heading"]
 
 
+def rename_keeps_each_home():
+    """A rename carries a name to its tests, links and baselines."""
+    files = {"docs/design_document.md": "## Feature: Old\n\n```gherkin\nScenario: Old thing\n```\n"
+                                        "[x](#feature-old) Old things.\n",
+             "scripts/test_x.py": "def test_scenario_old_thing():\n",
+             "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
+             "docs/retro/1/a.md": "Old thing\n"}
+    renamed = cd.rename(files, "Old thing", "New thing")
+    assert renamed.get("scripts/test_x.py") == "def test_scenario_new_thing():\n"
+    assert "Scenario: New thing" in renamed["docs/design_document.md"]
+    assert "Old things." in renamed["docs/design_document.md"]
+    assert "docs/retro/1/a.md" not in renamed
+    assert renamed["scripts/scenario-baseline.txt"] == "# A skill runs it\nFeature: Old: New thing\n"
+    renamed = cd.rename(files, "Feature: Old", "Feature: New")
+    assert "[x](#feature-new)" in renamed["docs/design_document.md"]
+    assert cd.rename(files, "Nothing here", "X") == {}
+
+
 def test_rule_each_part_has_its_home():
     """A baseline line is a part's only way out, and a line whose gap closed fails."""
     problems = cd.named_tests("workflow", {"Closing", "Opening"}, {"test_workflow_opening"}, {"Closing", "Opening"})
@@ -108,21 +126,3 @@ def test_rule_every_link_resolves():
     files = {"docs/a.md": "# CDD — Design\n\n## Feature: Notes\n\n## Tech\n\n## Tech\n\n"
                           "## See [x](y.md)\n\n[a](#cdd--design) [b](#feature-notes) [c](#tech-1) [d](b.md#{feature}) [e](#see-x)\n"}
     assert cd.broken_links(files, lambda path: True) == []
-
-
-def rename_keeps_each_home():
-    """A rename carries a name to its tests, links and baselines."""
-    files = {"docs/design_document.md": "## Feature: Old\n\n```gherkin\nScenario: Old thing\n```\n"
-                                        "[x](#feature-old) Old things.\n",
-             "scripts/test_x.py": "def test_scenario_old_thing():\n",
-             "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
-             "docs/retro/1/a.md": "Old thing\n"}
-    renamed = cd.rename(files, "Old thing", "New thing")
-    assert renamed.get("scripts/test_x.py") == "def test_scenario_new_thing():\n"
-    assert "Scenario: New thing" in renamed["docs/design_document.md"]
-    assert "Old things." in renamed["docs/design_document.md"]
-    assert "docs/retro/1/a.md" not in renamed
-    assert renamed["scripts/scenario-baseline.txt"] == "# A skill runs it\nFeature: Old: New thing\n"
-    renamed = cd.rename(files, "Feature: Old", "Feature: New")
-    assert "[x](#feature-new)" in renamed["docs/design_document.md"]
-    assert cd.rename(files, "Nothing here", "X") == {}

@@ -391,7 +391,7 @@ def check(docs, code):
     design, architecture = parse(docs[DESIGN]), parse(docs[ARCHITECTURE])
     tickets = {p: t for p, t in docs.items() if p.startswith("docs/backlog/") and not p.endswith("README.md")}
     tests = {name for path, text in code.items()
-             if os.path.basename(path).startswith("test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
+             if path.startswith("scripts/test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
     found, problems = baselines()
     named = {"journey": design["journeys"], "workflow": design["workflows"],
              "scenario": {n for _, n in design["scenarios"]}, "rule": rules(design, architecture, tickets)}

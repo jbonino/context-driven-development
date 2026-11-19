@@ -28,5 +28,16 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 **Changed after sign-off**
 - Round 1. The model and attribute rows left A part with no home fails the check. Each needs a product's code. Planning miss: `design_document.md`.
-- Round 1. The session scripts' tests became one `test_workflow_closing_a_phase` per file, for step 4. The test check reads every test. Planning miss: the ticket.
-- Round 1. The owner refused the proposed rule A rename carries a name to its tests and links. A home found by name already holds it. Its test folds into Each part has its home. Planning miss: —.
+- Round 1. The session scripts' tests became one `test_workflow_closing_a_phase` per file, for step 4. Steps 1 to 3, 5 and 6 run in a skill and wait for evals. The test check reads every test. Planning miss: the ticket.
+- Round 1. The owner refused the proposed rule A rename carries a name to its tests and links. The decision **A home is found by name** already covers a rename. Its test folds into Each part has its home. Planning miss: the ticket.
+
+**Sign-off review**
+
+| Severity | Finding | Outcome | Planning miss |
+|---|---|---|---|
+| Important | Closing a phase left its baseline with only step 4 tested | Pushed back. A baseline line beside a test fails the check. The retro names the untested steps | — |
+| Important | The workflow test asserts field mappings, not only step 4's outcome | Left. They are step 4's evidence, per the owner's pick | — |
+| Minor | Two retro lines read unclear | Fixed | — |
+| Minor | A test helper reassigned `tmp_path` | Fixed | — |
+| Minor | A helper sat below its caller | Fixed | — |
+| Minor | Any `test_` file counted, not only under `scripts/` | Fixed | — |

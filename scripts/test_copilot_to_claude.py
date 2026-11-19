@@ -57,8 +57,6 @@ def usage_maps_to_claude_fields():
 
 
 def only_this_repos_sessions_are_saved(tmp_path):
-    tmp_path = tmp_path / "saved"
-    tmp_path.mkdir()
     root, state, out = tmp_path / "repo", tmp_path / "state", tmp_path / "raw"
     root.mkdir()
     hello = [event("user.message", {"content": "hello"})]

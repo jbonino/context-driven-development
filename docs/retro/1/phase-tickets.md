@@ -6,6 +6,8 @@ sessions under `docs/retro/raw/`, mined at phase close.
 **Deviations from the plan and design**
 - One ticket, not one per Rule. The checks exist in green-wagon, so the ticket is a port.
 - No release playbook. The phase ships nothing to deploy.
+- The owner scoped Pi into the phase before sign-off. A spike, 001-002, comes before 001-003. Their decisions wait for the spike.
+- The README gained a Setup section.
 - A chore removed the two-repo model. Docs and code share one branch. A ticket is named `{phase}-{number}-{short-name}.md`.
 
 **Owner's calls**
@@ -26,6 +28,9 @@ sessions under `docs/retro/raw/`, mined at phase close.
 | Minor | Working a ticket's checks step named no command | Fixed | — |
 
 - Verdict: With fixes.
+
+**Signed off**
+- 2026-11-19 by the Product Owner.
 
 **Changed after sign-off**
 - The design's may-name outline lost its ticket row. A ticket may name anything. Planning miss: `design_document.md`.

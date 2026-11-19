@@ -10,22 +10,32 @@ cd = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cd)
 
 
-PARTS = {
-    "a rule with two scenarios under it": lambda: cd.rule_scenarios(
+PARTS = {  # part and home: the check, and the failure it gives
+    "a rule with two scenarios under it": (lambda: cd.rule_scenarios(
         "design.md", "```gherkin\nFeature: Notes\n  Rule: One alone\n\n    Scenario: Only\n```\n"),
-    "a journey with a test named for it": lambda: cd.named_tests("journey", {"A day"}, set(), set()),
-    "a workflow with a test named for it": lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
-    "a scenario with a test named for it": lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
-    "a rule with a test named for it": lambda: cd.named_tests("rule", {"One alone"}, set(), set()),
-    "a test with the source it names": lambda: cd.source_tests({"test_scenario_nobody_wrote"}, {"scenario": set()}),
-    "a deferred entry with a Revisit when line": lambda: cd.deferred_revisits(
-        {"docs/deferred/b.md": "# b\n\nWe never revisit.\n"}),
+        "design.md: Rule: One alone holds over 1 scenario; a rule needs two"),
+    "a journey with a test named for it": (lambda: cd.named_tests("journey", {"A day"}, set(), set()),
+                                           "Journey: A day has no test_journey_a_day"),
+    "a workflow with a test named for it": (lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
+                                            "Workflow: Closing has no test_workflow_closing"),
+    "a scenario with a test named for it": (
+        lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
+        "Feature: Notes's scenario Only has no test_scenario_only, and no open ticket cites it"),
+    "a rule with a test named for it": (lambda: cd.named_tests("rule", {"One alone"}, set(), set()),
+                                        "Rule: One alone has no test_rule_one_alone"),
+    "a test with the source it names": (
+        lambda: cd.source_tests({"test_scenario_nobody_wrote"}, {"scenario": set()}),
+        "test_scenario_nobody_wrote names no scenario"),
+    "a deferred entry with a Revisit when line": (
+        lambda: cd.deferred_revisits({"docs/deferred/b.md": "# b\n\nWe never revisit.\n"}),
+        "docs/deferred/b.md has no Revisit when line"),
 }
 
 
 @pytest.mark.parametrize("part", PARTS)
 def test_scenario_a_part_with_no_home_fails_the_check(part):
-    assert len(PARTS[part]()) == 1
+    check, failure = PARTS[part]
+    assert check() == [failure]
 
 
 def test_scenario_a_deferred_thing_described_outside_its_file_fails():
@@ -95,7 +105,7 @@ def test_rule_a_doc_names_only_what_s_above_it():
 def test_rule_every_link_resolves():
     """An anchor is its heading's GitHub slug: colons and dashes, repeats and placeholders."""
     files = {"docs/a.md": "# CDD — Design\n\n## Feature: Notes\n\n## Tech\n\n## Tech\n\n"
-                          "[a](#cdd--design) [b](#feature-notes) [c](#tech-1) [d](b.md#{feature})\n"}
+                          "## See [x](y.md)\n\n[a](#cdd--design) [b](#feature-notes) [c](#tech-1) [d](b.md#{feature}) [e](#see-x)\n"}
     assert cd.broken_links(files, lambda path: True) == []
 
 
@@ -103,12 +113,14 @@ def test_rule_a_rename_carries_a_name_to_its_tests_and_links():
     files = {"docs/design_document.md": "## Feature: Old\n\n```gherkin\nScenario: Old thing\n```\n"
                                         "[x](#feature-old) Old things.\n",
              "scripts/test_x.py": "def test_scenario_old_thing():\n",
+             "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
              "docs/retro/1/a.md": "Old thing\n"}
     renamed = cd.rename(files, "Old thing", "New thing")
     assert renamed.get("scripts/test_x.py") == "def test_scenario_new_thing():\n"
     assert "Scenario: New thing" in renamed["docs/design_document.md"]
     assert "Old things." in renamed["docs/design_document.md"]
     assert "docs/retro/1/a.md" not in renamed
+    assert renamed["scripts/scenario-baseline.txt"] == "# A skill runs it\nFeature: Old: New thing\n"
     renamed = cd.rename(files, "Feature: Old", "Feature: New")
     assert "[x](#feature-new)" in renamed["docs/design_document.md"]
     assert cd.rename(files, "Nothing here", "X") == {}

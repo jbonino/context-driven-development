@@ -9,15 +9,21 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - The port dropped green-wagon checks this design lacks. Those are workflow users, journey lists, feature twins, code in the architecture and ticket ids.
 - A deferred thing described outside its file is a new check.
 - Journeys and rules have baselines too, one per Testing strategy kind.
-- The ticket proposes A rename carries a name to its tests and links.
+- The ticket proposes the rule **A rename carries a name to its tests and links**.
 - No release playbook. The phase ships nothing to deploy.
 
 **Code review**
 
 | Severity | Finding | Outcome | Planning miss |
 |---|---|---|---|
+| Important | The rename skipped the baselines, so a renamed name left a stale line | Fixed | the ticket |
+| Important | A part with no home's test counted problems but not their text | Fixed | — |
+| Minor | A heading holding a link made the wrong anchor | Fixed | — |
+| Minor | The rename rewrote prose in code docstrings | Fixed. It rewrites only docs and baselines | — |
+| Minor | A `~~~` or four-backtick fence reads as text | Left. No doc uses one | — |
+| Minor | A one-word deferred title would match common words | Left. The one title is two words | — |
 
-- Verdict: {pending}.
+- Verdict: With fixes.
 
 **Past its caps**
 - The phase journey holds 9 workflows, past 7. The owner kept it.

@@ -72,6 +72,7 @@ def slug(name):
 
 def anchor(title):
     """GitHub's anchor for a heading."""
+    title = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", title)
     return re.sub(r"[^\w\- ]", "", title.strip().lower()).replace(" ", "-")
 
 
@@ -337,7 +338,7 @@ def rename(files, old, new):
         if path.startswith(HISTORY):
             continue
         after = text
-        if not path.startswith(FIXTURES):
+        if path.endswith((".md", ".txt")):
             after = phrase.sub(lambda m: new if m.group() == old else m.group(), after)
             for was, now in marks.items():
                 after = after.replace(f"#{was})", f"#{now})")
@@ -371,11 +372,15 @@ def load():
     return docs, code
 
 
+def baseline_path(kind):
+    return f"scripts/{kind}-baseline.txt"
+
+
 def baselines():
     """Each kind's baseline entries, and what is wrong with the files."""
     found, problems = {}, []
     for kind in KINDS:
-        path = f"scripts/{kind}-baseline.txt"
+        path = baseline_path(kind)
         text = read(path) if os.path.exists(os.path.join(ROOT, path)) else None
         found[kind], wrong = baseline(path, text)
         problems += wrong
@@ -406,7 +411,8 @@ def check(docs, code):
 def main():
     if sys.argv[1:2] == ["rename"] and len(sys.argv) == 4:
         docs, code = load()
-        changed = rename(docs | code, sys.argv[2], sys.argv[3])
+        lines = {baseline_path(k): read(baseline_path(k)) for k in KINDS}
+        changed = rename(docs | code | lines, sys.argv[2], sys.argv[3])
         if not changed:
             raise SystemExit(f"{sys.argv[2]} names no scenario, feature, workflow, journey or rule")
         for path, text in sorted(changed.items()):

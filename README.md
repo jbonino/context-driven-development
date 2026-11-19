@@ -1,6 +1,9 @@
 # Context Driven Development
+Humans please read this [article](https://jbonino.github.io/context-driven-development/articles/)
 
-Start with [foundations](docs/foundations.md).
+1. read [foundations](docs/foundations.md).
+1. read [design](docs/design_document.md).
+1. read [architecture](docs/architecture.md).
 
 ## Setup
 

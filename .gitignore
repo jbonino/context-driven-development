@@ -3,3 +3,7 @@ docs/retro/raw/
 __pycache__/
 .pytest_cache/
 .claude/worktrees/
+
+# Article drafts and posting notes
+articles/foundations-article.md
+articles/posting-plan.md

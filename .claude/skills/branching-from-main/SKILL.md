@@ -14,7 +14,6 @@ description: Use when a skill opens a branch for a ticket, a plan or a chore, fr
 
 1. **Claim the name.** A branch of that name in `git branch -a` or
    `git worktree list` is someone else's. With an `origin`, push `main`
-   under the name. Without one, the local branch claims it. See
-   [Two repos](../../../README.md#two-repos).
+   under the name. Without one, the local branch claims it.
 1. **Invoke `superpowers:using-git-worktrees` for the branch, under
    `.claude/worktrees/`.**

@@ -23,7 +23,7 @@ Copy this into the backlog. Delete this comment.
 | Slot | Content |
 |---|---|
 | Title | What the ticket ships in the user's words. No commas |
-| Filename | `{phase}-{team repo}-{team issue}.md` in `docs/backlog/`, like `001-my-service-42.md`. A ticket that turns out to be two takes letters, `031a` and `031b`, so every number after it stays put |
+| Filename | `{phase}-{number}-{short-name}.md` in `docs/backlog/`, like `001-001-check-docs.md`. A ticket that turns out to be two takes letters, `031a` and `031b`, so every number after it stays put |
 | Feature | The one feature it builds |
 | System | The one system it builds in as the architecture names it |
 | Points | Fibonacci. Past 5 it splits by scenario |

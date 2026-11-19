@@ -5,9 +5,6 @@ description: Use when the owner has signed off a branch and it is ready to merge
 
 1. **Run `scripts/save-transcripts.sh`.** It saves the Claude Code and
    Copilot sessions. Claude Code deletes them after 30 days.
-1. **Wait for a ticket's team PR to merge.** This repo's docs branch merges
-   after it. A plan's branch has no team PR. See
-   [Two repos](../../../README.md#two-repos).
 1. **Merge the branch from the main checkout.** `git pull`, then
    `git merge --no-ff {branch} -m "{branch name without its prefix} — {title}"`.
    The merge keeps the branch's own commits, which show what happened. On

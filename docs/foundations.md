@@ -72,7 +72,7 @@ Journeys say when. Each doc answers one question.
 
 | Doc | Answers |
 |---|---|
-| design.md | What does the product need and why? |
+| design_document.md | What does the product need and why? |
 | architecture.md | How is it built? |
 | code | What runs? |
 | product_roadmap.md | What's next? |

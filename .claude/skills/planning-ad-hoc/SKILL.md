@@ -6,7 +6,7 @@ description: Use when the open phase takes on scope it didn't plan, from the pla
 # Planning ad hoc
 
 Start: **Feedback in** that adds scope to the open phase. End: **Plan
-signed off**.
+signed off.**
 
 1. **Open the plan's branch off main.**
    - Number the first ticket with the phase's next free number. Invoke
@@ -27,7 +27,7 @@ signed off**.
      and check. The release waits for the phase.
 1. **Write the retro entry** at
    `docs/retro/{n}/adhoc-{first ticket}-{last ticket}.md`, per
-   `writing-a-retro-entry` ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
+   `writing-a-retro-entry`.
    Say what the scope is. Name the planning miss behind it.
 1. **Sign off with the Product Owner and merge.**
    1. Invoke `editing-prose` over the above.

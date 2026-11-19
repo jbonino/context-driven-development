@@ -2,13 +2,13 @@
 
 How a team of people and agents turn a customer's feedback into a plan that
 delivers a product and learns from each cycle. Start with
-[foundations](.claude/context-driven-development/foundations.md).
+[foundations](docs/foundations.md).
 
 | Directory | Holds |
 |---|---|
-| `.claude/context-driven-development/` | Foundations, CDD's own design and architecture, templates |
 | `.claude/skills/` | The phase skills |
-| `docs/` | Design, architecture, roadmap, backlog, release playbooks, deferred, retros. Blank templates to fill in |
+| `docs/` | CDD's own foundations, design, architecture, roadmap, backlog, deferred and retros |
+| `docs/templates/` | Blanks a new team copies into its own `docs/` |
 | `presentations/` | A slide deck that explains the method |
 | `scripts/` | Saving and mining agent sessions |
 

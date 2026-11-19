@@ -5,7 +5,7 @@ description: Use when picking up and implementing a backlog ticket, from claim t
 
 # Working a ticket
 
-Start: **Plan signed off**. End: **Ready for review**.
+Start: **Plan signed off**. End: **Ready for review.**
 
 1. **Claim the next open ticket on its own branch, and read the sections
    it names.**
@@ -29,14 +29,13 @@ Start: **Plan signed off**. End: **Ready for review**.
      the ticket's Release plan.
    - If the approach is unclear, invoke `superpowers:brainstorming`.
 1. **Write each of the ticket's tests in the team repo's branch until it
-   fails on its assertion**
-   ([Going red first](../../context-driven-development/design.md#feature-going-red-first)).
+   fails on its assertion.**
    - Invoke `superpowers:test-driven-development`. The Gherkin is the spec.
      Each test asserts only its kind's part, per the Testing strategy.
    - Stub anything new first. A test over built code goes red against a
      revert.
 1. **Add each case the tests find to the design as a row or a new
-   scenario** ([Signing off a change](../../context-driven-development/design.md#feature-signing-off-a-change)).
+   scenario.**
    - Write it into its scenario's Examples or the design, then any
      decision it changes. A new feature or workflow is a ticket, per
      `planning-ad-hoc`.
@@ -51,22 +50,19 @@ Start: **Plan signed off**. End: **Ready for review**.
      it. Record each in the ticket's Gherkin with what it replaces.
 1. **Write the code in the team repo's branch until each test passes.**
    For a page change, run the team repo's app locally and screenshot it.
-1. **Update each doc the change touches**
-   ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
+1. **Update each doc the change touches.**
    - Fold the Release plan into `docs/release/phase-{n}.md` per the
      playbook template. Add its lines unchecked. `releasing` checks them
      after the team PR merges.
    - Edit `docs/architecture.md` where a decision changed.
    - Write the retro entry, per `writing-a-retro-entry`, with its
-     **Deviations from the plan and design**.
+     **Deviations from the plan and design.**
    - Run `editing-prose` over the branch's prose.
-1. **Run the checks until they pass**
-   ([Keeping each fact in its place](../../context-driven-development/design.md#feature-keeping-each-fact-in-its-place)).
+1. **Run the checks until they pass.**
    - Run the team repo's own checks once, in the background. After a fix,
      run only the tests it touched.
    - Check by hand that each doc names only docs above it, per `CLAUDE.md`.
-1. **Another Developer reviews the change**
-   ([Editing prose](../../context-driven-development/design.md#feature-editing-prose)).
+1. **Another Developer reviews the change.**
    - Invoke `superpowers:requesting-code-review` over both branches. Ask the
      reviewer whether:
      - each new or changed test asserts only its kind's part
@@ -76,7 +72,7 @@ Start: **Plan signed off**. End: **Ready for review**.
      - `editing-prose`'s cut ran, and each changed line follows its
        sentence rules
    - Fix Critical and Important findings. Record every finding in the
-     retro's **Code review**.
+     retro's **Code review.**
 1. **Hand off to the Product Owner.**
    - Push the code branch and open the team PR, per the team repo's
      conventions. Commit the docs branch here.

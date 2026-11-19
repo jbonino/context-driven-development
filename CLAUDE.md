@@ -1,4 +1,4 @@
-@.claude/context-driven-development/foundations.md
+@docs/foundations.md
 
 - Read .claude/skills/editing-prose/SKILL.md and be proactive about agent output.
 - **superpowers:brainstorming** Never write specs or plans. When brainstorming would write a design doc and hand off to `writing-plans`, stop once the design is approved and use `planning-ad-hoc`. A screen gets a text wireframe.

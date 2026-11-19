@@ -5,7 +5,7 @@ description: Use when a phase's design is signed off and its architecture needs 
 
 # Architecting a phase
 
-Start: **Design signed off**. End: **Architecture signed off**.
+Start: **Design signed off**. End: **Architecture signed off.**
 
 1. **Brainstorm with the Product Owner until a build meets the design's
    changes and the phase's goal.**
@@ -20,7 +20,7 @@ Start: **Design signed off**. End: **Architecture signed off**.
    and runners.
 1. **List each new feature on the opening line of the system it runs on.**
    - Name a new system where none fits, from
-     `.claude/context-driven-development/templates/architecture.md`.
+     `docs/templates/architecture.md`.
    - Merge up the chain. A new system that shares its tech with one
      already there joins it.
 1. **Write the decisions each changed workflow and feature needs, under a

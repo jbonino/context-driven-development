@@ -5,7 +5,7 @@ description: Use when the Product Owner sets the next phase's goal from the feed
 
 # Scoping a phase
 
-Start: **Feedback in** and **Retro in**. End: **Phase scoped**.
+Start: **Feedback in** and **Retro in**. End: **Phase scoped.**
 
 1. **Read the feedback, the last retro's action items, and each deferred
    entry whose Revisit when now holds.**
@@ -13,13 +13,12 @@ Start: **Feedback in** and **Retro in**. End: **Phase scoped**.
    - Read `docs/feedback.md`, the action items in the last
      `docs/retro/{n}/retro.md`, and each file in `docs/deferred/` whose
      **Revisit when** now holds.
-1. **Place each entry with the Product Owner until the feedback is empty**
-   ([Placing feedback](../../context-driven-development/design.md#feature-placing-feedback)). One at a time:
+1. **Place each entry with the Product Owner until the feedback is empty.** One at a time:
 
    | Place | When | Then |
    |---|---|---|
    | Taken up | It fits the phase's goal | It joins the goal |
-   | Deferred | It can wait past this phase | Copy `.claude/context-driven-development/templates/deferred.md` into `docs/deferred/`, named for its title, with when to revisit it |
+   | Deferred | It can wait past this phase | Copy `docs/templates/deferred.md` into `docs/deferred/`, named for its title, with when to revisit it |
    | Dropped | It no longer holds | Git keeps it |
 
    Delete each placed entry from `docs/feedback.md`.

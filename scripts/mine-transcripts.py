@@ -124,9 +124,8 @@ def result_tokens(block):
 
 SLOW_SECONDS = 60
 BIG_CONTEXT = 150_000
-DOCS = re.compile(r"/docs/((?:design_document|architecture|product_roadmap)\.md"
-                  r"|(?:product_roadmap|release|deferred)/[^/]+\.md)$"
-                  r"|/\.claude/(context-driven-development/(?:foundations|design|architecture)\.md)$")
+DOCS = re.compile(r"/docs/((?:foundations|design_document|architecture|product_roadmap)\.md"
+                  r"|(?:product_roadmap|release|deferred)/[^/]+\.md)$")
 ACTS = [("server-", r"\bkill\b|pkill"),
         ("shot", r"shoo?ts?\.(js|sh)|screenshot"), ("test", r"pytest|vitest|pnpm test|turbo test"),
         ("deploy", r"deploy"),
@@ -619,8 +618,7 @@ def trigger(subject):
 
 def redesigns(phase):
     """Sections of the design and architecture docs changed after the phase's design was signed off."""
-    docs = ["docs/design_document.md", "docs/architecture.md",
-            *(f".claude/context-driven-development/{d}.md" for d in ("foundations", "design", "architecture"))]
+    docs = ["docs/foundations.md", "docs/design_document.md", "docs/architecture.md"]
     since = git("log", "--diff-filter=A", "--format=%aI", "--",
                 f"docs/retro/{phase}/phase-tickets.md").split()
     log = git("log", "--reverse", "--no-merges", "--format=%H\t%s",
@@ -635,7 +633,7 @@ def redesigns(phase):
         before = {f: git("show", f"{sha}^:{f}") for f in docs}
         changed = defaultdict(lambda: [[], []])  # one count per section a commit changes
         for file, start, removed, added in hunks(git("show", "-U0", "--format=", sha, "--", *docs)):
-            section = (file.removeprefix("docs/").replace(".claude/context-driven-development/", "cdd/"),
+            section = (file.removeprefix("docs/"),
                        heading_at(before[file], start))
             changed[section][0] += removed
             changed[section][1] += added
@@ -696,7 +694,7 @@ def splits(phase):
 def repeated_text():
     """Sentences that say the same thing in two or more of the workflow's files."""
     paths = (glob.glob(os.path.join(ROOT, ".claude/skills/**/*.md"), recursive=True)
-             + glob.glob(os.path.join(ROOT, ".claude/context-driven-development/templates/*.md"))
+             + glob.glob(os.path.join(ROOT, "docs/templates/*.md"))
              + [os.path.join(ROOT, p) for p in ("CLAUDE.md", "docs/architecture.md")])
     where = defaultdict(set)  # an 8-word run → files holding it; reworded copies still share runs
     for path in paths:

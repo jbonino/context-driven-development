@@ -5,7 +5,7 @@ description: Use when the roadmap's Now names a scoped phase and its design need
 
 # Designing a phase
 
-Start: **Phase scoped**. End: **Design signed off**.
+Start: **Phase scoped**. End: **Design signed off.**
 
 1. **Brainstorm with the Product Owner until a design meets the phase's
    goal.**

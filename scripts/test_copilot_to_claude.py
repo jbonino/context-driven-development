@@ -21,14 +21,14 @@ def session(state, sid, cwd, events):
     (path / "events.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
 
 
-def test_branch_from_worktree_cwd(tmp_path):
+def branch_from_worktree_cwd(tmp_path):
     root = str(tmp_path)
     assert c2c.branch_for(f"{root}/.claude/worktrees/001-my-service-42", root) == "001-my-service-42"
     assert c2c.branch_for(f"{root}/.claude/worktrees/001-x/docs", root) == "001-x"
     assert c2c.branch_for("/elsewhere", root) is None
 
 
-def test_tool_call_and_result_round_trip():
+def tool_call_and_result_round_trip():
     entries = c2c.convert([
         event("assistant.message", {"messageId": "m1", "model": "claude-opus-5.5", "content": "Reading.",
                                     "toolRequests": [{"toolCallId": "t1", "name": "view",
@@ -46,7 +46,7 @@ def test_tool_call_and_result_round_trip():
     assert all(e["gitBranch"] == "main" for e in entries)
 
 
-def test_usage_maps_to_claude_fields():
+def usage_maps_to_claude_fields():
     entries = c2c.convert([event("session.usage_record", {"usage": {
         "model": "claude-sonnet-5.5", "inputTokens": 1000, "outputTokens": 50,
         "cacheReadTokens": 600, "cacheWriteTokens": 300, "apiCallId": "msg_1"}})], "main")[None]
@@ -56,7 +56,7 @@ def test_usage_maps_to_claude_fields():
                                 "cache_read_input_tokens": 600, "cache_creation_input_tokens": 300}
 
 
-def test_only_this_repos_sessions_are_saved(tmp_path):
+def only_this_repos_sessions_are_saved(tmp_path):
     root, state, out = tmp_path / "repo", tmp_path / "state", tmp_path / "raw"
     root.mkdir()
     hello = [event("user.message", {"content": "hello"})]
@@ -68,3 +68,11 @@ def test_only_this_repos_sessions_are_saved(tmp_path):
     with gzip.open(out / saved, "rt") as handle:
         line = json.loads(handle.readline())
     assert line["gitBranch"] == "002-x" and line["message"]["content"] == "hello"
+
+
+def test_workflow_closing_a_phase(tmp_path):
+    """Step 4 mines the sessions: Copilot's join Claude Code's, by branch."""
+    branch_from_worktree_cwd(tmp_path)
+    tool_call_and_result_round_trip()
+    usage_maps_to_claude_fields()
+    only_this_repos_sessions_are_saved(tmp_path)

@@ -22,8 +22,10 @@ Start: **Ready for review**. End: **Signed off**. The goal is zero rounds.
       yes. Past two new scenarios, Signing off a change's rule decides.
    1. Write it into the design, then any decision it changes, and a
       changed criterion into the ticket. An accepted rule takes a
-      footnote. Rename a reworded one's test by hand. A refused one's test
-      goes.
+      footnote. Rename a reworded one and its test with
+      `uv run --script scripts/check-docs.py rename "{old}" "{new}"`. A
+      refused one's test goes. An untested scenario a skill runs joins
+      `scripts/scenario-baseline.txt`.
    1. Write its failing test first, per `superpowers:test-driven-development`,
       except for copy or style. Run only the tests you touched.
    1. For a page change, run the app locally and screenshot it.

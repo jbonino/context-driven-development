@@ -333,6 +333,11 @@ Feature: Keeping each fact in its place
     When the Developer runs the checks
     Then the checks fail on the feature
 
+  Scenario: A deferred thing described outside its file fails
+    Given a doc other than its deferred/ file describes a deferred thing
+    When the Developer runs the checks
+    Then the checks fail on that line
+
   Scenario: An outline under three rows warns
     Given a scenario outline with two Examples rows
     When the Developer runs the checks

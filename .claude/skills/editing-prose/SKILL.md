@@ -17,4 +17,5 @@ A chat reply runs step 2 alone.
      per-item detail.
    - UI copy uses the user's words, never code names or ids.
 1. **Cut each file until it's 25% shorter.** Forms skip this step.
-1. **Report each file's word count before and after.**
+1. **Report each file's word count before and after.** A cut the owner
+   keeps short of 25% goes into the retro entry.

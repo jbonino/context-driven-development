@@ -53,12 +53,12 @@ A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is it
 | Kind | Asserts | Prefix |
 |---|---|---|
 | Journey | Each workflow's End is the next workflow's Start | `journey_{journey}` |
-| Workflow | Each step's outcome, which holds on every branch of its feature | `workflow_{workflow}` |
+| Workflow | Each step's outcome | `workflow_{workflow}` |
 | Scenario | Its Then, one test for each Examples row | `scenario_{scenario}` |
 | Rule | The fact across its scenarios, beyond what their Thens prove | `rule_{rule}` |
 
 - **A decision** takes no test. Its feature's scenarios cover it.
-- **A test's name** runs the runner's prefix, then its kind's, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
+- **A test's name** runs its kind's prefix, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
 - **A test's kind** is the only part it asserts. Review moves a stray assertion.[^why-a-test-asserts-only-its-kind]
 - **The checks** are deferred in this repo. Each is a manual check until `docs/deferred/check-docs.md` is taken up.[^why-the-checks-are-deferred]
 
@@ -150,7 +150,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-a-plan-is-a-git-tag]: A tag marks the exact plan. The retro diffs what shipped against it. Every other checkpoint already shows in a file. **Other considerations:** A tag at every stage. A signed-off line in the plan's docs, which a later edit can carry along unseen. The plan's merge commit found by its message, which breaks on a reworded message.
 
-[^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill owned a step.
+[^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill ran a step.
 
 [^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 

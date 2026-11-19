@@ -5,7 +5,6 @@ How Context Driven Development is built, shaped around [design.md](design.md).
 - [Foundations](#foundations)
   - [Stack](#stack)
   - [Where](#where)
-  - [Constraints](#constraints)
   - [Testing strategy](#testing-strategy)
 - [Checkpoints](#checkpoints)
 - [Skills](#skills)
@@ -49,26 +48,19 @@ How Context Driven Development is built, shaped around [design.md](design.md).
 
 A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is its branch.
 
-### Constraints
-
-- **Names** give data exactly and code in words.[^why-data-by-name-code-in-words]
-- **A section** holds bullets that open with their subject in bold. Rows that share columns make a table.[^why-tables-or-bold-bullets]
-
 ### Testing strategy
 
 | Kind | Asserts | Prefix |
 |---|---|---|
 | Journey | Each workflow's End is the next workflow's Start | `journey_{journey}` |
-| Workflow | Each step's outcome, which holds on every branch of its feature | `workflow_{workflow}` |
+| Workflow | Each step's outcome | `workflow_{workflow}` |
 | Scenario | Its Then, one test for each Examples row | `scenario_{scenario}` |
 | Rule | The fact across its scenarios, beyond what their Thens prove | `rule_{rule}` |
 
 - **A decision** takes no test. Its feature's scenarios cover it.
-- **A test's name** runs the runner's prefix, then its kind's, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
+- **A test's name** runs its kind's prefix, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
 - **A test's kind** is the only part it asserts. Review moves a stray assertion.[^why-a-test-asserts-only-its-kind]
 - **The checks** are deferred in this repo. Each is a manual check until `docs/deferred/check-docs.md` is taken up.[^why-the-checks-are-deferred]
-- **A skill's tests** wait, since a skill runs in an agent.[^why-a-skill-s-tests-wait]
-- **A product's levels and runners** sit in its own architecture.[^why-a-product-owns-its-levels]
 
 ## Checkpoints
 
@@ -150,21 +142,15 @@ before a merge. One mines a phase's sessions at its close.
 
 Why each decision that's hard to undo holds, and the options it beat.
 
-[^why-data-by-name-code-in-words]: A tag format or a doc path is a contract the skills share. A skill, a script or a function named here drifts with every rename. **Other considerations:** Words alone, which leaves the tag format unstated. Names with no paths or links, which names skills. Anything, links too, which let code detail fill the architecture before.
-
 [^why-a-test-s-name-says-its-kind-and-source]: The checks match each test to its source by name. A test that names no source fails. **Other considerations:** A tag or comment naming the source, which a rename leaves stale.
 
 [^why-a-test-asserts-only-its-kind]: One test per fact means a change breaks one test. Review holds this rule. A check can't tell what an assertion proves. **Other considerations:** A design scenario per layer, which put a decision into the design.
 
 [^why-the-checks-are-deferred]: The check scripts walk a code tree. This repo holds no code. A known gap goes in the ticket's retro entry until the checks are written. **Other considerations:** Writing the scripts now, before the docs hold a workflow to check.
 
-[^why-a-skill-s-tests-wait]: A skill's tests wait until evals cost less than the bugs they'd catch. **Other considerations:** Skill evals now, which cost tokens on every run. A check that a skill lists its workflow's steps, which proves the words and not the work.
-
-[^why-a-product-owns-its-levels]: Each product runs on its own stack. A lower level runs faster and breaks less, and the template says so. **Other considerations:** One strategy for every repo, which speaks for stacks CDD can't see.
-
 [^why-a-plan-is-a-git-tag]: A tag marks the exact plan. The retro diffs what shipped against it. Every other checkpoint already shows in a file. **Other considerations:** A tag at every stage. A signed-off line in the plan's docs, which a later edit can carry along unseen. The plan's merge commit found by its message, which breaks on a reworded message.
 
-[^why-one-skill-per-workflow]: Each step of a workflow has one owner. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill owned a step.
+[^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill ran a step.
 
 [^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 
@@ -173,8 +159,6 @@ Why each decision that's hard to undo holds, and the options it beat.
 [^why-two-systems]: A system says what its features run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave Keeping each fact in its place between two.
 
 [^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 8 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
-
-[^why-tables-or-bold-bullets]: A table reads well when its rows share columns. A one-fact line reads better as a sentence. Its bold subject scans, and a check finds it. Keeping each fact in its place caps each section at 4 decisions, so a section splits before it clutters. **Other considerations:** A What and How table everywhere, which made 15 tables hard to read. Plain prose, which a check can't parse. One wide table per system. `key: value` blocks, which read as code. Bullets with no cap, which grew one product's section to 193.
 
 [^why-a-separate-reviewer]: An agent reads its own work with the reasoning that wrote it. It misses what that reasoning missed. **Other considerations:** The building agent reviewing itself, which is cheaper and sees less.
 

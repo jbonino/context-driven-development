@@ -3,11 +3,6 @@ name: merging-to-main
 description: Use when the owner has signed off a branch and it is ready to merge to main
 ---
 
-# Merging to main
-
-Start: **Signed off**, or a plan signed off. End: the merge in `main` and
-the branch gone.
-
 1. **Run `scripts/save-transcripts.sh`.** It saves the Claude Code and
    Copilot sessions. Claude Code deletes them after 30 days.
 1. **Wait for a ticket's team PR to merge.** This repo's docs branch merges

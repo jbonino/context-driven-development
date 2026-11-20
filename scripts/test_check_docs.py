@@ -1,6 +1,11 @@
-"""Tests for check-docs.py. Run: uv run --with pytest pytest scripts/"""
+"""Tests for check-docs.py. Run: uv run --with pytest pytest scripts/
+
+Each test proves one decision. Its cases are rows, each named for what it
+shows, so a failure names its case.
+"""
 import importlib.util
 import os
+from textwrap import dedent
 
 import pytest
 
@@ -10,98 +15,190 @@ cd = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cd)
 
 
-TESTED = {  # a source, and the failure it gives with no test
-    "journey": (lambda: cd.named_tests("journey", {"A day"}, set(), set()), "Journey: A day has no test_journey_a_day"),
-    "workflow": (lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
-                 "Workflow: Closing has no test_workflow_closing"),
-    "scenario": (lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
-                 "Feature: Notes's scenario Only has no test_scenario_only, and no open ticket cites it"),
-    "rule": (lambda: cd.named_tests("rule", {"One alone"}, set(), set()), "Rule: One alone has no test_rule_one_alone"),
-    "decision": (lambda: cd.named_tests("decision", {"A skill"}, set(), set()),
-                 "Decision: A skill has no test_decision_a_skill"),
+def md(text):
+    """A fixture doc written indented, as it reads."""
+    return dedent(text).lstrip("\n")
+
+
+EACH_SOURCE = {  # a source with no test, and the failure it gives
+    "a journey": (lambda: cd.named_tests("journey", {"A day"}, set(), set()),
+                  ["Journey: A day has no test_journey_a_day"]),
+    "a workflow": (lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
+                   ["Workflow: Closing has no test_workflow_closing"]),
+    "a scenario": (lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
+                   ["Feature: Notes's scenario Only has no test_scenario_only, and no open ticket cites it"]),
+    "a rule": (lambda: cd.named_tests("rule", {"One alone"}, set(), set()),
+               ["Rule: One alone has no test_rule_one_alone"]),
+    "a decision": (lambda: cd.named_tests("decision", {"A skill"}, set(), set()),
+                   ["Decision: A skill has no test_decision_a_skill"]),
+    "a baseline line": (lambda: cd.named_tests("workflow", {"Closing"}, set(), {"Closing"}), []),
 }
 
 
-@pytest.mark.parametrize("source", TESTED)
-def test_decision_each_source(source):
-    check, failure = TESTED[source]
-    assert check() == [failure]
+@pytest.mark.parametrize("case", EACH_SOURCE)
+def test_decision_each_source(case):
+    check, problems = EACH_SOURCE[case]
+    assert check() == problems
 
 
-def test_decision_a_rule_s_scenarios():
-    """Each Examples row of an outline counts as one scenario."""
-    outline = "```gherkin\nFeature: Notes\n  Rule: Rows\n\n    Scenario Outline: Many\n      Given <a>\n\n      Examples:\n        | a |\n"
-    assert cd.rule_scenarios("design.md", outline + "        | 1 |\n        | 2 |\n```\n") == []
-    assert cd.rule_scenarios("design.md", outline + "        | 1 |\n```\n") == [
-        "design.md: Rule: Rows holds over 1 scenario; a rule needs two"]
+OUTLINE = md("""
+    ```gherkin
+    Feature: Notes
+      Rule: Rows
+
+        Scenario Outline: Many
+          Given <a>
+
+          Examples:
+            | a |
+    """)
+RULE_S_SCENARIOS = {  # an outline's rows, and the failure they give
+    "two rows count as two": ("    | 1 |\n    | 2 |\n```\n", []),
+    "one row counts as one": ("    | 1 |\n```\n", ["design.md: Rule: Rows holds over 1 scenario; a rule needs two"]),
+}
+
+
+@pytest.mark.parametrize("case", RULE_S_SCENARIOS)
+def test_decision_a_rule_s_scenarios(case):
+    rows, problems = RULE_S_SCENARIOS[case]
+    assert cd.rule_scenarios("design.md", OUTLINE + rows) == problems
 
 
 def test_decision_a_deferred_thing():
-    files = {"docs/deferred/skill-evals.md": "# skill-evals\n\n**Revisit when** cheap.\n",
-             "docs/design_document.md": "Intro.\n\nSkill evals would test each skill.\n"}
+    files = {"docs/deferred/skill-evals.md": md("""
+                 # skill-evals
+
+                 **Revisit when** cheap.
+                 """),
+             "docs/design_document.md": md("""
+                 Intro.
+
+                 Skill evals would test each skill.
+                 """)}
     assert cd.deferred_outside(files) == [
         "docs/design_document.md describes skill-evals outside its deferred file: Skill evals would test each skill."]
 
 
-DESIGN = cd.parse("### Feature: Notes\n\n```gherkin\nScenario: A\n```\n\n"
-                  "### Feature: Caps\n\n```gherkin\nScenario: B\n```\n")
-COMPONENTS = {  # an architecture, and the failure it gives
-    "on a component's opening line": (
-        "## Shared\n\n### Stack\n\n## System: Skills\n\nRuns as skills.\n\n"
-        "### Component: Notebook\n\nNotes\n\n- **A note** is dated.\n\n### Component: Checks\n\n- **A check** fails.\n",
-        "design's Feature: Caps sits on no component's opening line in the architecture"),
-    "on one component alone": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Component: Pad\n\nNotes\n",
-        "design's Feature: Notes sits on 2 components' opening lines in the architecture"),
-    "an opening line names only design features": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps · Typo\n",
-        "architecture's Typo names no feature in the design"),
-    "a component under a system": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Shared\n\n### Component: Loose\n",
-        "architecture's Component: Loose sits under no system"),
-    "a heading under a system is a component": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Tracing\n",
-        "architecture's Tracing under System: Skills is no component"),
-    "a top heading is Shared, a system or Why": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Workflow: Tracing\n",
-        "architecture's Workflow: Tracing is no system. A top heading is Shared, a system or Why"),
+DESIGN = cd.parse(md("""
+    ### Feature: Notes
+
+    ```gherkin
+    Scenario: A
+    ```
+
+    ### Feature: Caps
+
+    ```gherkin
+    Scenario: B
+    ```
+    """))
+NOTEBOOK = md("""
+    ## System: Skills
+
+    ### Component: Notebook
+
+    Notes · Caps
+    """)
+DESIGN_FEATURE = {  # an architecture, and the failure it gives
+    "a feature on no opening line": (md("""
+        ## Shared
+
+        ### Stack
+
+        ## System: Skills
+
+        Runs as skills.
+
+        ### Component: Notebook
+
+        Notes
+
+        - **A note** is dated.
+
+        ### Component: Checks
+
+        - **A check** fails.
+        """), ["design's Feature: Caps sits on no component's opening line in the architecture"]),
+    "a feature on two opening lines": (NOTEBOOK + "\n### Component: Pad\n\nNotes\n",
+                                       ["design's Feature: Notes sits on 2 components' opening lines in the architecture"]),
+    "an opening line naming no design feature": (NOTEBOOK.replace("Caps", "Caps · Typo"),
+                                                  ["architecture's Typo names no feature in the design"]),
+    "a component under Shared": (NOTEBOOK + "\n## Shared\n\n### Component: Loose\n",
+                                 ["architecture's Component: Loose sits under no system"]),
+    "a heading under a system that is no component": (NOTEBOOK + "\n### Tracing\n",
+                                                      ["architecture's Tracing under System: Skills is no component"]),
+    "a top heading that is no system": (NOTEBOOK + "\n## Workflow: Tracing\n",
+                                        ["architecture's Workflow: Tracing is no system. A top heading is Shared, a system or Why"]),
 }
 
 
-@pytest.mark.parametrize("case", COMPONENTS)
+@pytest.mark.parametrize("case", DESIGN_FEATURE)
 def test_decision_a_design_feature(case):
-    architecture, failure = COMPONENTS[case]
-    assert cd.components(DESIGN, architecture) == [failure]
+    architecture, problems = DESIGN_FEATURE[case]
+    assert cd.components(DESIGN, architecture) == problems
 
 
-def test_decision_a_test_s_name():
-    """A test names a source of its kind, and a rename carries a name to its
-    tests, links and baselines."""
-    assert cd.source_tests({"test_scenario_nobody_wrote"}, {"scenario": set()}) == [
-        "test_scenario_nobody_wrote names no scenario"]
-    files = {"docs/design_document.md": "## Feature: Old\n\n```gherkin\nScenario: Old thing\n```\n"
-                                        "[x](#feature-old) Old things.\n",
-             "scripts/test_x.py": "def test_scenario_old_thing():\n",
-             "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
-             "docs/retro/1/a.md": "Old thing\n"}
-    renamed = cd.rename(files, "Old thing", "New thing")
-    assert renamed.get("scripts/test_x.py") == "def test_scenario_new_thing():\n"
-    assert "Scenario: New thing" in renamed["docs/design_document.md"]
-    assert "Old things." in renamed["docs/design_document.md"]
-    assert "docs/retro/1/a.md" not in renamed
-    assert renamed["scripts/scenario-baseline.txt"] == "# A skill runs it\nFeature: Old: New thing\n"
-    renamed = cd.rename(files, "Feature: Old", "Feature: New")
-    assert "[x](#feature-new)" in renamed["docs/design_document.md"]
-    assert cd.rename(files, "Nothing here", "X") == {}
+TEST_S_NAME = {  # a test, and the failure it gives
+    "a test of no source": ("test_scenario_nobody_wrote", ["test_scenario_nobody_wrote names no scenario"]),
+    "a near miss": ("test_scenario_old_thin", ["test_scenario_old_thin names no scenario; was it renamed to Old thing?"]),
+    "a test with no prefix": ("test_old_thing", ["test_old_thing carries no prefix: " + ", ".join(k + "_" for k in cd.KINDS)]),
+    "a test of its source": ("test_scenario_old_thing", []),
+}
 
 
-def test_decision_a_known_gap():
-    """A baseline line is a part's only way out, and a line whose gap closed fails."""
-    problems = cd.named_tests("workflow", {"Closing", "Opening"}, {"test_workflow_opening"}, {"Closing", "Opening"})
-    assert problems == ["Opening  ← tested or gone: remove it from the workflow baseline"]
-    assert cd.baseline("scripts/w.txt", "Closing\n")[1] == [
-        "scripts/w.txt: Closing gives no reason; add \" — {reason}\", or a # line at the file's top"]
-    assert cd.baseline("scripts/w.txt", "# A skill runs it\nClosing\n") == ({"Closing"}, [])
+@pytest.mark.parametrize("case", TEST_S_NAME)
+def test_decision_a_test_s_name(case):
+    test, problems = TEST_S_NAME[case]
+    assert cd.source_tests({test}, {"scenario": {"Old thing"}}) == problems
+
+
+FILES = {"docs/design_document.md": md("""
+             ## Feature: Old
+
+             ```gherkin
+             Scenario: Old thing
+             ```
+             [x](#feature-old) Old things.
+             """),
+         "scripts/test_x.py": "def test_scenario_old_thing():\n",
+         "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
+         "docs/retro/1/a.md": "Old thing\n"}
+RENAME = {  # old name, new name, a file, and what it holds after
+    "the test follows": ("Old thing", "New thing", "scripts/test_x.py", "def test_scenario_new_thing():\n"),
+    "the prose follows": ("Old thing", "New thing", "docs/design_document.md", FILES["docs/design_document.md"]
+                          .replace("Scenario: Old thing", "Scenario: New thing")),
+    "the baseline line follows": ("Old thing", "New thing", "scripts/scenario-baseline.txt",
+                                  "# A skill runs it\nFeature: Old: New thing\n"),
+    "history keeps the old name": ("Old thing", "New thing", "docs/retro/1/a.md", None),
+    "a link follows its heading": ("Feature: Old", "Feature: New", "docs/design_document.md",
+                                   FILES["docs/design_document.md"].replace("Old", "New", 1).replace("#feature-old", "#feature-new")),
+    "a name the docs lack renames nothing": ("Nothing here", "X", "docs/design_document.md", None),
+}
+
+
+@pytest.mark.parametrize("case", RENAME)
+def test_decision_a_rename(case):
+    old, new, path, after = RENAME[case]
+    assert cd.rename(FILES, old, new).get(path) == after
+
+
+KNOWN_GAP = {  # a check over a baseline, and what it gives
+    "a line with its reason": (lambda: cd.baseline("scripts/w.txt", "Closing — a skill runs it\n"), ({"Closing"}, [])),
+    "a # line gives the reason for all": (lambda: cd.baseline("scripts/w.txt", "# A skill runs it\nClosing\n"),
+                                          ({"Closing"}, [])),
+    "a line with no reason": (lambda: cd.baseline("scripts/w.txt", "Closing\n"), ({"Closing"}, [
+        "scripts/w.txt: Closing gives no reason; add \" — {reason}\", or a # line at the file's top"])),
+    "an empty baseline": (lambda: cd.baseline("scripts/w.txt", ""),
+                          (set(), ["scripts/w.txt is empty: delete it and the code that reads it"])),
+    "a line whose gap closed": (lambda: cd.named_tests("workflow", {"Opening"}, {"test_workflow_opening"}, {"Opening"}),
+                                ["Opening  ← tested or gone: remove it from the workflow baseline"]),
+}
+
+
+@pytest.mark.parametrize("case", KNOWN_GAP)
+def test_decision_a_known_gap(case):
+    check, found = KNOWN_GAP[case]
+    assert check() == found
 
 
 def test_decision_a_deferred_entry():
@@ -109,57 +206,102 @@ def test_decision_a_deferred_entry():
         "docs/deferred/b.md has no Revisit when line"]
 
 
-MAY_NAME = [  # file, a link it may not hold
-    ("docs/design_document.md", "architecture.md"),
-    ("docs/architecture.md", "backlog/001-001-a.md"),
-    ("scripts/check.py", "../docs/design_document.md"),
-    ("docs/product_roadmap.md", "design_document.md"),
-    ("docs/deferred/a.md", "../architecture.md"),
-    ("docs/backlog/README.md", "../design_document.md"),
-    ("docs/release/phase-1.md", "../design_document.md"),
-]
+DOC_S_LINKS = {  # a file, its text, and the failure it gives
+    "the design links the architecture": ("docs/design_document.md", "[x](architecture.md)\n",
+                                          ["docs/design_document.md names architecture.md, which it may not"]),
+    "the architecture links a ticket": ("docs/architecture.md", "[x](backlog/001-001-a.md)\n",
+                                        ["docs/architecture.md names backlog/001-001-a.md, which it may not"]),
+    "the code links the design": ("scripts/check.py", "[x](../docs/design_document.md)\n",
+                                  ["scripts/check.py names ../docs/design_document.md, which it may not"]),
+    "the roadmap links the design": ("docs/product_roadmap.md", "[x](design_document.md)\n",
+                                     ["docs/product_roadmap.md names design_document.md, which it may not"]),
+    "a deferred entry links the architecture": ("docs/deferred/a.md", "[x](../architecture.md)\n",
+                                                ["docs/deferred/a.md names ../architecture.md, which it may not"]),
+    "the backlog README links the design": ("docs/backlog/README.md", "[x](../design_document.md)\n",
+                                            ["docs/backlog/README.md names ../design_document.md, which it may not"]),
+    "the playbook links the design": ("docs/release/phase-1.md", "[x](../design_document.md)\n",
+                                      ["docs/release/phase-1.md names ../design_document.md, which it may not"]),
+    "the architecture links the design": ("docs/architecture.md", "[x](design_document.md)\n", []),
+    "a link in a code block": ("docs/design_document.md", "```\n[x](architecture.md)\n```\n", []),
+    "a link in inline code": ("docs/design_document.md", "`[c](architecture.md)`\n", []),
+    "a link to the web": ("docs/design_document.md", "[w](https://example.com)\n", []),
+    "a link to the foundations": ("docs/design_document.md", "[f](foundations.md)\n", []),
+}
 
 
-@pytest.mark.parametrize("path, bad", MAY_NAME)
-def test_decision_a_doc_s_links(path, bad):
-    """A link in a code block, to the web or to the foundations names nothing."""
-    assert cd.stream_names({path: f"[x]({bad})\n"}) == [f"{path} names {bad}, which it may not"]
-    text = "```\n[x](architecture.md)\n```\n[w](https://example.com) [f](foundations.md) `[c](architecture.md)`\n"
-    assert cd.stream_names({"docs/design_document.md": text}) == []
+@pytest.mark.parametrize("case", DOC_S_LINKS)
+def test_decision_a_doc_s_links(case):
+    path, text, problems = DOC_S_LINKS[case]
+    assert cd.stream_names({path: text}) == problems
 
 
-def test_decision_a_link():
-    """A link lands on a file, and its anchor on its heading's GitHub slug."""
-    assert cd.broken_links({"docs/a.md": "[gone](c.md)\n"}, lambda path: False) == [
-        "docs/a.md links c.md, which is not there"]
-    files = {"docs/a.md": "[bad](b.md#nope)\n", "docs/b.md": "## Plan\n"}
-    assert cd.broken_links(files, lambda path: False) == ["docs/a.md links b.md#nope, which has no such heading"]
-    files = {"docs/a.md": "# CDD — Design\n\n## Feature: Notes\n\n## Tech\n\n## Tech\n\n"
-                          "## See [x](y.md)\n\n[a](#cdd--design) [b](#feature-notes) [c](#tech-1) [d](b.md#{feature}) [e](#see-x)\n"}
-    assert cd.broken_links(files, lambda path: True) == []
+HEADINGS = md("""
+    # CDD — Design
+
+    ## Feature: Notes
+
+    ## Tech
+
+    ## Tech
+
+    ## See [x](y.md)
+    """)
+LINK = {  # a doc's text, and the failure it gives
+    "a missing file": ("[gone](c.md)\n", ["docs/a.md links c.md, which is not there"]),
+    "a missing heading": ("[bad](b.md#nope)\n", ["docs/a.md links b.md#nope, which has no such heading"]),
+    "a heading with a dash": (HEADINGS + "[a](#cdd--design)\n", []),
+    "a heading with a colon": (HEADINGS + "[b](#feature-notes)\n", []),
+    "a repeated heading": (HEADINGS + "[c](#tech-1)\n", []),
+    "a heading holding a link": (HEADINGS + "[e](#see-x)\n", []),
+    "a placeholder": (HEADINGS + "[d](b.md#{feature})\n", []),
+}
+
+
+@pytest.mark.parametrize("case", LINK)
+def test_decision_a_link(case):
+    text, problems = LINK[case]
+    files = {"docs/a.md": text, "docs/b.md": "## Plan\n"}
+    assert cd.broken_links(files, lambda path: path in ("docs/b.md", "docs/y.md")) == problems
 
 
 def test_decision_a_workflow_with_steps_to_carry():
     """A workflow whose step links a feature runs on the skill of its name."""
-    design = ("## Workflow: Tracing notes\n\n1. Trace ([Notes](#feature-notes))\n\nEnd: **Done**\n\n"
-              "## Workflow: Talking\n\n1. Talk\n\n"
-              "## Workflow: Releasing\n\n1. Ship ([Notes](#feature-notes))\n\n"
-              "### Feature: Notes\n\n```gherkin\nScenario: A\n```\n")
+    design = md("""
+        ## Workflow: Tracing notes
+
+        1. Trace ([Notes](#feature-notes))
+
+        ## Workflow: Talking
+
+        1. Talk
+
+        ## Workflow: Releasing
+
+        1. Ship ([Notes](#feature-notes))
+
+        ### Feature: Notes
+
+        ```gherkin
+        Scenario: A
+        ```
+        """)
     assert cd.workflow_skills(design, {"releasing", "editing-prose"}) == [
         "Workflow: Tracing notes links a feature, and no skill tracing-notes runs it"]
 
 
-def test_decision_a_skill_s_paths():
-    """A skill names no path: no link and no backticked path. Plain words pass."""
-    text = ("Read the roadmap and run `cdd read design`.\n"
-            "Run `uv run --script scripts/check.py`.\n"
-            "Read [the design](../../../docs/design_document.md).\n"
-            "Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`.\n"
-            "See [the guide](https://example.com) and [above](#above).\n"
-            "Run `cdd` or and/or `main`.\n"
-            "```\nscripts/check.py `x/y`\n```\n")
-    assert cd.skill_paths({".claude/skills/x/SKILL.md": text}) == [
-        ".claude/skills/x/SKILL.md names a path: Run `uv run --script scripts/check.py`.",
-        ".claude/skills/x/SKILL.md names a path: Read [the design](../../../docs/design_document.md).",
-        ".claude/skills/x/SKILL.md names a path: Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`."]
-    assert cd.skill_paths({"docs/a.md": "Run `scripts/check.py`.\n"}) == []
+SKILL_S_PATHS = {  # a skill line, and whether it names a path
+    "a cdd verb": ("Read the roadmap and run `cdd read design`.", False),
+    "a script path": ("Run `uv run --script scripts/check.py`.", True),
+    "a link to a doc": ("Read [the design](../../../docs/design_document.md).", True),
+    "a backticked file": ("Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`.", True),
+    "a web link and an anchor": ("See [the guide](https://example.com) and [above](#above).", False),
+    "plain words with a slash": ("Run `cdd` or and/or `main`.", False),
+    "a path in a code block": ("```\nscripts/check.py `x/y`\n```", False),
+}
+
+
+@pytest.mark.parametrize("case", SKILL_S_PATHS)
+def test_decision_a_skill_s_paths(case):
+    line, named = SKILL_S_PATHS[case]
+    found = cd.skill_paths({".claude/skills/x/SKILL.md": line + "\n"})
+    assert found == ([f".claude/skills/x/SKILL.md names a path: {line}"] if named else [])

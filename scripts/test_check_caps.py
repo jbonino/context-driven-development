@@ -90,21 +90,43 @@ WARNINGS = {
 }
 
 
-def test_decision_a_form_past_its_cap():
-    """A cap is read from the architecture's table, so a form at its cap is
-    quiet. An outline under three rows warns too."""
-    warned = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
-    assert all(w in warned for w in WARNINGS.values())
-    assert len(warned) == 7
-    assert not any("Short" in w or "Contents" in w for w in warned)
-    lines = ["- **A** is x.", "  More here.", "", "  Loose text.", "- **B** is y.", "  - **C** is z. And more. Again."]
-    assert cc.decision_sentences(lines) == [("A", 2), ("B", 1), ("C", 3)]
-    design = ("```gherkin\n  Scenario Outline: Two\n    Given <a>\n\n    Examples:\n      | a |\n      | 1 |\n"
-              "      | 2 |\n\n  Scenario Outline: Three\n    Given <a>\n\n    Examples:\n      | a |\n"
-              "      | 1 |\n      | 2 |\n      | 3 |\n```\n")
-    assert cc.short_outlines("design.md", design) == [
-        "design.md: Scenario Outline: Two has 2 Examples rows, under 3. "
-        "The owner decides whether to split it into scenarios"]
+WARNED = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
+FORM_PAST_ITS_CAP = {  # a check, and what it gives
+    **{f"a {form} past its cap": (lambda w=w: [x for x in WARNED if x == w], [w]) for form, w in WARNINGS.items()},
+    "a form at its cap": (lambda: [w for w in WARNED if "Short" in w or "Contents" in w], []),
+    "a wrapped line counts in its decision": (lambda: cc.decision_sentences(["- **A** is x.", "  More here."]), [("A", 2)]),
+    "a line after a blank one counts in none": (lambda: cc.decision_sentences(["- **A** is x.", "", "  Loose."]), [("A", 1)]),
+    "a nested bullet counts on its own": (lambda: cc.decision_sentences(["- **B** is y.", "  - **C** is z. More."]),
+                                          [("B", 1), ("C", 2)]),
+    "a footnote or a code span ends no sentence": (
+        lambda: cc.decision_sentences(["- **D** holds `a. b`.[^why-d] More."]), [("D", 2)]),
+}
+
+
+@pytest.mark.parametrize("case", FORM_PAST_ITS_CAP)
+def test_decision_a_form_past_its_cap(case):
+    check, found = FORM_PAST_ITS_CAP[case]
+    assert check() == found
+
+
+SHORT_OUTLINE = """```gherkin
+  Scenario Outline: Many
+    Given <a>
+
+    Examples:
+      | a |
+"""
+SHORT = {  # an outline's rows, and the warning they give
+    "two rows warn": ("      | 1 |\n      | 2 |\n```\n", [
+        "design.md: Scenario Outline: Many has 2 Examples rows, under 3. The owner decides whether to split it into scenarios"]),
+    "three rows are quiet": ("      | 1 |\n      | 2 |\n      | 3 |\n```\n", []),
+}
+
+
+@pytest.mark.parametrize("case", SHORT)
+def test_decision_a_short_outline(case):
+    rows, warned = SHORT[case]
+    assert cc.short_outlines("design.md", SHORT_OUTLINE + rows) == warned
 
 
 def test_rule_a_ticket_takes_two_new_scenarios_at_most():

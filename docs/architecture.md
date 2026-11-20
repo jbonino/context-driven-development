@@ -198,14 +198,15 @@ Editing prose
 | A name that leaves its folder | Its place is outside the doc's folder |
 | A phase that isn't a number | A phase is a number |
 
-- **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. It fails on each case below and lists what exists.
+- **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each doc in its folder. It fails on each case below and lists what exists.
 
 | Case | Lists |
 |---|---|
-| A heading only inside a fence | The doc's headings outside its fences |
-| A heading that doesn't exist | The doc's headings outside its fences |
+| A heading not outside a fence | The doc's headings outside its fences |
 | A doc name with no place | The docs cdd knows |
-| A file that doesn't exist | The files in its folder |
+| A file that doesn't exist | The docs in its folder |
+| A folder with no docs | Nothing |
+| Args that don't fit its place | The args it takes |
 
 ### Component: Branch commands
 

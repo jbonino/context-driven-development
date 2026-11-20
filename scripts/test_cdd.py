@@ -218,37 +218,34 @@ def test_decision_cdd_next_ticket(repo, capsys, case):
         assert "001-009" not in said, "a wait gone from the backlog is merged"
 
 
-CDD_BRANCH = {  # its args, and the branch it claims
-    "A ticket": (["ticket", "001-003"], "feature/001-003-three"),
-    "A phase's plan": (["plan", "2"], "design/phase-2"),
-    "An ad hoc plan": (["adhoc", "002", "fix-links"], "adhoc/002-fix-links"),
-    "A chore": (["chore", "tidy"], "chore/tidy"),
+CDD_BRANCH = {  # its args, the branch it claims, and what came before: a claim on origin or a first run
+    "A ticket": (["ticket", "001-003"], "feature/001-003-three", None),
+    "A phase's plan": (["plan", "2"], "design/phase-2", None),
+    "An ad hoc plan": (["adhoc", "002", "fix-links"], "adhoc/002-fix-links", None),
+    "A chore": (["chore", "tidy"], "chore/tidy", None),
+    "A branch already here is reused": (["chore", "tidy"], "chore/tidy", "here"),
+    "A branch on origin lost the race and names the next open ticket": (
+        ["ticket", "001-001"], "feature/001-001-one", "origin"),
 }
 
 
 @pytest.mark.parametrize("case", CDD_BRANCH)
 def test_decision_cdd_branch(repo, capsys, case):
-    args, branch = CDD_BRANCH[case]
+    args, branch, before = CDD_BRANCH[case]
+    if before == "origin":
+        claim_on_origin(repo, branch)
+        with pytest.raises(SystemExit) as failed:
+            cdd.main(["branch", *args])
+        assert isinstance(failed.value.code, str) and "001-003-three" in failed.value.code
+        assert not git(repo, "branch", "--list", branch).strip()
+        return
+    if before == "here":
+        cdd.main(["branch", *args])
+        capsys.readouterr()
     cdd.main(["branch", *args])
     printed = capsys.readouterr().out.split()
     assert printed, "cdd branch prints its worktree"
     tree = printed[-1]
     assert git(repo, "ls-remote", "--heads", "origin", branch).strip()
     assert git(tree, "rev-parse", "--abbrev-ref", "HEAD").strip() == branch
-    assert tree.startswith(str(repo / ".claude/worktrees"))
-
-
-def test_decision_cdd_branch_lost_race_names_the_next_open_ticket(repo):
-    claim_on_origin(repo, "feature/001-001-one")
-    with pytest.raises(SystemExit) as failed:
-        cdd.main(["branch", "ticket", "001-001"])
-    assert isinstance(failed.value.code, str) and "001-003-three" in failed.value.code
-    assert not git(repo, "branch", "--list", "feature/001-001-one").strip()
-
-
-def test_decision_cdd_branch_reuses_a_branch_already_here(repo, capsys):
-    cdd.main(["branch", "chore", "tidy"])
-    first = capsys.readouterr().out.split()
-    cdd.main(["branch", "chore", "tidy"])
-    again = capsys.readouterr().out.split()
-    assert first and again and again[-1] == first[-1]
+    assert tree == str(repo / ".claude/worktrees" / branch.split("/", 1)[1])

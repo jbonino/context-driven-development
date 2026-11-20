@@ -28,5 +28,19 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 - Verdict: With fixes.
 
+**Sign-off review**
+
+| Severity | Finding | Outcome | Planning miss |
+|---|---|---|---|
+| Important | The findings sit in the ticket and the deferred entry | Fixed. The ticket links the entry | — |
+| Important | A criterion still names 001-003 | Fixed | the ticket |
+| Important | The deferred entry adds a section past its template | Pushed back. The owner approved the tables there | — |
+| Minor | The footnote never says what Claude Code gives | Fixed | — |
+| Minor | "make installed too" refers to nothing | Fixed | — |
+| Minor | The Revisit when already holds | Fixed. A customer asks for it | — |
+| Minor | The title and the follow-up criterion | Left. Both still hold | — |
+
+- Verdict: With fixes.
+
 **Changed after sign-off**
 - The owner picks C, Claude Code alone. The roadmap's goal drops Pi, 001-003 goes, and Pi becomes a deferred entry. Planning miss: `product_roadmap.md`, which scoped Pi before the spike.

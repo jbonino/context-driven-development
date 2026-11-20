@@ -13,8 +13,8 @@ fallback for each. Deferred by the Product Owner on 2026-11-20.
 
 **Revisit when**
 
-Pi ships subagents, questions and phone pushes built in, or a user can't run
-Claude Code.
+Pi ships subagents, questions and phone pushes built in, or a customer asks to
+run CDD without Claude Code.
 
 **What Pi lacks**
 

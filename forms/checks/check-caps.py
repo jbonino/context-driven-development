@@ -16,7 +16,7 @@ import re
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import cdd  # noqa: E402
 
 ROOT = cdd.ROOT

@@ -32,7 +32,7 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../forms/checks"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../forms"))
 import cdd  # noqa: E402
 
 ROOT = cdd.ROOT

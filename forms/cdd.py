@@ -16,7 +16,8 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
+CHECKS = os.path.join(HERE, "checks")
 APP = os.path.join(ROOT, "apps/cdd")
 SESSION = os.path.join(APP, "scripts")
 USAGE = __doc__.split("\n\n", 1)[1].rstrip()
@@ -52,12 +53,12 @@ def folder(doc):
 ARG = {"n": re.compile(r"\d+"), "name": re.compile(r"[^/\\]+")}
 
 
-def script(name, *args, home=HERE):
+def script(name, *args, home=CHECKS):
     return ["uv", "run", "--script", os.path.join(home, name), *args]
 
 
 STEPS = {
-    "tests": ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", HERE, SESSION]),
+    "tests": ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", CHECKS, SESSION]),
     "docs": ("Each fact in its place", script("check-docs.py")),
     "caps": ("Each form under its cap. Warns, never fails", script("check-caps.py")),
 }

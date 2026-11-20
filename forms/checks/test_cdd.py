@@ -12,7 +12,7 @@ import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-spec = importlib.util.spec_from_file_location("cdd", os.path.join(HERE, "cdd.py"))
+spec = importlib.util.spec_from_file_location("cdd", os.path.join(ROOT, "forms/cdd.py"))
 cdd = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cdd)
 
@@ -387,7 +387,7 @@ def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
 
 def test_decision_an_app():
     for held in ("apps/cdd/foundations.md", "apps/cdd/docs", "apps/cdd/scripts", "apps/cdd/publish",
-                 "forms/forms.md", "forms/templates", "forms/checks"):
+                 "forms/forms.md", "forms/templates", "forms/checks", "forms/cdd.py"):
         assert os.path.exists(os.path.join(ROOT, held)), held
     tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles", "presentations"],
                              capture_output=True, text=True).stdout

@@ -4,7 +4,7 @@ The judgments that need fresh context. Everything else is in the raw
 sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 **Deviations from the plan and design**
-- `cdd.py` sits in `forms/checks/` beside the checks that import it.
+- `cdd.py` sits in `forms/`. It serves every app and does more than check.
 - `cdd` still names CDD's docs alone. A second app needs `cdd` to take the app.
 - The miner and the caps check also read each doc's old path. `cdd` holds it.
 - A doc may link `forms/forms.md` as well as the foundations.
@@ -27,4 +27,4 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 - Verdict: With fixes.
 
 **Changed after sign-off**
-- None.
+- Round 1. `cdd.py` moved from `forms/checks/` to `forms/`, since it also claims, merges and saves. Planning miss: the ticket's wireframe gave it no place.

@@ -14,7 +14,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import cdd  # noqa: E402
 
 ROOT = cdd.ROOT
@@ -28,7 +28,7 @@ DEFERRED, BACKLOG, RELEASE, RETRO = (cdd.folder(d) for d in ("deferred", "ticket
 KINDS = ("journey", "workflow", "scenario", "rule", "decision")
 HISTORY = (RETRO, DEFERRED, cdd.DOCS["feedback"])
 FIXTURES = ("forms/checks/test_check_docs.py", "forms/checks/test_check_caps.py")
-CODE = ("forms/checks", "apps/cdd/scripts")
+CODE = ("forms", "apps/cdd/scripts")
 
 HEADING = re.compile(r"^(#+) (.+)$")
 SCENARIO = re.compile(r"^\s*Scenario(?: Outline)?: (.+)$")

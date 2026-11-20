@@ -1,6 +1,6 @@
 # Forms
 
-The forms every app's docs take. Each app's foundations say what it makes with them.
+Every app's docs take these forms.
 
 | Term | Meaning | Form | Naming |
 |---|---|---|---|

@@ -52,7 +52,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 | Saved sessions | `apps/cdd/docs/retro/raw/`, gitignored |
 | Templates | `forms/templates/` |
 
-- **An app** sits in `apps/{app}/`, with its foundations, docs, scripts and published pages. `forms/` holds what every app shares: the forms, the templates and the checks.
+- **An app** sits in `apps/{app}/`. `forms/` holds the forms, templates and checks every app shares.
 - **A finished playbook** and **a taken-up deferred entry** are deleted by name. Git keeps them.
 - **A plan's sign-off** is a git tag.[^why-a-plan-is-a-git-tag]
 - **A claimed ticket** is its branch.

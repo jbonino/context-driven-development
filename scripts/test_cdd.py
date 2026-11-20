@@ -90,3 +90,69 @@ def test_decision_cdd_check(monkeypatch, capfd, case):
     if fails:
         assert failed.value.code not in (0, None)
     assert [line for line in capfd.readouterr().out.split("\n") if line.startswith("ran")] == ran
+
+
+DESIGN = """# Design
+
+## Feature: Splitting the work
+
+Split it.
+
+````gherkin
+## Only in a fence
+```
+## Still in it
+````
+
+  ~~~
+## In a tilde fence
+  ~~~
+
+### A step ###
+
+Its detail.
+
+## Feature: Next
+
+Next.
+"""
+HEADINGS = ["Design", "Feature: Splitting the work", "A step", "Feature: Next"]
+
+CDD_READ = {  # its args, and what it prints or the names its failure lists
+    "A section prints to the next heading of its level": (
+        ["design_document", "Feature: Splitting the work"],
+        DESIGN[DESIGN.index("## Feature: Splitting"):DESIGN.index("## Feature: Next")]),
+    "A whole doc prints": (["design_document"], DESIGN),
+    "Each of a phase's retro files prints": (
+        ["retro-entry", "1"], "== docs/retro/1/a.md\nA\n\n== docs/retro/1/b.md\nB\n"),
+    "Each ticket prints without the backlog README": (["ticket"], "== docs/backlog/t.md\nT\n"),
+    "A heading only inside a fence": (["design_document", "Only in a fence"], HEADINGS),
+    "A heading that doesn't exist": (["design_document", "Feature: Missing"], HEADINGS),
+    "A doc name with no place": (["design"], list(cdd.DOCS)),
+    "A file that doesn't exist": (["retro-entry", "1", "c"], ["a.md", "b.md"]),
+    "A folder with no docs": (["retro-entry", "2"], ["nothing"]),
+    "Args that don't fit its place": (["release-playbook", "x"], ["{n}", "[heading]"]),
+}
+
+
+@pytest.mark.parametrize("case", CDD_READ)
+def test_decision_cdd_read(root, capsys, case):
+    args, expected = CDD_READ[case]
+    (root / "docs/design_document.md").write_text(DESIGN)
+    os.makedirs(root / "docs/retro/1")
+    (root / "docs/retro/1/a.md").write_text("A\n")
+    (root / "docs/retro/1/b.md").write_text("B\n")
+    (root / "docs/retro/1/notes.txt").write_text("not a doc\n")
+    os.makedirs(root / "docs/backlog")
+    (root / "docs/backlog/t.md").write_text("T\n")
+    (root / "docs/backlog/README.md").write_text("order\n")
+    if isinstance(expected, str):
+        cdd.main(["read", *args])
+        assert capsys.readouterr().out == expected
+    else:
+        with pytest.raises(SystemExit) as failed:
+            cdd.main(["read", *args])
+        assert isinstance(failed.value.code, str)
+        listed = failed.value.code.rsplit(". ", 1)[-1]  # what exists, after the reason if there is one
+        assert all(name in listed for name in expected)
+        assert not any(fenced in listed for fenced in ("fence", "Still in it", "notes.txt", "##"))

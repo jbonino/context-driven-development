@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DESIGN = "docs/design_document.md"
 ARCHITECTURE = "docs/architecture.md"
 FOUNDATIONS = "docs/foundations.md"
-KINDS = ("journey", "workflow", "scenario", "rule")
+KINDS = ("journey", "workflow", "scenario", "rule", "decision")
 HISTORY = ("docs/done/", "docs/retro/", "docs/deferred/", "docs/feedback.md")
 FIXTURES = ("scripts/test_check_docs.py", "scripts/test_check_caps.py")
 
@@ -94,6 +94,12 @@ def rule_name(bullet):
     text = re.sub(r"\[\^[^\]]*\]", "", bullet)
     text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text).replace("`", "").replace("**", "")
     return re.split(r"(?<=[.!?])\s", text.strip(), maxsplit=1)[0].rstrip(".")
+
+
+def decisions(architecture):
+    """Each decision's subject: a bullet's bold opening words."""
+    return {m.group(1).replace("`", "") for bullets in architecture["bullets"].values() for b in bullets
+            if (m := re.match(r"\*\*(.+?)\*\*", b))}
 
 
 def rules(design, architecture, tickets):
@@ -239,6 +245,28 @@ def stream_names(files):
             resolved = os.path.normpath(os.path.join(os.path.dirname(path), file))
             if resolved not in (path, FOUNDATIONS) and not allowed(resolved):
                 problems.append(f"{path} names {target}, which it may not")
+    return problems
+
+
+SPAN = re.compile(r"`([^`]+)`")
+PATH = re.compile(r"/|\.(?:md|py|sh|json|ya?ml|toml|txt|js|html)\b")
+SKILLS = ".claude/skills/"
+SKILL_GAP = "A skill"
+
+
+def skill_paths(files):
+    """A skill line names no path: no link to a file and no backticked path."""
+    problems = []
+    for path, text in sorted(files.items()):
+        if not path.startswith(SKILLS):
+            continue
+        for line, fenced in lines_outside_code(text):
+            spans = SPAN.findall(line)
+            targets = LINK.findall(SPAN.sub("", line))
+            if fenced:
+                continue
+            if any(PATH.search(s) for s in spans) or any(not re.match(r"[a-z]+:|#", t) for t in targets):
+                problems.append(f"{path} names a path: {line.strip()}")
     return problems
 
 
@@ -394,11 +422,20 @@ def check(docs, code):
              if path.startswith("scripts/test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
     found, problems = baselines()
     named = {"journey": design["journeys"], "workflow": design["workflows"],
-             "scenario": {n for _, n in design["scenarios"]}, "rule": rules(design, architecture, tickets)}
+             "scenario": {n for _, n in design["scenarios"]}, "rule": rules(design, architecture, tickets),
+             "decision": decisions(architecture)}
     problems += rule_scenarios(DESIGN, docs[DESIGN])
     for kind in ("journey", "workflow"):
         problems += named_tests(kind, named[kind], tests, found[kind])
     problems += named_tests("rule", {n for _, n in design["rules"]}, tests, found["rule"])
+    problems += named_tests("decision", named["decision"], tests, found["decision"] - {SKILL_GAP})
+    skills = skill_paths(docs)
+    if SKILL_GAP in found["decision"] and not skills:
+        problems.append(f"{SKILL_GAP}  ← no skill names a path: remove it from the decision baseline")
+    if SKILL_GAP in found["decision"] and SKILL_GAP not in named["decision"]:
+        problems.append(f"{SKILL_GAP}  ← gone: remove it from the decision baseline")
+    elif SKILL_GAP not in found["decision"]:
+        problems += skills
     problems += scenario_tests(design["scenarios"], tests, tickets, found["scenario"])
     problems += source_tests(tests, named)
     problems += deferred_revisits(docs) + deferred_outside(docs | code)

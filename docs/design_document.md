@@ -304,6 +304,7 @@ Feature: Keeping each fact in its place
         | a workflow                          | test named for it                         |
         | a scenario                          | test named for it                         |
         | a rule                              | test named for it                         |
+        | a decision                          | test named for it                         |
         | a test                              | source it names                           |
         | a deferred entry                    | `Revisit when` line                       |
 

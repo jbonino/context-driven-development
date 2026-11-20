@@ -2,7 +2,7 @@
 
 How Context Driven Development is built, shaped around [design.md](design_document.md).
 
-- [Foundations](#foundations)
+- [Base](#base)
   - [Stack](#stack)
   - [Where](#where)
   - [Testing strategy](#testing-strategy)
@@ -16,16 +16,20 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Feature: Going red first](#feature-going-red-first)
 - [Scripts](#scripts)
   - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
+  - [Feature: Starting a doc from its form](#feature-starting-a-doc-from-its-form)
+  - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
+  - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
+  - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
 - [Why](#why)
 
-## Foundations
+## Base
 
 ### Stack
 
 | Unit | Tech | Carries |
 |---|---|---|
 | Skills | Claude Code skills in Markdown | Workflow skills and the helpers they share |
-| Scripts | Python scripts under `uv`, tested with pytest | Keeping each fact in its place and Closing a phase |
+| Scripts | Python under `uv`, run as one `cdd` command, tested with pytest | Keeping each fact in its place and Closing a phase |
 | Git | Branches and tags | A claimed ticket and a plan's sign-off |
 | Docs | Markdown, Gherkin and Mermaid | The design, the architecture, feedback, tickets, retros |
 
@@ -87,7 +91,7 @@ Placing feedback · Splitting the work · Signing off a change · Running the pl
 Every feature here runs inside a workflow's skill.[^why-two-systems] A
 workflow with steps to carry runs on the skill of its name.[^why-one-skill-per-workflow]
 A skill holds its workflow's steps and the facts they act on. It names a
-doc only as a file it reads or writes.[^why-a-skill-names-no-doc] A helper
+doc by what it is and runs `cdd` to read, start or claim one.[^why-a-skill-names-no-doc] A helper
 serves several workflows and carries no workflow's name. A skill
 bridges CDD and the product, so it may name the product's things.[^why-a-skill-names-the-product]
 
@@ -123,9 +127,9 @@ bridges CDD and the product, so it may name the product's things.[^why-a-skill-n
 
 ## Scripts
 
-Keeping each fact in its place
+Keeping each fact in its place · Starting a doc from its form · Reading a doc by name · Claiming the next ticket · Merging a signed-off branch
 
-The check scripts run here. `scripts/check.py` runs them all. A failure exits 1. A warning exits 0.
+Each script runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command] `cdd check` runs the checks. A failure exits 1. A warning exits 0.
 A baseline is `scripts/{kind}-baseline.txt`, one per Testing strategy kind.
 
 The session scripts run here too. One saves the Claude Code and Copilot sessions
@@ -137,6 +141,22 @@ before a merge. One mines a phase's sessions at its close.
 - **A system** lists each of its features on its opening line. A feature takes a heading only for its decisions.
 - **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
 - **A home** is found by name. A test matches its source by its prefix and title. A deferred thing matches its file's title. An architecture heading matches a design heading.[^why-a-test-s-name-says-its-kind-and-source]
+
+### Feature: Starting a doc from its form
+
+- **A form's template** is the file in Templates named for it. Foundations is one, for each product's own.
+
+### Feature: Reading a doc by name
+
+- **A section** runs from its heading to the next heading of its level or higher.
+
+### Feature: Claiming the next ticket
+
+- **A claim** is the push of the ticket's branch to origin, named as branching from main names it. The push that fails lost the race.
+
+### Feature: Merging a signed-off branch
+
+- **A merge** saves the sessions first. It cleans up only after main is pushed.
 
 ## Why
 
@@ -152,7 +172,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill ran a step.
 
-[^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
+[^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 
 [^why-a-skill-names-the-product]: The design and architecture stay unaware of the product, so they serve any product. A fresh session needs the product's facts to act, and the skill is the one file it loads. **Other considerations:** A product-agnostic skill that reads the product's docs for its facts, which costs a second read every run.
 
@@ -165,3 +185,5 @@ Why each decision that's hard to undo holds, and the options it beat.
 [^why-red-runs-in-the-skill]: No check can see a test's first run. **Other considerations:** A check over the test files' history, which can't tell a failing assertion from a compile error.
 
 [^why-feedback-lives-in-one-file]: Scoping empties it. Any entry left is feedback. A meeting pastes in as written. **Other considerations:** A file per meeting, which each shrinks apart. A file per phase, where feedback written in one phase belongs to the next.
+
+[^why-one-command]: A skill names a verb, and the folders can move under it. **Other considerations:** A script path in each skill, which a move breaks. A Makefile, which needs make in Pi too.

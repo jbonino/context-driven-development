@@ -25,6 +25,10 @@ Read [foundations.md](foundations.md) first.
     - [Feature: Running the playbook](#feature-running-the-playbook)
     - [Feature: Deciding a planning miss](#feature-deciding-a-planning-miss)
     - [Feature: Editing prose](#feature-editing-prose)
+    - [Feature: Starting a doc from its form](#feature-starting-a-doc-from-its-form)
+    - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
+    - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
+    - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
 
 
 ## Checkpoints
@@ -126,7 +130,7 @@ Responsible: Designer · Accountable: Product Owner
 
 Start: **Phase scoped**
 
-1. Brainstorm with the Product Owner until a design meets the phase's goal
+1. Brainstorm with the Product Owner until a design meets the phase's goal ([Reading a doc by name](#feature-reading-a-doc-by-name))
 1. Edit the foundations the goal changes with the Product Owner
 1. Edit the journeys the goal changes
 1. Edit the workflows the goal changes and the checkpoints they start and end at
@@ -143,8 +147,8 @@ Responsible: Developer · Accountable: Product Owner
 
 Start: **Design signed off**
 
-1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal
-1. Edit the architecture's foundations the design changes
+1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal ([Reading a doc by name](#feature-reading-a-doc-by-name))
+1. Edit the architecture's base the design changes
 1. Place each new feature under the system it runs on. Name a new system where none fits
 1. Write the decisions each changed workflow and feature needs, under a heading of its own name ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
 1. Give each decision that's hard to undo a why. Name the options it beat
@@ -162,7 +166,7 @@ Start: **Architecture signed off**
 1. Check each scenario for how a bug could break it ([Signing off a change](#feature-signing-off-a-change))
 1. Check that a ticket carries each model attribute the architecture adds ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
 1. Order the tickets in the backlog README with their parallel groups
-1. Write the release playbook in run order
+1. Write the release playbook in run order ([Starting a doc from its form](#feature-starting-a-doc-from-its-form))
 1. Write the ticket pass's retro entry and sign off the plan with the Product Owner. Merge it to main ([Editing prose](#feature-editing-prose))
 
 End: **Plan signed off**
@@ -173,7 +177,7 @@ Responsible: Developer
 
 Start: **Plan signed off**
 
-1. Claim the next open ticket in the backlog README on its own branch, and read the phase's goal in the roadmap and the design and architecture sections it names
+1. Claim the next open ticket in the backlog README on its own branch, and read the phase's goal in the roadmap and the design and architecture sections it names ([Claiming the next ticket](#feature-claiming-the-next-ticket))
 1. Write each of the ticket's tests until it fails on its assertion ([Going red first](#feature-going-red-first))
 1. Add each case the tests find to the design as a row or a new scenario ([Signing off a change](#feature-signing-off-a-change))
 1. Write the code until each test passes
@@ -193,7 +197,7 @@ Start: **Ready for review**
 1. Walk the change ([Signing off a change](#feature-signing-off-a-change))
 1. Restate each piece of feedback as a new scenario or row in the design, and fix it in a review pass ([Signing off a change](#feature-signing-off-a-change))
 1. Sign off the change ([Signing off a change](#feature-signing-off-a-change))
-1. Merge to main and delete the ticket
+1. Merge to main and delete the ticket ([Merging a signed-off branch](#feature-merging-a-signed-off-branch))
 
 End: **Signed off**
 
@@ -328,6 +332,7 @@ Feature: Keeping each fact in its place
         | a deferred entry     | the design                                            |
         | the backlog README   | its own tickets                                       |
         | the release playbook | the tickets and the architecture's systems            |
+        | a skill              | nothing. It names a doc by what it is                 |
 
     Scenario: An architecture heading with no design heading fails the check
       Given the architecture heads decisions with a workflow or feature the design doesn't have
@@ -593,4 +598,90 @@ Feature: Editing prose
     Given a change whose writer has edited its prose
     When another Developer reviews it
     Then each line that breaks a sentence rule is a finding
+```
+
+### Feature: Starting a doc from its form
+
+```gherkin
+Feature: Starting a doc from its form
+  A skill names the form and the doc's name. The command knows where both live.
+
+  Scenario: A new doc lands in its place from its template
+    Given a form with a template
+    When a skill starts a doc of that form
+    Then the doc is the template, in that form's place
+    And the command prints its path
+
+  Scenario: A doc that already exists stays as it is
+    Given a doc of that form and name already exists
+    When a skill starts it again
+    Then the command fails and the doc is unchanged
+
+  Scenario: A form with no template fails
+    Given a form name that has no template
+    When a skill starts a doc of it
+    Then the command fails and lists the forms that have one
+```
+
+### Feature: Reading a doc by name
+
+```gherkin
+Feature: Reading a doc by name
+  A skill reads part of a doc by what the doc is and the heading it wants.
+
+  Scenario: A section prints alone
+    Given a doc with a heading the skill names
+    When the skill reads it
+    Then the command prints that heading's section and no more
+
+  Scenario: A heading the doc lacks fails
+    Given a heading the doc doesn't have
+    When the skill reads it
+    Then the command fails and lists the doc's headings
+
+  Scenario: A doc name with no place fails
+    Given a doc name the Where table doesn't hold
+    When the skill reads it
+    Then the command fails and lists the names it holds
+```
+
+### Feature: Claiming the next ticket
+
+```gherkin
+Feature: Claiming the next ticket
+  The next ticket is the first open one in the backlog README.
+
+  Scenario: The first open ticket whose waits are done is next
+    Given a group whose tickets wait on nothing still in the backlog
+    When the Developer asks for the next ticket
+    Then the command names the first ticket in it with no branch on origin
+
+  Scenario: A ticket claimed meanwhile can't be claimed twice
+    Given a ticket whose branch reached origin after it was named
+    When the Developer claims it
+    Then the claim fails and names the next open ticket
+
+  Scenario: No open ticket says so
+    Given every ticket in the backlog is claimed or waits
+    When the Developer asks for the next ticket
+    Then the command says none is open and what each waits on
+```
+
+### Feature: Merging a signed-off branch
+
+```gherkin
+Feature: Merging a signed-off branch
+  The merge carries the work to main and clears what the branch left.
+
+  Scenario: A clean merge clears the branch
+    Given a signed-off branch that merges clean
+    When the Developer merges it
+    Then main holds it with the branch's name and title in the message
+    And its sessions are saved and its ticket, worktree and branches are gone
+
+  Scenario: A conflict stops the merge
+    Given a signed-off branch that conflicts with main
+    When the Developer merges it
+    Then nothing merges and the worktree and branches stay
+    And the command names the conflicting files
 ```

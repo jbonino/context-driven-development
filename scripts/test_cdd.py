@@ -1,4 +1,5 @@
 """Tests for cdd.py. Run: uv run --with pytest pytest scripts/"""
+import ast
 import contextlib
 import importlib.util
 import os
@@ -67,6 +68,54 @@ def test_decision_each_script():
         assert any(held.startswith(path) for held in [*cdd.DOCS.values(), *cdd.FOLDERS.values()]), path
     usage = subprocess.run(["uv", "run", "-q", "--project", ROOT, "cdd"], capture_output=True, text=True)
     assert usage.returncode == 2 and "uv run cdd" in usage.stderr
+    for script, held in strings_in_scripts():
+        assert not any(path.split("{")[0] in held for path in where_paths()), f"{script} holds {held!r}"
+
+
+def where_paths():
+    where = open(os.path.join(ROOT, "docs/architecture.md"), encoding="utf-8").read()
+    table = where.split("### Where", 1)[1].split("\n\n", 2)[1]
+    return re.findall(r"^\|[^|]+\| `([^`]+)`", table, re.M)
+
+
+def strings_in_scripts():
+    """(script, string) for each string a script in scripts/ holds, less cdd.py, the tests and docstrings."""
+    for name in sorted(os.listdir(HERE)):
+        if name == "cdd.py" or name.startswith("test_") or not name.endswith((".py", ".sh")):
+            continue
+        text = open(os.path.join(HERE, name), encoding="utf-8").read()
+        if name.endswith(".sh"):
+            for line in text.splitlines():
+                if not line.lstrip().startswith("#"):
+                    yield name, line
+            continue
+        tree = ast.parse(text)
+        docstrings = {id(n.value) for n in ast.walk(tree) if isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant)}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings:
+                yield name, node.value
+
+
+SESSION_SCRIPTS = {  # its args, and the command it runs
+    "cdd save hands the script main's saved sessions' folder": (
+        ["save"], lambda main: [*cdd.SAVE, os.path.join(main, "docs/retro/raw/")]),
+    "cdd mine mines a phase's": (
+        ["mine", "1"], lambda main: cdd.script("mine-transcripts.py", "1")),
+}
+
+
+@pytest.mark.parametrize("case", SESSION_SCRIPTS)
+def test_decision_the_session_scripts(monkeypatch, case):
+    args, command = SESSION_SCRIPTS[case]
+    ran = []
+    real = subprocess.run
+    monkeypatch.setattr(cdd.subprocess, "run", lambda c, **kw: real(c, **kw) if c[0] == "git" else ran.append(c)
+                        or subprocess.CompletedProcess(c, 0))
+    with contextlib.suppress(SystemExit):
+        cdd.main(args)
+    main = os.path.dirname(real(["git", "-C", ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                                capture_output=True, text=True).stdout.strip())
+    assert ran == [command(main)]
 
 
 def step(code):
@@ -78,6 +127,7 @@ CDD_CHECK = {  # its args, each step's exit code, the steps that run, and whethe
     "a failure exits 1": (["check"], (1, 0, 0), ["ran 1", "ran 0", "ran 0"], True),
     "each step runs past a failure": (["check"], (0, 1, 1), ["ran 0", "ran 1", "ran 1"], True),
     "check caps runs the caps alone": (["check", "caps"], (1, 1, 0), ["ran 0"], False),
+    "check rename runs the docs' rename alone": (["check", "rename", "Old", "New"], (0, 1, 0), ["ran 1"], True),
 }
 
 

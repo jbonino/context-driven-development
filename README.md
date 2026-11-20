@@ -21,7 +21,7 @@ The CDD skills load from `.claude/skills/` with no install.
 
 | Command | Does |
 |---|---|
-| `uv run --script scripts/check.py` | Runs the scripts' tests, then the checks. Fails on a fact out of place or a broken link. Warns on a form past its cap |
-| `uv run --script scripts/check-docs.py rename "{old}" "{new}"` | Renames a scenario, feature, workflow, journey or rule, with its links and tests |
+| `uv run cdd check` | Runs the scripts' tests, then the checks. Fails on a fact out of place or a broken link. Warns on a form past its cap |
+| `uv run cdd check rename "{old}" "{new}"` | Renames a scenario, feature, workflow, journey or rule, with its links and tests |
 | `scripts/save-transcripts.sh` | Saves this repo's Claude Code and Copilot sessions to `docs/retro/raw/`, gitignored. Run it before each merge |
 | `uv run --script scripts/mine-transcripts.py {n}` | Mines phase `n`'s saved sessions for the phase-close retro |

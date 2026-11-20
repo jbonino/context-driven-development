@@ -1,8 +1,6 @@
-A skill's paths — waits on 001-009, since today's skills name paths
 A skill — a skill runs it. Its test waits for evals
 A product's things — a skill runs it. Its test waits for evals
 A baseline — a file per kind. Its test waits, since no check reads the file names
-The session scripts — run by a skill at a merge and a close. Their tests wait for evals, per the deferred skill evals
 A test's kind — review holds it; a check can't tell what an assertion proves
 A plan's sign-off — a git tag that a skill makes. Its test waits for evals
 A claimed ticket — a branch that a skill makes. Its test waits for evals

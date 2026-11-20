@@ -7,16 +7,9 @@ description: Use when a skill opens a branch for a ticket, a plan or a chore, fr
 
 Start: `main` up to date. End: the branch claimed, in its own worktree.
 
-1. **Name the branch by its kind.**
-
-   | Kind | Branch |
-   |---|---|
-   | Ticket | `feature/{ticket filename, no .md}` |
-   | Phase's plan | `design/phase-{n}` |
-   | Ad hoc plan | `adhoc/{number}-{short-name}` |
-   | Chore | `chore/{short-name}` |
-
-1. **Push `main` to `origin` under that name.** The push claims it. A
-   branch already on `origin` is someone else's.
-1. **Invoke `superpowers:using-git-worktrees` for the branch, under
-   `.claude/worktrees/`.**
+1. **Run `uv run cdd branch {kind} {args}`.** The kind is `ticket {number}`,
+   `plan {n}`, `adhoc {number} {short-name}` or `chore {short-name}`. The
+   push to `origin` claims the branch. A branch someone else holds names the
+   next open ticket instead.
+1. **Enter the worktree it prints**, with the harness's own worktree tool
+   if it has one.

@@ -5,7 +5,9 @@
     uv run cdd next-ticket                           name the next open ticket
     uv run cdd branch {kind} {args}                  claim a branch and open its worktree
     uv run cdd merge {branch} [title]                merge a signed-off branch. A plan or chore takes a title
+    uv run cdd save                                  save the sessions for the phase's close
     uv run cdd check [caps]                          run the checks, or the caps alone
+    uv run cdd check rename {old} {new}              rename a source with its links and tests
     uv run cdd mine {n} [--top 10]                   mine phase n's saved sessions
 """
 import os
@@ -32,6 +34,13 @@ DOCS = {
     "retro-entry": "docs/retro/{n}/{name}.md",
 }
 FOLDERS = {"raw": "docs/retro/raw/", "templates": "docs/templates/"}
+
+
+def folder(doc):
+    """The folder a doc sits in, like docs/backlog/ for a ticket."""
+    return os.path.dirname(DOCS[doc].split("{")[0]) + "/"
+
+
 ARG = {"n": re.compile(r"\d+"), "name": re.compile(r"[^/\\]+")}
 
 
@@ -209,6 +218,16 @@ def branch(kind, args):
 SAVE = ["bash", os.path.join(HERE, "save-transcripts.sh")]
 
 
+def main_checkout():
+    """The main checkout's folder, from here or from any worktree."""
+    return os.path.dirname(git("rev-parse", "--path-format=absolute", "--git-common-dir").stdout.strip())
+
+
+def save():
+    """Save the sessions into the main checkout's folder for them. False on a failure."""
+    return not subprocess.run([*SAVE, os.path.join(main_checkout(), FOLDERS["raw"])]).returncode
+
+
 def merge(name, title):
     """Save the sessions, merge the branch into main with its name and title, delete its ticket,
     push, then remove its worktree and branches. A conflict or a rejected push leaves the branch.
@@ -216,8 +235,7 @@ def merge(name, title):
     prefix, _, short = name.partition("/")
     if prefix not in {v.split("/")[0] for v in BRANCHES.values()} or not short:
         sys.exit(f"cdd merge takes a branch cdd branch names, like {', '.join(BRANCHES.values())}")
-    common = git("rev-parse", "--path-format=absolute", "--git-common-dir").stdout.strip()
-    here = os.path.dirname(common)
+    here = main_checkout()
 
     def main_git(*args, check=True):
         done = subprocess.run(["git", "-C", here, *args], capture_output=True, text=True)
@@ -252,7 +270,7 @@ def merge(name, title):
             title = re.sub(r" — \*\*[^*]+\*\*$", "", top).split(" — ", 1)[-1]
         if not title:
             sys.exit(f"cdd merge {name} takes a title")
-        if subprocess.run(SAVE, cwd=here).returncode:
+        if not save():
             sys.exit("Saving the sessions failed")
         if main_git("merge", "-q", "--no-ff", "--no-commit", ref, check=False).returncode:
             main_git("merge", "--abort")
@@ -305,10 +323,16 @@ def main(argv=None):
             branch(kind, args)
         case ["merge", name, *title] if len(title) <= 1:
             merge(name, (title or [None])[0])
+        case ["save"]:
+            if not save():
+                sys.exit("Saving the sessions failed")
         case ["check"]:
             check(STEPS)
         case ["check", "caps"]:
             check({"caps": STEPS["caps"]})
+        case ["check", "rename", was, now]:
+            title, command = STEPS["docs"]
+            check({"rename": (title, [*command, "rename", was, now])})
         case ["mine", n, *rest]:
             sys.exit(subprocess.run(script("mine-transcripts.py", n, *rest), cwd=ROOT).returncode)
         case _:

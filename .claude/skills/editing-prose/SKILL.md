@@ -30,7 +30,7 @@ reads it fast. A chat reply runs step 2 alone.
    per-item detail.
 1. A sentence that answers another doc's question moves there. The
    foundations' Where says which.
-1. Something deferred lives only in its `deferred/` file.
+1. Something deferred lives only in its deferred entry.
 
 **The cut**
 

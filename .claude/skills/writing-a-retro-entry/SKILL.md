@@ -5,10 +5,10 @@ description: Use when a skill says to write a retro entry, for a ticket, a desig
 
 # Writing a retro entry
 
-Start: a skill names a retro file. End: the entry written and edited.
+Start: a skill names a retro entry. End: the entry written and edited.
 
-1. Open the retro file the skill names. When it's new, copy
-   `docs/templates/retro-entry.md` into it.
+1. Open the retro entry the skill names. When it's new, run
+   `uv run cdd new retro-entry {n} {name}` and open the path it prints.
 1. An edge case the owner waves off is one line under **Owner's calls**,
    with no test.
 1. Record every code review finding in the **Code review** table, fixed

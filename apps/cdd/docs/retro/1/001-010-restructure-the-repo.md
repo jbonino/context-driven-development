@@ -8,7 +8,7 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 - `cdd` still names CDD's docs alone. A second app needs `cdd` to take the app.
 - The miner and the caps check also read each doc's old path. `cdd` holds it.
 - A doc may link `forms/forms.md` as well as the foundations.
-- The essay now serves at `/apps/cdd/publish/articles/`. The old link breaks.
+- The essay now serves at `/apps/cdd/publish/articles/`.
 - Saved sessions and article drafts are gitignored. They move by hand after the merge.
 - The foundations template's What asks for a sentence or two.
 
@@ -28,3 +28,4 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 **Changed after sign-off**
 - Round 1. `cdd.py` moved from `forms/checks/` to `forms/`, since it also claims, merges and saves. Planning miss: the ticket's wireframe gave it no place.
+- Round 2. `articles/` redirects to the essay's new address, so old links still work. Planning miss: the ticket said the essay still serves but not at which address.

@@ -389,7 +389,12 @@ def test_decision_an_app():
     for held in ("apps/cdd/foundations.md", "apps/cdd/docs", "apps/cdd/scripts", "apps/cdd/publish",
                  "forms/forms.md", "forms/templates", "forms/checks", "forms/cdd.py"):
         assert os.path.exists(os.path.join(ROOT, held)), held
-    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles", "presentations"],
+    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles/images", "presentations"],
                              capture_output=True, text=True).stdout
     assert tracked == ""
     assert all(p.startswith(("apps/cdd/", "forms/")) for p in [*cdd.DOCS.values(), *cdd.FOLDERS.values()])
+
+
+def test_decision_the_essay_s_old_address():
+    page = open(os.path.join(ROOT, "articles/index.html"), encoding="utf-8").read()
+    assert 'http-equiv="refresh" content="0; url=../apps/cdd/publish/articles/"' in page

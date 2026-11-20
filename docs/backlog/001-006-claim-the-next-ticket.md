@@ -17,5 +17,5 @@ does by hand.
 ## Build notes
 
 - Waits on 001-004.
-- `branch` takes the kinds branching from main names: ticket, phase plan, ad hoc plan and chore.
+- `branch` takes each kind that branching from main names.
 - Tests run against a bare repo in a temp folder as origin.

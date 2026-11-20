@@ -2,8 +2,8 @@
 
 **Feature.** [Merging a signed-off branch](../design_document.md#feature-merging-a-signed-off-branch) · **System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — merge, save sessions, delete the ticket, clean up · **Model.** Sonnet 5.5, medium — edge cases with conflicts and cleanup
 
-`uv run cdd merge {branch}` does what merging to main does by hand: save
-the sessions, merge with the message, delete the ticket, push, and remove
+`uv run cdd merge {branch}` does what merging to main does by hand. It saves
+the sessions, merges, deletes the ticket, pushes, and removes
 the worktree and branches.
 
 ## Acceptance criteria

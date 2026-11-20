@@ -18,4 +18,4 @@ its place with its path printed. `uv run cdd check` runs the checks, as
 
 - `pyproject.toml` declares a `cdd` script. `scripts/cdd.py` holds the Where table's paths in one dict and dispatches the verbs.
 - `check` calls what `scripts/check.py` runs. Keep `check.py` until 001-009 moves the skills off it.
-- Add `docs/templates/foundations.md`: What, Why, Who, Where and How headings with a comment per slot.
+- Add a foundations template. It holds What, Why, Who, Where and How, each with a comment.

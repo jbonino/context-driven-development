@@ -144,7 +144,7 @@ Responsible: Developer · Accountable: Product Owner
 Start: **Design signed off**
 
 1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal
-1. Edit the architecture's foundations the design changes
+1. Edit the architecture's base the design changes
 1. Place each new feature under the system it runs on. Name a new system where none fits
 1. Write the decisions each changed workflow and feature needs, under a heading of its own name ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
 1. Give each decision that's hard to undo a why. Name the options it beat
@@ -360,7 +360,7 @@ Feature: Keeping each fact in its place
       And the owner decides whether to split it into scenarios
 
     Scenario Outline: One more than the cap warns
-      Given a <form> at its cap of <cap>
+      Given a <doc> at its cap of <cap>
       When one more is added
       Then the checks warn
       And the owner decides whether to redesign <upstream>

@@ -1,6 +1,6 @@
 # 001-010 — Restructure the repo — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 5 — every file moves, and each path and link follows · **Model.** Sonnet 5.5, medium — many moves, each by the wireframe
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 5 — every file moves, and each path and link follows · **Model.** Sonnet 5.5, medium — many moves, each by the wireframe
 
 The root holds the shared forms and the apps. CDD is one app beside any
 other.

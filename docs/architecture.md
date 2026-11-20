@@ -6,16 +6,19 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Stack](#stack)
   - [Where](#where)
   - [Testing strategy](#testing-strategy)
-- [Checkpoints](#checkpoints)
-- [Skills](#skills)
-  - [Feature: Placing feedback](#feature-placing-feedback)
-  - [Feature: Splitting the work](#feature-splitting-the-work)
-  - [Feature: Signing off a change](#feature-signing-off-a-change)
-  - [Feature: Running the playbook](#feature-running-the-playbook)
-  - [Feature: Deciding a planning miss](#feature-deciding-a-planning-miss)
-  - [Feature: Going red first](#feature-going-red-first)
-- [Scripts](#scripts)
-  - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
+  - [Checkpoints](#checkpoints)
+- [System: Skills](#system-skills)
+  - [Component: Feedback](#component-feedback)
+  - [Component: Tickets](#component-tickets)
+  - [Component: Review](#component-review)
+  - [Component: Playbook](#component-playbook)
+  - [Component: Retro](#component-retro)
+  - [Component: Red tests](#component-red-tests)
+  - [Component: Prose](#component-prose)
+- [System: Scripts](#system-scripts)
+  - [Component: Checks](#component-checks)
+  - [Component: Doc commands](#component-doc-commands)
+  - [Component: Branch commands](#component-branch-commands)
 - [Why](#why)
 
 ## Shared
@@ -25,7 +28,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 | Unit | Tech | Carries |
 |---|---|---|
 | Skills | Claude Code skills in Markdown | Workflow skills and the helpers they share |
-| Scripts | Python under `uv`, run as one `cdd` command, tested with pytest | Keeping each fact in its place and Closing a phase |
+| Scripts | Python under `uv`, run as one `cdd` command, tested with pytest | The checks and the `cdd` commands |
 | Git | Branches and tags | A claimed ticket and a plan's sign-off |
 | Docs | Markdown, Gherkin and Mermaid | The design, the architecture, feedback, tickets, retros |
 
@@ -64,7 +67,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 - **A test's kind** is the only part it asserts. Review moves a stray assertion.[^why-a-test-asserts-only-its-kind]
 - **A known gap** sits in a baseline line with its reason, as does each workflow and scenario a skill runs. The check fails on a line whose reason is gone.[^why-a-known-gap-sits-in-a-baseline]
 
-## Checkpoints
+### Checkpoints
 
 The owner reads this table against the design's journeys and names the
 workflow to run next.
@@ -82,67 +85,93 @@ workflow to run next.
 | Released | Every box checked in the phase's playbook | Releasing |
 | Retro in | `docs/retro/{n}/retro.md` | Closing a phase |
 
-## Skills
-
-Placing feedback · Splitting the work · Signing off a change · Running the playbook · Deciding a planning miss · Going red first · Editing prose
+## System: Skills
 
 - **A feature here** runs inside a workflow's skill.[^why-two-systems]
-- **A workflow with steps to carry** runs on the skill of its name.[^why-one-skill-per-workflow]
+- **A workflow with steps to carry**, one whose step links a feature, runs on the skill of its name.[^why-one-skill-per-workflow]
 - **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one.
 - **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
 - **A helper** serves several workflows and carries no workflow's name.
 
-### Feature: Placing feedback
+### Component: Feedback
+
+Placing feedback
 
 - **An entry** takes any shape.[^why-feedback-lives-in-one-file]
 - **A deferred entry** has a `Revisit when`.
 
-### Feature: Splitting the work
+### Component: Tickets
+
+Splitting the work
 
 - **A ticket** is a file from the ticket template.
 - **A spike** is timeboxed to a ticket's cap in points.
 
-### Feature: Signing off a change
+### Component: Review
+
+Signing off a change
 
 - **A ticket's hand-off** says whether a user sees or does the change.
 - **The reviewer** is a separate agent.[^why-a-separate-reviewer]
 - **A deferred scenario** goes under **Past its caps** in the ticket's retro entry. Closing reads it there.
 
-### Feature: Running the playbook
+### Component: Playbook
+
+Running the playbook
 
 - **The playbook** opens each line with its system.
 - **The deploy** runs through the team's own process. The playbook lists only the setup and checks each ticket's Release plan names.
 - **A failed step's fix** goes into its system's section.
 
-### Feature: Deciding a planning miss
+### Component: Retro
+
+Deciding a planning miss
 
 - **A miss's kind** is each `Planning miss` in a retro entry, in a table column or a bullet's last line. A table counts only its severity rows.
 
-### Feature: Going red first
+### Component: Red tests
+
+Going red first
 
 - **The red rule** runs inside the ticket-working skill.[^why-red-runs-in-the-skill]
 
-## Scripts
+### Component: Prose
 
-Keeping each fact in its place
+Editing prose
+
+## System: Scripts
 
 - **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
-- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1. A warning exits 0.
 - **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario already covers sits in it with that scenario's name.
 - **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
+
+### Component: Checks
+
+- **A home** is found by name. Each journey, workflow, scenario, rule and decision has a test of its name or a baseline line. A rule holds over two scenarios. A deferred thing is described in its own file alone. A design feature sits on one component's opening line, and a component sits under a system.[^why-a-test-s-name-says-its-kind-and-source]
+- **A doc's links** name only the foundations and the docs above it. The design, the roadmap and the code name none. The architecture and a deferred entry name the design. The backlog README names its tickets, and the playbook the tickets and the architecture.
+- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
+- **A form past its cap** warns, and so does an outline under three Examples rows. A form's cap is read from the table below, and a ticket's from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
+
+| form | cap | upstream |
+|---|---|---|
+| journey | 7 workflows | the journey |
+| workflow | 8 steps | its journey |
+| workflow step | 1 feature | the step |
+| feature | 8 scenarios or 4 rules | its workflows |
+| architecture section | 4 decisions | its component or system |
+
+### Component: Doc commands
+
+- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1. A warning exits 0.
 - **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on a doc that exists or a doc with no template.
 - **`cdd read`** prints a doc's section, from its heading to the next of its level or higher. With no heading it prints the doc, and for a doc kept as a file each, each of a phase's files. A heading in a fence opens none.
+
+### Component: Branch commands
+
 - **`cdd next-ticket`** names the first ticket in the backlog README whose waits are merged and that has no branch on origin. With none open, it says what each waits on.
 - **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race. A branch already here is reused.
 - **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything. A rerun finishes what's left.
-
-### Feature: Keeping each fact in its place
-
-- **A form past its cap** warns. A form's cap is read from the Examples of the outline that warns, and a ticket's from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
-- **A system** lists each of its features on its opening line. A feature takes a heading only for its decisions.
-- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
-- **A home** is found by name. A test matches its source by its prefix and title. A deferred thing matches its file's title. An architecture heading matches a design heading.[^why-a-test-s-name-says-its-kind-and-source]
 
 ## Why
 
@@ -161,7 +190,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 [^why-a-skill-names-no-path]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 
 
-[^why-two-systems]: A system says what its features run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave Keeping each fact in its place between two.
+[^why-two-systems]: A system says what its components run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave the checks between two.
 
 [^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 9 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
 

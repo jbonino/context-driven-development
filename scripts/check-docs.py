@@ -270,37 +270,53 @@ def skill_paths(files):
     return problems
 
 
-def orphan_headings(design, architecture):
-    """Each architecture heading for a workflow or feature names one in the design."""
-    named = design["features"] | {f"Workflow: {w}" for w in design["workflows"]}
-    problems = []
-    for line, fenced in lines_outside_code(architecture):
-        heading = None if fenced else HEADING.match(line)
-        title = heading.group(2).strip() if heading else ""
-        if title.startswith(("Feature: ", "Workflow: ")) and title not in named:
-            problems.append(f"architecture's {title} names no workflow or feature in the design")
-    return problems
-
-
-def system_features(design, architecture):
-    """Each design feature sits on exactly one system's opening line, split by " · "."""
-    listed, opening = {}, False
+def components(design, architecture):
+    """A heading under a system is a component, and a component sits under a
+    system. No heading names a workflow, journey or feature. Each design
+    feature sits on one component's opening line, split by " · "."""
+    problems, listed, system, opening = [], {}, None, False
     for line, fenced in lines_outside_code(architecture):
         heading = None if fenced else HEADING.match(line)
         if heading:
-            opening = len(heading.group(1)) == 2
-        elif opening and line.strip():
-            for name in line.split(" · "):
-                listed[f"Feature: {name.strip()}"] = listed.get(f"Feature: {name.strip()}", 0) + 1
+            level, title = len(heading.group(1)), heading.group(2).strip()
             opening = False
-    problems = []
+            if title.startswith(("Workflow: ", "Journey: ", "Feature: ")):
+                problems.append(f"architecture's {title} names a workflow, journey or feature. "
+                                "A component's opening line names a feature")
+            elif level == 2:
+                system = title if title.startswith("System: ") else None
+            elif level == 3 and title.startswith("Component: "):
+                opening = True
+                if not system:
+                    problems.append(f"architecture's {title} sits under no system")
+            elif level == 3 and system:
+                problems.append(f"architecture's {title} under {system} is no component")
+        elif opening and line.strip():
+            if not line.startswith("- "):
+                for name in line.split(" · "):
+                    listed[f"Feature: {name.strip()}"] = listed.get(f"Feature: {name.strip()}", 0) + 1
+            opening = False
     for feature in sorted(design["features"]):
         count = listed.get(feature, 0)
         if count == 0:
-            problems.append(f"design's {feature} sits on no system's opening line in the architecture")
+            problems.append(f"design's {feature} sits on no component's opening line in the architecture")
         elif count > 1:
-            problems.append(f"design's {feature} sits on {count} systems' opening lines in the architecture")
+            problems.append(f"design's {feature} sits on {count} components' opening lines in the architecture")
     return problems
+
+
+def workflow_skills(design, skills):
+    """A workflow whose step links a feature runs on the skill of its name."""
+    carried, workflow = [], None
+    for line, fenced in lines_outside_code(design):
+        heading = None if fenced else HEADING.match(line)
+        if heading:
+            title = heading.group(2).strip()
+            workflow = title[len("Workflow: "):] if title.startswith("Workflow: ") else None
+        elif workflow and re.match(r"\d+\. .*\]\(#feature-", line) and workflow not in carried:
+            carried.append(workflow)
+    return [f"Workflow: {w} links a feature, and no skill {skill} runs it"
+            for w in carried if (skill := slug(w).replace("_", "-")) not in skills]
 
 
 def broken_links(files, exists, read_file=lambda path: ""):
@@ -440,7 +456,8 @@ def check(docs, code):
     problems += source_tests(tests, named)
     problems += deferred_revisits(docs) + deferred_outside(docs | code)
     problems += stream_names(docs | {p: t for p, t in code.items() if p not in FIXTURES})
-    problems += orphan_headings(design, docs[ARCHITECTURE]) + system_features(design, docs[ARCHITECTURE])
+    problems += components(design, docs[ARCHITECTURE])
+    problems += workflow_skills(docs[DESIGN], {p.split("/")[2] for p in docs if p.startswith(SKILLS)})
     linked = {p: t for p, t in docs.items() if not p.startswith(("docs/done/", "docs/retro/"))}
     problems += broken_links(linked, lambda path: os.path.exists(os.path.join(ROOT, path)), read)
     return problems

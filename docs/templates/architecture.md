@@ -2,17 +2,18 @@
 
 How {Product} is built, shaped around the design.
 
-- [Foundations](#foundations)
-- [{System}](#system)
+- [Shared](#shared)
+- [System: {Name}](#system-name)
+  - [Component: {Name}](#component-name)
 - [Why](#why)
 
-## Foundations
+## Shared
 
 ### Stack
 
 | Unit | Tech | Carries |
 |---|---|---|
-| {System} | {Tech} | {Its features} |
+| {System} | {Tech} | {Its components} |
 
 ### Where
 
@@ -32,13 +33,19 @@ How {Product} is built, shaped around the design.
 
 - **{Subject}** {one fact about how this product tests}.
 
-## {System}
+### Checkpoints
+
+| Checkpoint | Evidence | Left by |
+|---|---|---|
+| {Checkpoint} | {What shows it in the repo} | {Workflow} |
+
+## System: {Name}
+
+- **{Subject}** {a decision every component here keeps}.
+
+### Component: {Name}
 
 {Feature} · {Feature}
-
-Runs on {tech}.
-
-### Feature: {Name}
 
 - **{Subject}** {its decision}.[^why-{slug}]
 
@@ -53,11 +60,12 @@ Copy this to the architecture. Delete this comment.
 
 | Slot | Content |
 |---|---|
-| Foundations | The decisions every system shares |
+| Shared | The decisions every system shares |
 | Where | A path for each doc in the foundations' Where |
 | Testing strategy | This product's levels and runners. CDD's kinds sit above them. A lower level runs faster and breaks less |
-| System | What its features run on. Its opening line lists each of its features. A Developer knows from it whether to open a skill, a script or an app |
-| Feature | The design's workflow or feature name, verbatim. Only one with a decision of its own takes a heading |
+| Checkpoints | The design's checkpoints, with what shows each in the repo |
+| System | What its components run on. A Developer knows from it whether to open a skill, a script or an app |
+| Component | A noun for what it builds. Its opening line names each design feature it builds, verbatim. One that builds none opens with its decisions. It holds 4 decisions at most |
 | Subject | A bold subject opens each bullet. Rows that share columns make a table |
 | Why | One footnote per decision that's hard to undo, naming every option it beat |
 

@@ -5,7 +5,7 @@
 # ///
 """Warns where a form passes its soft cap, so the owner decides whether to
 redesign upstream. A form's cap is read from the Examples of the outline
-that warns, a ticket's points from Splitting the work's rule, and its new
+in the architecture's caps table, a ticket's points from Splitting the work's rule, and its new
 scenarios from Signing off a change's. A warning never fails: the script
 exits 0.
 
@@ -32,14 +32,16 @@ WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
 PLURAL = {"feature": "features"}
 
 
-def examples(design):
-    """The Examples rows under the outline whose header reads form, cap, upstream."""
+def examples(architecture):
+    """The rows of the table whose header reads form, cap, upstream."""
     rows, header = [], False
-    for line in design.splitlines():
+    for line in architecture.splitlines():
         row = ROW.match(line)
         cells = [c.strip() for c in row.group(1).split("|")] if row else None
         if cells and cells[:3] == ["form", "cap", "upstream"]:
             header = True
+        elif cells and set("".join(cells)) <= set("-: "):
+            continue
         elif cells and header:
             rows.append(cells)
         else:
@@ -47,14 +49,14 @@ def examples(design):
     return rows
 
 
-def caps(design):
+def caps(architecture):
     """Each form's caps, by unit."""
-    return {form: {unit: int(n) for n, unit in CAP.findall(cap)} for form, cap, _ in examples(design)}
+    return {form: {unit: int(n) for n, unit in CAP.findall(cap)} for form, cap, _ in examples(architecture)}
 
 
-def upstreams(design):
+def upstreams(architecture):
     """What the owner may redesign for each form."""
-    return {form: upstream for form, _, upstream in examples(design)}
+    return {form: upstream for form, _, upstream in examples(architecture)}
 
 
 def new_scenario_cap(design):
@@ -127,7 +129,7 @@ def counts(design, architecture):
 
 def form_warnings(design_name, design, architecture_name, architecture):
     """A form past its cap goes to the owner."""
-    found, ups = caps(design), upstreams(design)
+    found, ups = caps(architecture), upstreams(architecture)
     names = {"design": design_name, "architecture": architecture_name}
     return [f"{names[doc]}: {name} has {count} {PLURAL.get(unit, unit)}, past its cap of {found[form][unit]}. "
             f"The owner decides whether to redesign {ups[form]}"

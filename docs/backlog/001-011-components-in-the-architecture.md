@@ -1,6 +1,6 @@
 # 001-011 — Components in the architecture — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 5 — the architecture's headings, the check that matches them, and a feature's tests renamed · **Model.** Opus 5.5, medium — the check's matching changes shape
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 5 — the architecture's headings, the check that matches them, and a feature's tests renamed · **Model.** Opus 5.5, medium — the check's matching changes shape
 
 Under each system, the architecture holds components, not features. A
 component's opening line names the design features it builds. Keeping

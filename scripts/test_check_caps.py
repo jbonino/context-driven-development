@@ -35,18 +35,8 @@ Feature: Caps
 
   Rule: A ticket takes two new scenarios at most
 
-    Scenario Outline: One more than the cap warns
-      Given a <form> at its cap of <cap>
-      When one more is added
-      Then the checks warn
-
-      Examples:
-        | form                 | cap                    | upstream              |
-        | journey              | 2 workflows            | the journey           |
-        | workflow             | 2 steps                | its journey           |
-        | workflow step        | 1 feature              | the step              |
-        | feature              | 2 scenarios or 1 rules | its workflows         |
-        | architecture section | 1 decisions            | its feature or system |
+    Scenario: First
+      Given a
 
   Rule: A ticket is at most one feature on one system and 5 points
 
@@ -58,15 +48,23 @@ Feature: Caps
 ```
 """
 
-ARCHITECTURE = """## Skills
+ARCHITECTURE = """## System: Skills
+
+### Component: Caps
 
 Caps
-
-### Feature: Caps
 
 - **One** decision.
 - **Two** decisions,
   wrapped onto a second line.
+
+| form                 | cap                    | upstream              |
+|---|---|---|
+| journey              | 2 workflows            | the journey           |
+| workflow             | 2 steps                | its journey           |
+| workflow step        | 1 feature              | the step              |
+| feature              | 2 scenarios or 1 rules | its workflows         |
+| architecture section | 1 decisions            | its component or system |
 
 ## Contents
 
@@ -80,31 +78,25 @@ WARNINGS = {
     "workflow step": "design: Workflow: Long steps step 2 has 2 features, past its cap of 1. "
                      "The owner decides whether to redesign the step",
     "feature": "design: Feature: Caps has 3 scenarios, past its cap of 2. The owner decides whether to redesign its workflows",
-    "architecture section": "architecture: Feature: Caps has 2 decisions, past its cap of 1. "
-                            "The owner decides whether to redesign its feature or system",
+    "architecture section": "architecture: Component: Caps has 2 decisions, past its cap of 1. "
+                            "The owner decides whether to redesign its component or system",
 }
 
 
 @pytest.mark.parametrize("form", WARNINGS)
-def test_scenario_one_more_than_the_cap_warns(form):
+def test_decision_a_form_past_its_cap(form):
+    """A cap is read from the architecture's table, so a form at its cap is
+    quiet. An outline under three rows warns too."""
     warned = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
     assert [w for w in warned if w == WARNINGS[form]] == [WARNINGS[form]]
-
-
-def test_scenario_an_outline_under_three_rows_warns():
+    assert len(warned) == 6
+    assert not any("Short" in w or "Contents" in w for w in warned)
     design = ("```gherkin\n  Scenario Outline: Two\n    Given <a>\n\n    Examples:\n      | a |\n      | 1 |\n"
               "      | 2 |\n\n  Scenario Outline: Three\n    Given <a>\n\n    Examples:\n      | a |\n"
               "      | 1 |\n      | 2 |\n      | 3 |\n```\n")
     assert cc.short_outlines("design.md", design) == [
         "design.md: Scenario Outline: Two has 2 Examples rows, under 3. "
         "The owner decides whether to split it into scenarios"]
-
-
-def test_rule_each_form_stays_under_its_cap():
-    """A cap is read from the design's Examples, so a form at its cap is quiet."""
-    warned = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
-    assert len(warned) == 6
-    assert not any("Short" in w or "Contents" in w for w in warned)
 
 
 def test_rule_a_ticket_takes_two_new_scenarios_at_most():

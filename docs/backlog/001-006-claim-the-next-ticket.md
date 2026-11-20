@@ -1,6 +1,6 @@
 # 001-006 — Claim the next ticket — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — reads the backlog README and origin, then pushes · **Model.** Sonnet 5.5, medium — edge cases with branches on origin
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 3 — reads the backlog README and origin, then pushes · **Model.** Sonnet 5.5, medium — edge cases with branches on origin
 
 `uv run cdd next-ticket` names the next open ticket. `uv run cdd branch
 ticket 001-004` claims it and opens its worktree, as branching from main

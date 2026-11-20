@@ -1,6 +1,6 @@
 # 001-005 — Read a doc by name — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 2 — one verb over the paths 001-004 holds · **Model.** Sonnet 5.5, low — a heading parser
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 2 — one verb over the paths 001-004 holds · **Model.** Sonnet 5.5, low — a heading parser
 
 `uv run cdd read design "Feature: Splitting the work"` prints that
 section, so a skill reads part of a doc with no path or grep.

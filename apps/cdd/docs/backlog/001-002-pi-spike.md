@@ -70,9 +70,8 @@ Each ethic scores 1 to 5.
 
 | Option | People care | Repo care | Fair share | Total |
 |---|---|---|---|---|
-| A. Stay, with Pi as a second harness | 5. Users without Claude Code get CDD | 3. Each gap names its fallback | 4. Only the gaps get built | **12** |
+| A. Stay, and add Pi alongside | 5. Users without Claude Code get CDD | 3. Each gap names its fallback | 4. Only the gaps get built | **12** |
 | B. Move to Pi | 2. The owner loses phone pushes and the worktree guard | 3. Five example extensions to keep | 1. Subagents, questions and worktrees get rebuilt | 6 |
 | C. Stay, with no Pi | 2. Users without Claude Code lose CDD | 5. Nothing new to tend | 5. Nothing to build | **12** |
 
-A and C tie. A keeps the phase goal and C drops it, so the owner picks. A
-live run in Pi waits for 001-003.
+A and C tie. The owner picks C. Pi waits in its deferred entry.

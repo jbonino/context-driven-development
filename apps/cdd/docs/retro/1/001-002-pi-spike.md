@@ -5,7 +5,7 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 **Deviations from the plan and design**
 - The owner reframed the spike before it began. It asks whether CDD should move to Pi, not whether Pi runs on Copilot. Planning miss: the ticket.
-- The analysis is on paper, from the sessions and Pi's docs. A live run in Pi waits for 001-003.
+- The analysis is on paper, from the sessions and Pi's docs.
 - The miner's `--tools` change lives in the green-wagon repo, which holds the sessions. It needs its own commit there.
 
 **Owner's calls**
@@ -29,4 +29,4 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 - Verdict: With fixes.
 
 **Changed after sign-off**
-- None.
+- The owner picks C, Claude Code alone. The roadmap's goal drops Pi, 001-003 goes, and Pi becomes a deferred entry. Planning miss: `product_roadmap.md`, which scoped Pi before the spike.

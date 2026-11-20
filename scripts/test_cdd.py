@@ -273,6 +273,8 @@ CDD_MERGE = {  # the branch's kind and args, the merge's args, its message, and 
         "plan", ["2"], ["design/phase-2", "Phase 2 plan"], "phase-2 — Phase 2 plan", None),
     "A chore deletes no ticket": (
         "chore", ["tidy"], ["chore/tidy", "Tidy up"], "tidy — Tidy up", None),
+    "A branch held only on origin merges before it's deleted": (
+        "chore", ["tidy"], ["chore/tidy", "Tidy up"], "tidy — Tidy up", "origin only"),
     "A conflict leaves everything": (
         "chore", ["tidy"], ["chore/tidy", "Tidy up"], None, "conflict"),
     "A rejected push leaves everything, and a rerun finishes it": (
@@ -296,6 +298,11 @@ def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
         (repo / "work.txt").write_text("main's work\n")
         commit(repo, "clash")
         git(repo, "push", "-q", "origin", "main")
+    if wrong == "origin only":
+        git(tree, "push", "-q", "origin", f"HEAD:{branch}")
+        git(repo, "worktree", "remove", "--force", tree)
+        git(repo, "branch", "-D", branch)
+        wrong = None
     hook = repo.parent / "origin.git/hooks/pre-receive"
     if wrong == "rejected":
         hook.write_text("#!/bin/sh\nexit 1\n")

@@ -603,11 +603,11 @@ Feature: Editing prose
 
 ```gherkin
 Feature: Starting a doc from its template
-  The Developer names the doc and its name. The command knows where its template and its place are.
+  A user names the doc and its name. The command knows where its template and its place are.
 
   Scenario Outline: A new doc lands in its place from its template
     Given the <doc> has a template
-    When the Developer starts <name>
+    When a user starts <name>
     Then the doc is the template, at <place>
     And the command prints its path
 
@@ -620,12 +620,12 @@ Feature: Starting a doc from its template
 
   Scenario: A doc that already exists stays as it is
     Given that doc already exists
-    When the Developer starts it again
+    When a user starts it again
     Then the command fails and the doc is unchanged
 
   Scenario: A doc with no template fails
     Given a doc name that has no template
-    When the Developer starts one
+    When a user starts one
     Then the command fails and lists the docs that have one
 ```
 
@@ -633,11 +633,11 @@ Feature: Starting a doc from its template
 
 ```gherkin
 Feature: Reading a doc by name
-  The Developer reads part of a doc by what the doc is and the heading it wants.
+  A user reads part of a doc by what the doc is and the heading it wants.
 
-  Scenario Outline: A doc prints as much as the Developer names
+  Scenario Outline: A doc prints as much as a user names
     Given <names>
-    When the Developer reads it
+    When a user reads it
     Then the command prints <prints>
 
     Examples:
@@ -648,17 +648,17 @@ Feature: Reading a doc by name
 
   Scenario: A heading inside a gherkin fence is no section
     Given a heading that sits only inside a gherkin fence
-    When the Developer reads it
+    When a user reads it
     Then the command fails and lists the doc's headings
 
   Scenario: A heading the doc lacks fails
     Given a heading the doc doesn't have
-    When the Developer reads it
+    When a user reads it
     Then the command fails and lists the doc's headings
 
   Scenario: A doc name with no place fails
     Given a doc name the Where table doesn't hold
-    When the Developer reads it
+    When a user reads it
     Then the command fails and lists the names it holds
 ```
 

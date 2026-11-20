@@ -50,9 +50,9 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 | Saved sessions | `docs/retro/raw/`, gitignored |
 | Templates | `docs/templates/` |
 
-A finished playbook and a taken-up deferred entry leave the repo. Git keeps them. A skill deletes one by its name, and Where gives the path.
-
-A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is its branch.
+- **A finished playbook** and **a taken-up deferred entry** are deleted by name. Git keeps them.
+- **A plan's sign-off** is a git tag.[^why-a-plan-is-a-git-tag]
+- **A claimed ticket** is its branch.
 
 ### Testing strategy
 
@@ -143,7 +143,7 @@ Keeping each fact in its place · Starting a doc from its template · Reading a 
 
 ### Feature: Starting a doc from its template
 
-- **A doc's template** is the file in Templates named for it. Each app starts its own foundations from one.
+- **A doc's template** is the file in Templates with the doc's name.
 
 ### Feature: Reading a doc by name
 

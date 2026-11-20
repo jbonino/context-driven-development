@@ -21,7 +21,8 @@ retro entry, per `writing-a-retro-entry`.
 1. **Mine the sessions** with `uv run cdd mine {n}`, in the
    background. Read the owner's notes in the retro entries, then the order
    of acts. A restart, a step out of order or a retry points at a skill
-   step. Extend the miner rather than write a scratch script.
+   step. Extend the miner rather than write a scratch script. Check its ticket
+   count against the entries before using its numbers.
 1. **Walk every planning miss with the Product Owner, by kind**,
    grouped by pattern with a proposed call each, in one message.
    A miss's kind is its `Planning miss` cell on a severity row, or a

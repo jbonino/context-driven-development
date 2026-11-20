@@ -1,4 +1,4 @@
-"""Tests for cdd.py. Run: uv run --with pytest pytest scripts/"""
+"""Tests for cdd.py. Run: uv run --with pytest pytest forms/checks/"""
 import ast
 import contextlib
 import importlib.util

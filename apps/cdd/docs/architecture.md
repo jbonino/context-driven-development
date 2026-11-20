@@ -79,15 +79,15 @@ workflow to run next.
 | Checkpoint | Evidence | Left by |
 |---|---|---|
 | New product | No design | — |
-| Feedback in | An entry in `docs/feedback.md`. A blocker's opens with **Blocker** | Interviewing or Meeting the customer |
+| Feedback in | An entry in `apps/cdd/docs/feedback.md`. A blocker's opens with **Blocker** | Interviewing or Meeting the customer |
 | Phase scoped | The roadmap's Now names phase n | Scoping a phase |
-| Design signed off | `docs/retro/{n}/phase-design.md` holds a **Signed off** line | Designing a phase |
-| Architecture signed off | `docs/retro/{n}/phase-architecture.md` holds a **Signed off** line | Architecting a phase |
+| Design signed off | `apps/cdd/docs/retro/{n}/phase-design.md` holds a **Signed off** line | Designing a phase |
+| Architecture signed off | `apps/cdd/docs/retro/{n}/phase-architecture.md` holds a **Signed off** line | Architecting a phase |
 | Plan signed off | Tag `phase-{n}-plan` or `phase-{n}-adhoc-{m}` | Writing the tickets or Planning ad hoc |
 | Ready for review | A ticket's branch holding its retro entry | Working a ticket |
 | Signed off | The ticket merged to main and gone from the backlog | Reviewing a ticket |
 | Released | Every box checked in the phase's playbook | Releasing |
-| Retro in | `docs/retro/{n}/retro.md` | Closing a phase |
+| Retro in | `apps/cdd/docs/retro/{n}/retro.md` | Closing a phase |
 
 ## System: Skills
 

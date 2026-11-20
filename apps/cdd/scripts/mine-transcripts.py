@@ -452,7 +452,7 @@ def phase_reports(stats):
     for s in stats.values():
         for path, n in s["reads"].items():
             if path not in s["edits"]:
-                unused[re.sub(r".*/(?:worktrees/[^/]+/)?(?=docs/|\.claude/)", "", path)] += n
+                unused[re.sub(r".*/(?:worktrees/[^/]+/)?(?=apps/|forms/|docs/|\.claude/)", "", path)] += n
     print("\n## Read and never edited, whole phase")
     for path, n in sorted(unused.items(), key=lambda kv: -kv[1])[:15]:
         print(f"- {path}: {n}")

@@ -68,10 +68,10 @@ How the team works. The architecture holds how it's built.
 
 | Principle | Means |
 |---|---|
-| The tortoise and the hare | Small and slow solutions.  An operation matures with time and nothing substitutes for it |
+| The tortoise and the hare | Small and slow solutions. An operation matures with time and nothing substitutes for it |
 | Wide then deep | Draft every instance of a form roughly. Then review each one in depth with the user. Walk two or three real cases through it with a verdict for each. The wide draft shows where a redesign upstream would simplify. Each deep review ends by merging up the chain |
 | Design from patterns to details | Analyze what happened to find the patterns that structure what comes next |
-| Testability shapes the plan | Structured prose shows how to test it in the forms under What |
+| Testability shapes the plan | Structured prose shows how to test it in the [forms](../../forms/forms.md) |
 | Merge up the chain | Ask whether rules merge into one. Ask whether a rule is a scenario's outcome and whether a scenario is a workflow's step. Each merge goes to the owner with what it replaces |
 | Facts flow down stream | A doc names only the docs above it. A ticket pulls part of the stream together to build the code. Feedback and retros feed the next cycle. Ask whether facts merge upstream during review. |
 | Soft caps | Each form has a soft cap. A form past its cap calls for a redesign upstream and the user decides. The retros tune the caps |

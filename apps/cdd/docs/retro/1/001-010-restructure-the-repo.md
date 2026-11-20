@@ -16,8 +16,15 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 | Severity | Finding | Outcome | Planning miss |
 |---|---|---|---|
+| Important | The Checkpoints table's Evidence names the old `docs/` paths | Fixed | architecture.md. Its test reads Where alone |
+| Important | The deferred README names the old template path | Fixed | The ticket |
+| Important | Testability shapes the plan points to the forms under What | Fixed | The ticket |
+| Minor | test_cdd's docstring names `scripts/` | Fixed | — |
+| Minor | The miner shortens new paths to `docs/` and leaves `forms/` paths whole | Fixed | — |
+| Minor | The test of **Each script** asserts four things | Left. It predates this ticket | — |
+| Minor | The Pi spike ticket names `scripts/mine-transcripts.py` | Left. It means green-wagon's repo | — |
 
-- Verdict: —.
+- Verdict: With fixes.
 
 **Changed after sign-off**
 - None.

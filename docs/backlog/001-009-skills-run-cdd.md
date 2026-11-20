@@ -1,6 +1,6 @@
 # 001-009 — Skills run cdd — **Ad hoc**
 
-**System.** [Skills](../architecture.md#skills) · **Estimate.** 3 — every skill gets read and its paths go · **Model.** Sonnet 5.5, medium — many small edits, each by rule
+**System.** [Skills](../architecture.md#skills) · **Estimate.** 5 — all 13 skills and a template get read and their paths go · **Model.** Sonnet 5.5, medium — many small edits, each by rule
 
 Each skill names docs by what they are and runs `cdd` for the
 mechanics. No skill names a path.
@@ -11,7 +11,9 @@ mechanics. No skill names a path.
 - Branching from main and merging to main each run their `cdd` verb.
 - Working a ticket claims with `cdd next` and `cdd branch`.
 - A skill that starts a doc runs `cdd new`, and one that reads part of a doc runs `cdd read`.
-- The checks run as `cdd check`.
+- The checks run as `cdd check`, the caps as `cdd check caps`, and mining as `cdd mine`.
+- Closing a phase and scoping a phase delete a finished playbook or a taken-up deferred entry by name.
+- Reviewing a ticket names the scenario baseline by name.
 
 ## Workflow steps
 
@@ -26,5 +28,5 @@ mechanics. No skill names a path.
 - Waits on 001-004, 001-005, 001-006 and 001-007.
 - Rename the architecture template's Foundations section to Base.
 - Planning ad hoc drops "Raise its points and ticket count". The README holds no totals.
-- Closing a phase deletes the playbook from the repo, not moves it. Delete the empty done and in-progress folders.
+- Delete the empty done and in-progress folders.
 - Delete `scripts/check.py` once nothing runs it.

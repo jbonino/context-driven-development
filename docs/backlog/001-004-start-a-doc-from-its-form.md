@@ -9,6 +9,8 @@ its place with its path printed. `uv run cdd check` runs the checks, as
 ## Acceptance criteria
 
 - [Starting a doc from its form](../design_document.md#feature-starting-a-doc-from-its-form)
+- `cdd check` prints and exits as `scripts/check.py` does. `cdd check caps` does the same for `check-caps.py`.
+- `cdd mine {n}` runs `mine-transcripts.py` for phase n.
 
 ## Workflow steps
 

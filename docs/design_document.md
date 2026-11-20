@@ -332,7 +332,7 @@ Feature: Keeping each fact in its place
         | a deferred entry     | the design                                            |
         | the backlog README   | its own tickets                                       |
         | the release playbook | the tickets and the architecture's systems            |
-        | a skill              | nothing. It names a doc by what it is                 |
+        | a skill              | the product's own files. It names CDD's docs by what they are |
 
     Scenario: An architecture heading with no design heading fails the check
       Given the architecture heads decisions with a workflow or feature the design doesn't have
@@ -606,11 +606,18 @@ Feature: Editing prose
 Feature: Starting a doc from its form
   A skill names the form and the doc's name. The command knows where both live.
 
-  Scenario: A new doc lands in its place from its template
-    Given a form with a template
-    When a skill starts a doc of that form
-    Then the doc is the template, in that form's place
+  Scenario Outline: A new doc lands in its place from its template
+    Given the <form> form has a template
+    When a skill starts <name>
+    Then the doc is the template, at <place>
     And the command prints its path
+
+    Examples:
+      | form             | name                 | place                                  |
+      | ticket           | 001-010-foo          | the backlog, as 001-010-foo.md         |
+      | retro entry      | phase 1, phase-design | phase 1's retro, as phase-design.md   |
+      | release playbook | phase 1              | the release folder, as phase-1.md      |
+      | foundations      | garden               | garden's foundations.md                |
 
   Scenario: A doc that already exists stays as it is
     Given a doc of that form and name already exists
@@ -629,10 +636,21 @@ Feature: Starting a doc from its form
 Feature: Reading a doc by name
   A skill reads part of a doc by what the doc is and the heading it wants.
 
-  Scenario: A section prints alone
-    Given a doc with a heading the skill names
+  Scenario Outline: A doc prints as much as the skill names
+    Given <names>
     When the skill reads it
-    Then the command prints that heading's section and no more
+    Then the command prints <prints>
+
+    Examples:
+      | names                                   | prints                          |
+      | a doc and one of its headings           | that heading's section and no more |
+      | a doc and no heading                    | the whole doc                   |
+      | a form kept as a file each, and a phase | each of that phase's files whole |
+
+  Scenario: A heading inside a gherkin fence is no section
+    Given a heading that sits only inside a gherkin fence
+    When the skill reads it
+    Then the command fails and lists the doc's headings
 
   Scenario: A heading the doc lacks fails
     Given a heading the doc doesn't have
@@ -661,6 +679,23 @@ Feature: Claiming the next ticket
     When the Developer claims it
     Then the claim fails and names the next open ticket
 
+  Scenario Outline: Each kind of branch is claimed by its name
+    Given a <kind> with no branch on origin
+    When the Developer claims it
+    Then origin holds <branch> and its worktree is open
+
+    Examples:
+      | kind          | branch                       |
+      | ticket        | feature/001-004-foo          |
+      | phase's plan  | design/phase-2               |
+      | ad hoc plan   | adhoc/001-004-foo            |
+      | chore         | chore/foo                    |
+
+  Scenario: A branch already in this checkout is reused
+    Given the branch exists here and on origin, claimed by this Developer
+    When the Developer claims it again
+    Then the command opens its worktree and pushes nothing
+
   Scenario: No open ticket says so
     Given every ticket in the backlog is claimed or waits
     When the Developer asks for the next ticket
@@ -678,6 +713,22 @@ Feature: Merging a signed-off branch
     When the Developer merges it
     Then main holds it with the branch's name and title in the message
     And its sessions are saved and its ticket, worktree and branches are gone
+
+  Scenario: A plan or chore merges with no ticket to delete
+    Given a signed-off plan or chore branch
+    When the Developer merges it
+    Then main holds it and nothing in the backlog is deleted
+
+  Scenario: A rejected push keeps the branch
+    Given main on origin moved after the merge began
+    When the push is rejected
+    Then the worktree and branches stay
+    And the command says to merge again
+
+  Scenario: A rerun finishes a partial merge
+    Given main on origin holds the merge but the branches remain
+    When the Developer merges again
+    Then the command clears what remains and merges nothing twice
 
   Scenario: A conflict stops the merge
     Given a signed-off branch that conflicts with main

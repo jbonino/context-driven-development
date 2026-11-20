@@ -50,6 +50,8 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 | Saved sessions | `docs/retro/raw/`, gitignored |
 | Templates | `docs/templates/` |
 
+A finished playbook and a taken-up deferred entry leave the repo. Git keeps them. A skill deletes one by its name, and Where gives the path.
+
 A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is its branch.
 
 ### Testing strategy
@@ -129,7 +131,7 @@ bridges CDD and the product, so it may name the product's things.[^why-a-skill-n
 
 Keeping each fact in its place · Starting a doc from its form · Reading a doc by name · Claiming the next ticket · Merging a signed-off branch
 
-Each script runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command] `cdd check` runs the checks. A failure exits 1. A warning exits 0.
+Each script runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command] `cdd check` runs the checks, and `cdd check caps` the caps alone. `cdd mine {n}` mines a phase's sessions. A failure exits 1. A warning exits 0.
 A baseline is `scripts/{kind}-baseline.txt`, one per Testing strategy kind.
 
 The session scripts run here too. One saves the Claude Code and Copilot sessions
@@ -148,7 +150,8 @@ before a merge. One mines a phase's sessions at its close.
 
 ### Feature: Reading a doc by name
 
-- **A section** runs from its heading to the next heading of its level or higher.
+- **A section** runs from its heading to the next heading of its level or higher. A heading in a fence opens none.
+- **A form kept as a file each** reads as each of its files in name order.
 
 ### Feature: Claiming the next ticket
 

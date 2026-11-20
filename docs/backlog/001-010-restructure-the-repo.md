@@ -38,5 +38,6 @@ other.
 ```
 
 - Each app keeps its own backlog.
-- Move each file with its history. Fix each path the skills and the architecture's Where name.
+- Waits on 001-009, so no skill names a path that moves.
+- Move each file with its history. Fix each path `cdd` and the architecture's Where hold.
 - Delete the empty done and in-progress folders.

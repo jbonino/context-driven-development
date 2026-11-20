@@ -25,3 +25,4 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 **Changed after sign-off**
 - Round 1. **A skill** split into **A skill**, **A skill's paths** and **An app's things**, so the test's name matches the one sentence it checks. Planning miss: the ticket.
+- Round 1. **An app's things** became **A product's things**, which a skill may name. Planning miss: `architecture.md`.

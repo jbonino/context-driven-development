@@ -1,6 +1,6 @@
 A skill's paths — waits on 001-009, since today's skills name paths
 A skill — a skill runs it. Its test waits for evals
-An app's things — a skill runs it. Its test waits for evals
+A product's things — a skill runs it. Its test waits for evals
 A baseline — a file per kind. Its test waits, since no check reads the file names
 A form past its cap — Feature: Keeping each fact in its place: One more than the cap warns
 A home — Rule: Each part has its home

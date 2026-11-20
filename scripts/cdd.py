@@ -4,6 +4,7 @@
     uv run cdd read {doc} [{n}] [{name}] [heading]   print a doc or one section
     uv run cdd next-ticket                           name the next open ticket
     uv run cdd branch {kind} {args}                  claim a branch and open its worktree
+    uv run cdd merge {branch} [title]                merge a signed-off branch and clean up
     uv run cdd check [caps]                          run the checks, or the caps alone
     uv run cdd mine {n} [--top 10]                   mine phase n's saved sessions
 """
@@ -205,6 +206,70 @@ def branch(kind, args):
     print(tree)
 
 
+SAVE = ["bash", os.path.join(HERE, "save-transcripts.sh")]
+
+
+def merge(name, title):
+    """Save the sessions, merge the branch into main with its name and title, delete its ticket,
+    push, then remove its worktree and branches. A conflict or a rejected push leaves the branch
+    for a rerun, which skips what's done."""
+    prefix, _, short = name.partition("/")
+    if prefix not in {v.split("/")[0] for v in BRANCHES.values()} or not short:
+        sys.exit(f"cdd merge takes a branch cdd branch names, like {', '.join(BRANCHES.values())}")
+    common = git("rev-parse", "--path-format=absolute", "--git-common-dir").stdout.strip()
+    here = os.path.dirname(common)
+
+    def main_git(*args, check=True):
+        done = subprocess.run(["git", "-C", here, *args], capture_output=True, text=True)
+        if check and done.returncode:
+            sys.exit(f"git {' '.join(args)} failed: {done.stderr.strip()}")
+        return done
+
+    if main_git("branch", "--show-current").stdout.strip() != "main":
+        sys.exit(f"{here} isn't on main")
+    ref = f"refs/heads/{name}"
+    held = bool(main_git("rev-parse", "--verify", "--quiet", ref, check=False).stdout)
+    on_origin = bool(main_git("ls-remote", "--heads", "origin", name).stdout.strip())
+    if not held and not on_origin:
+        sys.exit(f"{name} is neither here nor on origin")
+    main_git("fetch", "-q", "origin", "main")
+    main_git("merge", "-q", "--ff-only", "FETCH_HEAD")
+    if held and main_git("merge-base", "--is-ancestor", ref, "HEAD", check=False).returncode:
+        ticket = DOCS["ticket"].format(name=short) if prefix == "feature" else None
+        if ticket:
+            top = main_git("show", f"{ref}:{ticket}").stdout.split("\n", 1)[0]
+            title = re.sub(r" — \*\*[^*]+\*\*$", "", top).split(" — ", 1)[-1]
+        if not title:
+            sys.exit(f"cdd merge {name} takes a title")
+        if subprocess.run(SAVE, cwd=here).returncode:
+            sys.exit("Saving the sessions failed")
+        if main_git("merge", "-q", "--no-ff", "--no-commit", ref, check=False).returncode:
+            main_git("merge", "--abort")
+            sys.exit(f"{name} conflicts with main. Merge main into it, then rerun")
+        if ticket and os.path.exists(os.path.join(here, ticket)):
+            main_git("rm", "-q", ticket)
+            readme = os.path.join(here, DOCS["backlog-README"])
+            with open(readme, encoding="utf-8") as source:
+                rows = [row for row in source if "](" + short + ".md)" not in row]
+            with open(readme, "w", encoding="utf-8") as out:
+                out.writelines(rows)
+            main_git("add", DOCS["backlog-README"])
+        main_git("commit", "-q", "-m", f"{short} — {title}")
+    pushed = main_git("push", "-q", "origin", "main", check=False)
+    if pushed.returncode:
+        sys.exit(f"git push was rejected: {pushed.stderr.strip()}. Rerun once it can push")
+    trees = main_git("worktree", "list", "--porcelain").stdout.split("\n\n")
+    for tree in trees:
+        if f"\nbranch {ref}" in tree:
+            main_git("worktree", "remove", "--force", tree.split("\n", 1)[0].removeprefix("worktree "))
+    main_git("worktree", "prune")
+    if held:
+        main_git("branch", "-q", "-D", name)
+    if on_origin:
+        main_git("push", "-q", "origin", "--delete", name)
+    print(main_git("rev-parse", "--short", "HEAD").stdout.strip())
+
+
 def check(steps):
     """Run each step. A failure exits 1 naming it. A warning prints and exits 0."""
     failed = []
@@ -227,6 +292,8 @@ def main(argv=None):
             next_ticket()
         case ["branch", kind, *args]:
             branch(kind, args)
+        case ["merge", name, *title] if len(title) <= 1:
+            merge(name, (title or [None])[0])
         case ["check"]:
             check(STEPS)
         case ["check", "caps"]:

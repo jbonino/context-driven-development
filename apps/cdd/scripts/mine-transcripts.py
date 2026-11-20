@@ -32,13 +32,15 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../forms"))
 import cdd  # noqa: E402
 
 ROOT = cdd.ROOT
 RAW = os.path.join(ROOT, cdd.FOLDERS["raw"])
 PLANNED = [cdd.DOCS[d] for d in ("foundations", "design_document", "architecture", "product_roadmap")]
 RETRO = cdd.folder("retro")
+
+before_the_move = cdd.before_the_move
 
 # Cache reads bill at 0.1x input, cache writes at 1.25x, output at 5x.
 WEIGHTS = {"input_tokens": 1.0, "cache_creation_input_tokens": 1.25,
@@ -130,8 +132,9 @@ def result_tokens(block):
 
 SLOW_SECONDS = 60
 BIG_CONTEXT = 150_000
-DOCS = re.compile("/(" + "|".join(map(re.escape, PLANNED)) + "|(?:"
-                  + "|".join(re.escape(cdd.folder(d)) for d in ("release-playbook", "deferred")) + r")[^/]+\.md)$")
+DOCS = re.compile("/(" + "|".join(re.escape(p) for p in PLANNED + [before_the_move(p) for p in PLANNED]) + "|(?:"
+                  + "|".join(re.escape(f) for d in ("release-playbook", "deferred")
+                             for f in (cdd.folder(d), before_the_move(cdd.folder(d)))) + r")[^/]+\.md)$")
 ACTS = [("server-", r"\bkill\b|pkill"),
         ("shot", r"shoo?ts?\.(js|sh)|screenshot"), ("test", r"pytest|vitest|pnpm test|turbo test"),
         ("deploy", r"deploy"),
@@ -360,10 +363,9 @@ def estimate(text):
 
 
 def ticket_file(ticket):
-    for folder in ("done", "parked", "in-progress", "backlog"):
-        for path in glob.glob(os.path.join(ROOT, "docs", folder, f"{ticket}*.md")):
-            if re.match(rf"{re.escape(ticket)}(\.md|-)", os.path.basename(path)):
-                return path
+    for path in glob.glob(os.path.join(ROOT, cdd.folder("ticket"), f"{ticket}*.md")):
+        if re.match(rf"{re.escape(ticket)}(\.md|-)", os.path.basename(path)):
+            return path
     return None
 
 
@@ -450,7 +452,7 @@ def phase_reports(stats):
     for s in stats.values():
         for path, n in s["reads"].items():
             if path not in s["edits"]:
-                unused[re.sub(r".*/(?:worktrees/[^/]+/)?(?=docs/|\.claude/)", "", path)] += n
+                unused[re.sub(r".*/(?:worktrees/[^/]+/)?(?=apps/|forms/|docs/|\.claude/)", "", path)] += n
     print("\n## Read and never edited, whole phase")
     for path, n in sorted(unused.items(), key=lambda kv: -kv[1])[:15]:
         print(f"- {path}: {n}")
@@ -624,7 +626,7 @@ def trigger(subject):
 
 def redesigns(phase):
     """Sections of the design and architecture docs changed after the phase's design was signed off."""
-    docs = PLANNED[:3]
+    docs = PLANNED[:3] + [before_the_move(p) for p in PLANNED[:3]]
     since = git("log", "--diff-filter=A", "--format=%aI", "--",
                 cdd.DOCS["retro-entry"].format(n=phase, name="phase-tickets")).split()
     log = git("log", "--reverse", "--no-merges", "--format=%H\t%s",
@@ -636,10 +638,10 @@ def redesigns(phase):
         if re.search(r"editing-prose|prose|wording|reword", subject, re.I):
             continue  # a prose pass rewords; it changes no decision
         ticket = (re.match(rf"({phase}-\d{{3}}[a-z]?)", subject) or [None, None])[1]
-        before = {f: git("show", f"{sha}^:{f}") for f in docs}
+        before = {f: git("show", f"{sha}^:{f}") for f in docs}  # a path not there yet shows nothing
         changed = defaultdict(lambda: [[], []])  # one count per section a commit changes
         for file, start, removed, added in hunks(git("show", "-U0", "--format=", sha, "--", *docs)):
-            section = (file.removeprefix("docs/"),
+            section = (before_the_move(file).removeprefix("docs/"),
                        heading_at(before[file], start))
             changed[section][0] += removed
             changed[section][1] += added
@@ -684,10 +686,10 @@ def owner_notes(phase):
 
 
 def splits(phase):
-    # A signed-off ticket moves to docs/done/ or leaves the backlog.
-    deleted = git("log", "--diff-filter=D", "--name-only", "--format=", "--", cdd.DOCS["ticket"].format(name=f"{phase}-*"))
-    names = set([os.path.basename(p) for p in glob.glob(os.path.join(ROOT, "docs/done", f"{phase}-*.md"))]
-             + [os.path.basename(p) for p in deleted.split()])
+    # A signed-off ticket leaves the backlog.
+    deleted = git("log", "--diff-filter=D", "--name-only", "--format=", "--", cdd.DOCS["ticket"].format(name=f"{phase}-*"),
+                  before_the_move(cdd.DOCS["ticket"].format(name=f"{phase}-*")))
+    names = {os.path.basename(p) for p in deleted.split()}
     split = defaultdict(list)
     for name in names:
         found = re.match(rf"({phase}-\d{{3}})([a-z])", name)

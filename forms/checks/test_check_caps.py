@@ -1,4 +1,4 @@
-"""Tests for check-caps.py. Run: uv run --with pytest pytest scripts/"""
+"""Tests for check-caps.py. Run: uv run --with pytest pytest forms/checks/"""
 import importlib.util
 import os
 
@@ -141,7 +141,7 @@ def test_rule_a_ticket_takes_two_new_scenarios_at_most():
 
 
 def test_rule_a_ticket_is_at_most_one_feature_on_one_system_and_5_points():
-    tickets = {"docs/backlog/001-001-a.md": "**Feature.** x · **Estimate.** 8 — big",
-               "docs/backlog/001-002-b.md": "**Feature.** x · **Estimate.** 5 — fits"}
+    tickets = {"apps/cdd/docs/backlog/001-001-a.md": "**Feature.** x · **Estimate.** 8 — big",
+               "apps/cdd/docs/backlog/001-002-b.md": "**Feature.** x · **Estimate.** 5 — fits"}
     assert cc.point_warnings(tickets, cc.point_cap(DESIGN)) == [
-        "docs/backlog/001-001-a.md is 8 points, past its cap of 5. The owner decides whether to redesign its feature"]
+        "apps/cdd/docs/backlog/001-001-a.md is 8 points, past its cap of 5. The owner decides whether to redesign its feature"]

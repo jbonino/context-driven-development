@@ -1,7 +1,7 @@
 # Phase {N} — {ticket or activity} — {what it covered}
 
 The judgments that need fresh context. Everything else is in the raw
-sessions under `docs/retro/raw/`, mined at phase close.
+sessions under `apps/{app}/docs/retro/raw/`, mined at phase close.
 
 **Deviations from the plan and design**
 - [Each place the work differs from the ticket or its wireframe, and why.

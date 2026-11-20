@@ -17,4 +17,5 @@ that only works in Claude Code.
 
 ## Build notes
 
-- Waits on 001-002. Use its sections in the architecture.
+- Waits on 001-002. Use its [findings](001-002-pi-spike.md#findings) and the Skills section's harness decision.
+- Pi reads skills from `.agents/skills/`, not `.claude/skills/`.

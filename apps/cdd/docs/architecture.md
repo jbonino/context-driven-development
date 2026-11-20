@@ -29,7 +29,7 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 
 | Unit | Tech | Carries |
 |---|---|---|
-| Skills | Claude Code skills in Markdown | Workflow skills and the helpers they share |
+| Skills | Agent Skills in Markdown, run in Claude Code and in Pi | Workflow skills and the helpers they share |
 | Scripts | Python under `uv`, run as one `cdd` command, tested with pytest | The checks and the `cdd` commands |
 | Git | Branches and tags | A claimed ticket and a plan's sign-off |
 | Docs | Markdown, Gherkin and Mermaid | The design, the architecture, feedback, tickets, retros |
@@ -98,6 +98,7 @@ workflow to run next.
 - **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
 - **A helper** serves several workflows and carries no workflow's name.
+- **A skill's harness** is Claude Code first. In Pi, a Claude Code tool with no built-in runs on its fallback in [001-002's findings](backlog/001-002-pi-spike.md#findings).[^why-claude-code-first]
 
 ### Component: Feedback
 
@@ -245,6 +246,8 @@ Why each decision that's hard to undo holds, and the options it beat.
 [^why-two-systems]: A system says what its components run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave the checks between two.
 
 [^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 9 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
+
+[^why-claude-code-first]: Pi has built-ins for 96% of the tool calls in green-wagon's sessions. The rest are the workflow skills' reviewer agents, worktrees, questions and phone pushes, which Pi has only as example extensions or not at all. **Other considerations:** Moving to Pi, which rebuilds those and drops the worktree guard. Claude Code alone, which leaves out users who can't run it.
 
 [^why-a-separate-reviewer]: An agent reads its own work with the reasoning that wrote it. It misses what that reasoning missed. **Other considerations:** The building agent reviewing itself, which is cheaper and sees less.
 

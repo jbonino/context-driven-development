@@ -8,7 +8,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - Each Skills feature heading became a component named for what it builds: Feedback, Tickets, Review, Playbook, Retro, Red tests and Prose.
 - The old **A system** decision folded into **A design feature**, under Homes.
 - **A workflow with steps to carry** is now one whose step links a feature. The customer workflows link none, so they need no skill.
-- A component that builds no design feature opens with its decisions. Checks and both command components do.
+- A component that builds no design feature opens with its decisions. Homes, Links, Caps and both command components do.
 - Architecting a phase, in the design and its skill, now places a feature on a component.
 - Merges: the four rule tests and nine scenario tests folded into six `decision_` tests. The baseline drops eight lines.
 
@@ -33,6 +33,26 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 **Past its caps**
 - The Skills system holds 6 decisions, past 4. The owner kept it in 001-008.
+
+**Sign-off review**
+
+| Severity | Finding | Outcome | Planning miss |
+|---|---|---|---|
+| Important | The sentence counter crashed on an indented line after a blank one | Fixed, with a case | — |
+| Important | Round 1 fit the cap by joining clauses with ", and" | Fixed. Cut or moved a fact instead | — |
+| Important | "Naming one below" sat under A link, not A doc's links | Fixed. A doc's links says a link in code names nothing | — |
+| Important | The rule's-scenarios test proved the Foundations fact, not the row count | Fixed. It counts an outline's rows | — |
+| Minor | A nested bullet merged into its parent's count | Fixed | — |
+| Minor | `e.g.` and `."` miscount sentences | Left. No decision holds either | — |
+| Minor | The fixture had no wrapped line | Fixed | — |
+| Minor | A heading case stated no fact of its decision | Fixed. A design feature names components under each system | — |
+| Minor | A test's home repeated A test's name | Fixed. It is Each source | — |
+| Minor | The table narrowed the playbook to the architecture's systems | Fixed | — |
+| Minor | The baseline line named rules, and A baseline said scenarios | Fixed. A baseline names a scenario or rule | — |
+| Minor | Foundations' Decision row joined with a comma | Fixed | — |
+| Minor | The ticket and retro still named Checks | Fixed | — |
+
+- Verdict: With fixes.
 
 **Changed after sign-off**
 - Round 1. A decision holds 2 sentences at most, and the caps check warns past that. Foundations' Decision row says so. Planning miss: `foundations.md`.

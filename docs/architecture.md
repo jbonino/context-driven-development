@@ -145,32 +145,32 @@ Editing prose
 ## System: Scripts
 
 - **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
-- **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario already covers sits in it with that scenario's name.
+- **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario or rule already covers sits in it with that one's name.
 - **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
 
 ### Component: Homes
 
-- **A test's home** is the source its name gives. Each journey, workflow, scenario, rule and decision has a test or a baseline line.[^why-a-test-s-name-says-its-kind-and-source]
+- **Each source** has a test or a baseline line, whether a journey, workflow, scenario, rule or decision.[^why-a-test-s-name-says-its-kind-and-source]
 - **A rule's scenarios** count each Examples row of an outline as one.
 - **A deferred thing** is described in its own file alone, found by its file's title.
-- **A design feature** sits on one component's opening line, which names only design features. A component sits under a system, and a top heading is Shared, a system or Why.
+- **A design feature** sits on one component's opening line, which names design features alone. A top heading is Shared, a system or Why, with components under each system.
 
 ### Component: Links
 
-- **A doc's links** name only the foundations and the docs above it, per the table below.
-- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path, and doc paths and tag formats pass.
+- **A doc's links** name only the foundations and the docs above it, per the table below. A link in code names nothing.
+- **A link** resolves to a file and its anchor to a heading's GitHub slug.
 
 | Doc | May link |
 |---|---|
 | The design, the roadmap and the code | Nothing |
 | The architecture and a deferred entry | The design |
 | The backlog README | Its own tickets |
-| The release playbook | The tickets and the architecture's systems |
+| The release playbook | The tickets and the architecture |
 
 ### Component: Caps
 
 - **A form past its cap** warns, with its cap read from the table below. An outline under three Examples rows warns too.[^why-a-cap-warns]
-- **A ticket's caps** come from the rules of Splitting the work and Signing off a change. Its new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets, and a rename counts as new.
+- **A ticket's caps** come from the rules of Splitting the work and Signing off a change. Its new scenarios are the titles its branch adds since its plan's tag, renames included, less those main gains from other tickets.
 
 | form | cap | upstream |
 |---|---|---|
@@ -183,15 +183,15 @@ Editing prose
 
 ### Component: Doc commands
 
-- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1, and a warning exits 0.
+- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1 and a warning 0.
 - **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on a doc that exists or a doc with no template.
 - **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. A heading in a fence opens none.
 
 ### Component: Branch commands
 
 - **`cdd next-ticket`** names the first ticket in the backlog README whose waits are merged and that has no branch on origin. With none open, it says what each waits on.
-- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race, and a branch already here is reused.
-- **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything, and a rerun finishes what's left.
+- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race.
+- **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything for a rerun to finish.
 
 ## Why
 

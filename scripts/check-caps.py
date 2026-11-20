@@ -111,9 +111,9 @@ def decision_sentences(lines):
     bullet that opens in bold, with its wrapped lines."""
     found = []
     for line in lines:
-        if line.startswith("- **"):
-            found.append([line])
-        elif found and line.startswith("  ") and line.strip():
+        if line.lstrip().startswith("- **"):
+            found.append([line.lstrip()])
+        elif found and found[-1] is not None and line.startswith("  ") and line.strip():
             found[-1].append(line.strip())
         elif found and found[-1] is not None:
             found.append(None)

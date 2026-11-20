@@ -4,7 +4,7 @@
 
 Under each system, the architecture holds components, not features. A
 component's opening line names the design features it builds. Keeping
-each fact in its place leaves the design and becomes the Checks component.
+each fact in its place leaves the design and becomes the Homes, Links and Caps components.
 
 ## Acceptance criteria
 

@@ -97,6 +97,8 @@ def test_decision_a_form_past_its_cap():
     assert all(w in warned for w in WARNINGS.values())
     assert len(warned) == 7
     assert not any("Short" in w or "Contents" in w for w in warned)
+    lines = ["- **A** is x.", "  More here.", "", "  Loose text.", "- **B** is y.", "  - **C** is z. And more. Again."]
+    assert cc.decision_sentences(lines) == [("A", 2), ("B", 1), ("C", 3)]
     design = ("```gherkin\n  Scenario Outline: Two\n    Given <a>\n\n    Examples:\n      | a |\n      | 1 |\n"
               "      | 2 |\n\n  Scenario Outline: Three\n    Given <a>\n\n    Examples:\n      | a |\n"
               "      | 1 |\n      | 2 |\n      | 3 |\n```\n")

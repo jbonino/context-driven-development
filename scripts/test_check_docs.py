@@ -23,14 +23,17 @@ TESTED = {  # a source, and the failure it gives with no test
 
 
 @pytest.mark.parametrize("source", TESTED)
-def test_decision_a_test_s_home(source):
+def test_decision_each_source(source):
     check, failure = TESTED[source]
     assert check() == [failure]
 
 
 def test_decision_a_rule_s_scenarios():
-    assert cd.rule_scenarios("design.md", "```gherkin\nFeature: Notes\n  Rule: One alone\n\n    Scenario: Only\n```\n") == [
-        "design.md: Rule: One alone holds over 1 scenario; a rule needs two"]
+    """Each Examples row of an outline counts as one scenario."""
+    outline = "```gherkin\nFeature: Notes\n  Rule: Rows\n\n    Scenario Outline: Many\n      Given <a>\n\n      Examples:\n        | a |\n"
+    assert cd.rule_scenarios("design.md", outline + "        | 1 |\n        | 2 |\n```\n") == []
+    assert cd.rule_scenarios("design.md", outline + "        | 1 |\n```\n") == [
+        "design.md: Rule: Rows holds over 1 scenario; a rule needs two"]
 
 
 def test_decision_a_deferred_thing():

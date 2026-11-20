@@ -17,6 +17,6 @@ A skill that names a path fails its decision's test.
 
 ## Build notes
 
-- Waits on 001-009, or the skill test fails on today's skills.
+- `test_decision_a_skill` sits in the baseline until 001-009 lands, since today's skills name paths.
 - A path is a link or a backticked path. Plain words like "the roadmap" pass.
 - A decision's subject is its bold opening words.

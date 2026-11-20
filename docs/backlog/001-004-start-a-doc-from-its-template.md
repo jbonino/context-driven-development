@@ -1,23 +1,25 @@
 # 001-004 — Start a doc from its template — **Ad hoc**
 
-**Feature.** [Starting a doc from its template](../design_document.md#feature-starting-a-doc-from-its-template) · **System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
+**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
 
-A skill runs `uv run cdd new ticket 001-010-foo` and gets the ticket in
-its place with its path printed. `uv run cdd check` runs the checks, as
+A user runs `uv run cdd new ticket 001-012-foo` and gets the ticket in its
+place with its path printed. `uv run cdd check` runs the checks, as
 `scripts/check.py` does today.
 
 ## Acceptance criteria
 
-- [Starting a doc from its template](../design_document.md#feature-starting-a-doc-from-its-template)
-- `cdd check` prints and exits as `scripts/check.py` does. `cdd check caps` does the same for `check-caps.py`.
+- `test_decision_cdd_new` holds **`cdd new`**: a ticket, a retro entry, a playbook and a foundations land in place. A doc that exists, or one with no template, fails.
+- `test_decision_each_script` holds **Each script**: `pyproject.toml` declares `cdd`.
+- `test_decision_cdd_check` holds **`cdd check`**: it prints and exits as `check.py` does, and `cdd check caps` as `check-caps.py` does.
 - `cdd mine {n}` runs `mine-transcripts.py` for phase n.
 
 ## Workflow steps
 
-- [Writing the tickets](../design_document.md#workflow-writing-the-tickets) step 5: the playbook starts from its template
+- None
 
 ## Build notes
 
-- `pyproject.toml` declares a `cdd` script. `scripts/cdd.py` holds the Where table's paths in one dict and dispatches the verbs.
-- `check` calls what `scripts/check.py` runs. Keep `check.py` until 001-009 moves the skills off it.
+- Waits on 001-008 for the decision kind.
+- `scripts/cdd.py` holds the Where table's paths in one dict and dispatches the verbs.
+- Keep `check.py` until 001-009 moves the skills off it.
 - Add a foundations template. It holds What, Why, Who, Where and How, each with a comment.

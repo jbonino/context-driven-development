@@ -25,10 +25,6 @@ Read [foundations.md](foundations.md) first.
     - [Feature: Running the playbook](#feature-running-the-playbook)
     - [Feature: Deciding a planning miss](#feature-deciding-a-planning-miss)
     - [Feature: Editing prose](#feature-editing-prose)
-    - [Feature: Starting a doc from its template](#feature-starting-a-doc-from-its-template)
-    - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
-    - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
-    - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
 
 
 ## Checkpoints
@@ -130,7 +126,7 @@ Responsible: Designer · Accountable: Product Owner
 
 Start: **Phase scoped**
 
-1. Brainstorm with the Product Owner until a design meets the phase's goal ([Reading a doc by name](#feature-reading-a-doc-by-name))
+1. Brainstorm with the Product Owner until a design meets the phase's goal
 1. Edit the foundations the goal changes with the Product Owner
 1. Edit the journeys the goal changes
 1. Edit the workflows the goal changes and the checkpoints they start and end at
@@ -147,7 +143,7 @@ Responsible: Developer · Accountable: Product Owner
 
 Start: **Design signed off**
 
-1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal ([Reading a doc by name](#feature-reading-a-doc-by-name))
+1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal
 1. Edit the architecture's base the design changes
 1. Place each new feature under the system it runs on. Name a new system where none fits
 1. Write the decisions each changed workflow and feature needs, under a heading of its own name ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
@@ -166,7 +162,7 @@ Start: **Architecture signed off**
 1. Check each scenario for how a bug could break it ([Signing off a change](#feature-signing-off-a-change))
 1. Check that a ticket carries each model attribute the architecture adds ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
 1. Order the tickets in the backlog README with their parallel groups
-1. Write the release playbook in run order ([Starting a doc from its template](#feature-starting-a-doc-from-its-template))
+1. Write the release playbook in run order
 1. Write the ticket pass's retro entry and sign off the plan with the Product Owner. Merge it to main ([Editing prose](#feature-editing-prose))
 
 End: **Plan signed off**
@@ -177,7 +173,7 @@ Responsible: Developer
 
 Start: **Plan signed off**
 
-1. Claim the next open ticket in the backlog README on its own branch, and read the phase's goal in the roadmap and the design and architecture sections it names ([Claiming the next ticket](#feature-claiming-the-next-ticket))
+1. Claim the next open ticket in the backlog README on its own branch, and read the phase's goal in the roadmap and the design and architecture sections it names
 1. Write each of the ticket's tests until it fails on its assertion ([Going red first](#feature-going-red-first))
 1. Add each case the tests find to the design as a row or a new scenario ([Signing off a change](#feature-signing-off-a-change))
 1. Write the code until each test passes
@@ -197,7 +193,7 @@ Start: **Ready for review**
 1. Walk the change ([Signing off a change](#feature-signing-off-a-change))
 1. Restate each piece of feedback as a new scenario or row in the design, and fix it in a review pass ([Signing off a change](#feature-signing-off-a-change))
 1. Sign off the change ([Signing off a change](#feature-signing-off-a-change))
-1. Merge to main and delete the ticket ([Merging a signed-off branch](#feature-merging-a-signed-off-branch))
+1. Merge to main and delete the ticket
 
 End: **Signed off**
 
@@ -597,141 +593,4 @@ Feature: Editing prose
     Given a change whose writer has edited its prose
     When another Developer reviews it
     Then each line that breaks a sentence rule is a finding
-```
-
-### Feature: Starting a doc from its template
-
-```gherkin
-Feature: Starting a doc from its template
-  A user names the doc and its name. The command knows where its template and its place are.
-
-  Scenario Outline: A new doc lands in its place from its template
-    Given the <doc> has a template
-    When a user starts <name>
-    Then the doc is the template, at <place>
-    And the command prints its path
-
-    Examples:
-      | doc              | name                 | place                                  |
-      | ticket           | 001-010-foo          | the backlog, as 001-010-foo.md         |
-      | retro entry      | phase 1, phase-design | phase 1's retro, as phase-design.md   |
-      | release playbook | phase 1              | the release folder, as phase-1.md      |
-      | foundations      | garden               | garden's foundations.md                |
-
-  Scenario: A doc that already exists stays as it is
-    Given that doc already exists
-    When a user starts it again
-    Then the command fails and the doc is unchanged
-
-  Scenario: A doc with no template fails
-    Given a doc name that has no template
-    When a user starts one
-    Then the command fails and lists the docs that have one
-```
-
-### Feature: Reading a doc by name
-
-```gherkin
-Feature: Reading a doc by name
-  A user reads part of a doc by what the doc is and the heading it wants.
-
-  Scenario Outline: A doc prints as much as a user names
-    Given <names>
-    When a user reads it
-    Then the command prints <prints>
-
-    Examples:
-      | names                                   | prints                          |
-      | a doc and one of its headings           | that heading's section and no more |
-      | a doc and no heading                    | the whole doc                   |
-      | a doc kept as a file each, and a phase  | each of that phase's files whole |
-
-  Scenario: A heading inside a gherkin fence is no section
-    Given a heading that sits only inside a gherkin fence
-    When a user reads it
-    Then the command fails and lists the doc's headings
-
-  Scenario: A heading the doc lacks fails
-    Given a heading the doc doesn't have
-    When a user reads it
-    Then the command fails and lists the doc's headings
-
-  Scenario: A doc name with no place fails
-    Given a doc name the Where table doesn't hold
-    When a user reads it
-    Then the command fails and lists the names it holds
-```
-
-### Feature: Claiming the next ticket
-
-```gherkin
-Feature: Claiming the next ticket
-  The next ticket is the first open one in the backlog README.
-
-  Scenario: The first open ticket whose waits are done is next
-    Given a group whose tickets wait on nothing still in the backlog
-    When the Developer asks for the next ticket
-    Then the command names the first ticket in it with no branch on origin
-
-  Scenario: A ticket claimed meanwhile can't be claimed twice
-    Given a ticket whose branch reached origin after it was named
-    When the Developer claims it
-    Then the claim fails and names the next open ticket
-
-  Scenario Outline: Each kind of branch is claimed by its name
-    Given a <kind> with no branch on origin
-    When the Developer claims it
-    Then origin holds <branch> and its worktree is open
-
-    Examples:
-      | kind          | branch                       |
-      | ticket        | feature/001-004-foo          |
-      | phase's plan  | design/phase-2               |
-      | ad hoc plan   | adhoc/001-004-foo            |
-      | chore         | chore/foo                    |
-
-  Scenario: A branch already in this checkout is reused
-    Given the branch exists here and on origin, claimed by this Developer
-    When the Developer claims it again
-    Then the command opens its worktree and pushes nothing
-
-  Scenario: No open ticket says so
-    Given every ticket in the backlog is claimed or waits
-    When the Developer asks for the next ticket
-    Then the command says none is open and what each waits on
-```
-
-### Feature: Merging a signed-off branch
-
-```gherkin
-Feature: Merging a signed-off branch
-  The merge carries the work to main and clears what the branch left.
-
-  Scenario: A clean merge clears the branch
-    Given a signed-off branch that merges clean
-    When the Developer merges it
-    Then main holds it with the branch's name and title in the message
-    And its sessions are saved and its ticket, worktree and branches are gone
-
-  Scenario: A plan or chore merges with no ticket to delete
-    Given a signed-off plan or chore branch
-    When the Developer merges it
-    Then main holds it and nothing in the backlog is deleted
-
-  Scenario: A rejected push keeps the branch
-    Given main on origin moved after the merge began
-    When the push is rejected
-    Then the worktree and branches stay
-    And the command says to merge again
-
-  Scenario: A rerun finishes a partial merge
-    Given main on origin holds the merge but the branches remain
-    When the Developer merges again
-    Then the command clears what remains and merges nothing twice
-
-  Scenario: A conflict stops the merge
-    Given a signed-off branch that conflicts with main
-    When the Developer merges it
-    Then nothing merges and the worktree and branches stay
-    And the command names the conflicting files
 ```

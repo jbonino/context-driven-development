@@ -16,10 +16,6 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Feature: Going red first](#feature-going-red-first)
 - [Scripts](#scripts)
   - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
-  - [Feature: Starting a doc from its template](#feature-starting-a-doc-from-its-template)
-  - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
-  - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
-  - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
 - [Why](#why)
 
 ## Shared
@@ -127,12 +123,17 @@ Placing feedback · Splitting the work · Signing off a change · Running the pl
 
 ## Scripts
 
-Keeping each fact in its place · Starting a doc from its template · Reading a doc by name · Claiming the next ticket · Merging a signed-off branch
+Keeping each fact in its place
 
 - **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
 - **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1. A warning exits 0.
 - **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario already covers sits in it with that scenario's name.
 - **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
+- **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on a doc that exists or a doc with no template.
+- **`cdd read`** prints a doc's section, from its heading to the next of its level or higher. With no heading it prints the doc, and for a doc kept as a file each, each of a phase's files. A heading in a fence opens none.
+- **`cdd next-ticket`** names the first ticket in the backlog README whose waits are merged and that has no branch on origin. With none open, it says what each waits on.
+- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race. A branch already here is reused.
+- **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything. A rerun finishes what's left.
 
 ### Feature: Keeping each fact in its place
 
@@ -140,23 +141,6 @@ Keeping each fact in its place · Starting a doc from its template · Reading a 
 - **A system** lists each of its features on its opening line. A feature takes a heading only for its decisions.
 - **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
 - **A home** is found by name. A test matches its source by its prefix and title. A deferred thing matches its file's title. An architecture heading matches a design heading.[^why-a-test-s-name-says-its-kind-and-source]
-
-### Feature: Starting a doc from its template
-
-- **A doc's template** is the file in Templates with the doc's name.
-
-### Feature: Reading a doc by name
-
-- **A section** runs from its heading to the next heading of its level or higher. A heading in a fence opens none.
-- **A doc kept as a file each** reads as each of its files in name order.
-
-### Feature: Claiming the next ticket
-
-- **A claim** is the push of the ticket's branch to origin, named as branching from main names it. The push that fails lost the race.
-
-### Feature: Merging a signed-off branch
-
-- **A merge** saves the sessions first. It cleans up only after main is pushed.
 
 ## Why
 

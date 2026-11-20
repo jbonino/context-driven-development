@@ -98,6 +98,7 @@ workflow to run next.
 - **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
 - **A helper** serves several workflows and carries no workflow's name.
+- **A skill's harness** is Claude Code.[^why-claude-code]
 
 ### Component: Feedback
 
@@ -246,10 +247,12 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-a-cap-warns]: A cap is soft. The owner may keep a form past it, as the phase journey keeps 9 workflows. A failing check would stand for good. The checks count each form alike. One count serves every skill. **Other considerations:** A check that fails, which the phase journey would fail forever. The owner's call is a choice. Each skill counting by reading, which repeats the count in every skill.
 
+[^why-claude-code]: Claude Code has every tool the workflow skills use. Pi's docs list built-ins for 96% of green-wagon's tool calls. The rest are what the workflow skills rely on. That means reviewer agents, questions, worktrees and phone pushes. **Other considerations:** Pi alongside Claude Code, which names a fallback for each gap in every skill. Moving to Pi, which rebuilds those and drops the worktree guard.
+
 [^why-a-separate-reviewer]: An agent reads its own work with the reasoning that wrote it. It misses what that reasoning missed. **Other considerations:** The building agent reviewing itself, which is cheaper and sees less.
 
 [^why-red-runs-in-the-skill]: No check can see a test's first run. **Other considerations:** A check over the test files' history, which can't tell a failing assertion from a compile error.
 
 [^why-feedback-lives-in-one-file]: Scoping empties it. Any entry left is feedback. A meeting pastes in as written. **Other considerations:** A file per meeting, which each shrinks apart. A file per phase, where feedback written in one phase belongs to the next.
 
-[^why-one-command]: A skill names a verb, and the folders can move under it. **Other considerations:** A script path in each skill, which a move breaks. A Makefile, which needs make in Pi too.
+[^why-one-command]: A skill names a verb, and the folders can move under it. **Other considerations:** A script path in each skill, which a move breaks. A Makefile, which needs make installed.

@@ -2,7 +2,6 @@
 
 | Group | Ticket | Waits on |
 |---|---|---|
-| 4 | [001-006 — Claim the next ticket — **Ad hoc**](001-006-claim-the-next-ticket.md) | 001-004 |
 | 4 | [001-007 — Merge a signed-off branch — **Ad hoc**](001-007-merge-a-signed-off-branch.md) | 001-004 |
 | 5 | [001-009 — Skills run cdd — **Ad hoc**](001-009-skills-run-cdd.md) | 001-005, 001-006, 001-007 |
 | 6 | [001-010 — Restructure the repo — **Ad hoc**](001-010-restructure-the-repo.md) | 001-009 |

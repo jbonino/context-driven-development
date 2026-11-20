@@ -2,9 +2,6 @@ A skill's paths — waits on 001-009, since today's skills name paths
 A skill — a skill runs it. Its test waits for evals
 A product's things — a skill runs it. Its test waits for evals
 A baseline — a file per kind. Its test waits, since no check reads the file names
-Each script — waits on 001-004 for cdd
-cdd check — waits on 001-004 for cdd
-cdd new — waits on 001-004
 cdd read — waits on 001-005
 cdd next-ticket — waits on 001-006
 cdd branch — waits on 001-007

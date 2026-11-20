@@ -144,7 +144,7 @@ Editing prose
 
 ## System: Scripts
 
-- **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
+- **Each script** runs as `uv run cdd <verb>`. `cdd` holds each doc's path, from Where.[^why-one-command]
 - **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario or rule already covers sits in it with that one's name.
 - **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
 
@@ -185,8 +185,19 @@ Editing prose
 
 ### Component: Doc commands
 
-- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1 and a warning 0.
-- **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on a doc that exists or a doc with no template.
+- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1.
+- **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on each case below.
+
+| Case | Fails because |
+|---|---|
+| A doc that exists | It would overwrite the doc |
+| A doc with no template | There's nothing to copy |
+| A doc cdd doesn't know | It has no place |
+| A doc missing its name | Its place has a blank |
+| A doc missing its phase | Its place has a blank |
+| A name that leaves its folder | Its place is outside the doc's folder |
+| A phase that isn't a number | A phase is a number |
+
 - **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. A heading in a fence opens none.
 
 ### Component: Branch commands

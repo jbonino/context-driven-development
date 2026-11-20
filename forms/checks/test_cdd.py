@@ -328,6 +328,8 @@ CDD_MERGE = {  # the branch's kind and args, the merge's args, its message, and 
         "chore", ["tidy"], ["chore/tidy", "Tidy up"], "tidy — Tidy up", "origin only"),
     "A conflict leaves everything": (
         "chore", ["tidy"], ["chore/tidy", "Tidy up"], None, "conflict"),
+    "A ticket the branch edits is still deleted": (
+        "ticket", ["001-003"], ["feature/001-003-three"], "001-003-three — Three", "edited"),
     "A rejected push leaves everything, and a rerun finishes it": (
         "ticket", ["001-003"], ["feature/001-003-three"], "001-003-three — Three", "rejected"),
 }
@@ -353,6 +355,11 @@ def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
         git(tree, "push", "-q", "origin", f"HEAD:{branch}")
         git(repo, "worktree", "remove", "--force", tree)
         git(repo, "branch", "-D", branch)
+        wrong = None
+    if wrong == "edited":
+        with open(os.path.join(tree, "apps/cdd/docs/backlog/001-003-three.md"), "w") as out:
+            out.write("# 001-003 — Three\n\nFindings.\n")
+        commit(tree, "findings")
         wrong = None
     hook = repo.parent / "origin.git/hooks/pre-receive"
     if wrong == "rejected":

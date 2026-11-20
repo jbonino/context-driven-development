@@ -285,7 +285,7 @@ def merge(name, title):
             main_git("merge", "--abort")
             sys.exit(f"{name} conflicts with main. Merge main into it, then rerun")
         if ticket and os.path.exists(os.path.join(here, ticket)):
-            main_git("rm", "-q", ticket)
+            main_git("rm", "-qf", ticket)  # a ticket the branch edits is staged by the merge
             readme = os.path.join(here, DOCS["backlog-README"])
             with open(readme, encoding="utf-8") as source:
                 rows = [row for row in source if "](" + short + ".md)" not in row]

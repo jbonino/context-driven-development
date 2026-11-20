@@ -249,3 +249,86 @@ def test_decision_cdd_branch(repo, capsys, case):
     assert git(repo, "ls-remote", "--heads", "origin", branch).strip()
     assert git(tree, "rev-parse", "--abbrev-ref", "HEAD").strip() == branch
     assert tree == str(repo / ".claude/worktrees" / branch.split("/", 1)[1])
+
+
+def commit(cwd, message):
+    git(cwd, "add", "-A")
+    git(cwd, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message)
+
+
+def claimed(repo, kind, args, capsys):
+    """Claim a branch with cdd branch, and commit a change on it. Its worktree."""
+    cdd.main(["branch", kind, *args])
+    tree = capsys.readouterr().out.split()[-1]
+    with open(os.path.join(tree, "work.txt"), "w") as out:
+        out.write("the branch's work\n")
+    commit(tree, "work")
+    return tree
+
+
+CDD_MERGE = {  # the branch's kind and args, the merge's args, its message, and what goes wrong first
+    "A ticket's merge carries its name and title and deletes it": (
+        "ticket", ["001-003"], ["feature/001-003-three"], "001-003-three — Three", None),
+    "A plan deletes no ticket": (
+        "plan", ["2"], ["design/phase-2", "Phase 2 plan"], "phase-2 — Phase 2 plan", None),
+    "A chore deletes no ticket": (
+        "chore", ["tidy"], ["chore/tidy", "Tidy up"], "tidy — Tidy up", None),
+    "A branch held only on origin merges before it's deleted": (
+        "chore", ["tidy"], ["chore/tidy", "Tidy up"], "tidy — Tidy up", "origin only"),
+    "A conflict leaves everything": (
+        "chore", ["tidy"], ["chore/tidy", "Tidy up"], None, "conflict"),
+    "A rejected push leaves everything, and a rerun finishes it": (
+        "ticket", ["001-003"], ["feature/001-003-three"], "001-003-three — Three", "rejected"),
+}
+
+
+@pytest.mark.parametrize("case", CDD_MERGE)
+def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
+    kind, args, merge_args, message, wrong = CDD_MERGE[case]
+    monkeypatch.setattr(cdd, "SAVE", ["true"])
+    git(repo, "config", "user.name", "t")
+    git(repo, "config", "user.email", "t@t")
+    (repo / "docs/backlog/001-003-three.md").write_text("# 001-003 — Three\n")
+    commit(repo, "titles")
+    git(repo, "push", "-q", "origin", "main")
+    branch = merge_args[0]
+    tree = claimed(repo, kind, args, capsys)
+    tickets = sorted(os.listdir(repo / "docs/backlog"))
+    if wrong == "conflict":
+        (repo / "work.txt").write_text("main's work\n")
+        commit(repo, "clash")
+        git(repo, "push", "-q", "origin", "main")
+    if wrong == "origin only":
+        git(tree, "push", "-q", "origin", f"HEAD:{branch}")
+        git(repo, "worktree", "remove", "--force", tree)
+        git(repo, "branch", "-D", branch)
+        wrong = None
+    hook = repo.parent / "origin.git/hooks/pre-receive"
+    if wrong == "rejected":
+        hook.write_text("#!/bin/sh\nexit 1\n")
+        hook.chmod(0o755)
+    if wrong:
+        before = git(repo, "rev-parse", "origin/main").strip()
+        with pytest.raises(SystemExit) as failed:
+            cdd.main(["merge", *merge_args])
+        assert isinstance(failed.value.code, str)
+        assert git(repo, "ls-remote", "origin", "main").split()[0] == before
+        assert os.path.isdir(tree) and git(repo, "branch", "--list", branch).strip()
+        assert git(repo, "ls-remote", "--heads", "origin", branch).strip()
+        assert not os.path.exists(repo / ".git/MERGE_HEAD")
+        if wrong == "conflict":
+            return
+        hook.unlink()
+    cdd.main(["merge", *merge_args])
+    head = git(repo, "log", "-1", "--merges", "--format=%s", "origin/main").strip()
+    assert head == message
+    assert git(repo, "show", "origin/main:work.txt") == "the branch's work\n"
+    held = sorted(git(repo, "ls-tree", "--name-only", "origin/main", "docs/backlog/").split())
+    readme = git(repo, "show", "origin/main:docs/backlog/README.md")
+    if kind == "ticket":
+        assert "docs/backlog/001-003-three.md" not in held and "001-003-three" not in readme
+    else:
+        assert held == [f"docs/backlog/{t}" for t in tickets] and readme == BACKLOG
+    assert not os.path.exists(tree)
+    assert not git(repo, "branch", "--list", branch).strip()
+    assert not git(repo, "ls-remote", "--heads", "origin", branch).strip()

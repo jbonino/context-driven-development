@@ -15,8 +15,18 @@ sessions under `apps/cdd/docs/retro/raw/`, mined at phase close.
 
 | Severity | Finding | Outcome | Planning miss |
 |---|---|---|---|
+| Critical | Bash's 727 sessions exceed the 678 mined | Fixed. The miner counts 740 transcripts, 399 sessions and 341 subagents. 678 was a wrong file count | Tests |
+| Important | The rows sum to 2 short of the total | Fixed. `bash_placeholder` joins the rare row | Tests |
+| Important | No skill rows, which a criterion asks for | Fixed. A skills table with loads | the ticket |
+| Important | Pi claims read as tested fact | Fixed. They cite Pi 1.6.0's docs | — |
+| Important | A and C tie, yet only A is bolded | Fixed. Both are bolded and the owner picks | — |
+| Important | The footnote's 96% waits on the count fix | Fixed. It holds, and cites the docs | — |
+| Minor | The table's key sits among the findings | Fixed | — |
+| Minor | The decision holds two facts | Fixed. "Claude Code first" moves to its footnote | — |
+| Minor | `import gzip` sits mid-file | Fixed | — |
+| Minor | No test that a phase is needed without `--tools` | Left. The parser's own error covers it | — |
 
-- Verdict: pending.
+- Verdict: With fixes.
 
 **Changed after sign-off**
 - None.

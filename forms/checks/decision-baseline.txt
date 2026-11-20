@@ -19,4 +19,4 @@ A failed step's fix — a skill runs it. Its test waits for evals
 A miss's kind — a skill runs it. Its test waits for evals
 The red rule — a skill runs it. Its test waits for evals
 A ticket's caps — Rule: A ticket takes two new scenarios at most, and Rule: A ticket is at most one feature on one system and 5 points
-A skill's harness — a skill runs it. Its test waits for evals
+A skill in Pi — a skill runs it. Its test waits for evals

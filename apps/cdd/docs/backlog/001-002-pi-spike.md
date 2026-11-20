@@ -24,10 +24,12 @@ Claude Code tools the skills need Pi to replace.
 
 ## Findings
 
-Mined from 678 green-wagon sessions with `mine-transcripts.py --tools`, and
-checked against Pi 1.6.0's docs on 2026-11-20. Calls total 41,499.
+Mined from green-wagon's 740 transcripts with `mine-transcripts.py --tools`.
+They are 399 sessions and 341 subagents. Calls total 41,499. The In Pi
+column comes from Pi 1.6.0's docs, read on 2026-11-20, not a run. A grouped
+row's Transcripts is its busiest tool's.
 
-| Claude Code tool | Calls | Sessions | In Pi |
+| Claude Code tool | Calls | Transcripts | In Pi |
 |---|---|---|---|
 | Bash | 29,490 | 727 | Equivalent. `bash` |
 | Edit, Read, Write, Grep | 8,842 | 309 | Equivalent. `edit`, `read`, `write`, `grep` |
@@ -40,14 +42,27 @@ checked against Pi 1.6.0's docs on 2026-11-20. Calls total 41,499.
 | Monitor, TaskStop | 99 | 26 | None. `bash` with `nohup`, polled |
 | SendUserFile | 50 | 23 | None. The reply names the file's path |
 | WebFetch, WebSearch | 21 | 9 | None. `curl` or a third-party package |
-| Artifact, ReportFindings, ReadNotifications, ScheduleWakeup | 17 | 13 | None. Each is rare |
+| Artifact, ReportFindings, ReadNotifications, ScheduleWakeup, bash_placeholder | 19 | 13 | None. Each is rare |
 
 Pi has built-ins for 96% of the calls. The gaps sit in the workflow skills.
 `working-a-ticket` uses a reviewer agent, a worktree, a question and a push.
-Pi asks no permission before a tool call. Nothing keeps an agent in its
-worktree. A grouped row's Sessions is its busiest tool's.
+Pi's docs say it asks no permission before a tool call. Nothing keeps an
+agent in its worktree.
 
-The skills `run`, `built-in-browser` and `computer-use` have no Pi equivalent.
+| Skill | Loads | In Pi |
+|---|---|---|
+| requesting-code-review | 246 | Runs. Its reviewer needs the `subagent` extension |
+| working-a-ticket | 218 | Runs. Needs subagents, a worktree, a question and a push |
+| editing-prose | 191 | Runs |
+| signing-off-a-ticket | 179 | Runs. Needs a question |
+| brainstorming | 161 | Runs. Needs a question |
+| using-git-worktrees | 158 | Fallback. `cdd branch` makes the worktree |
+| merging-to-main | 108 | Runs |
+| creating-an-adhoc-ticket | 72 | Runs |
+| writing-a-retro-entry | 43 | Runs |
+| test-driven-development | 24 | Runs |
+| 10 others | 55 | Runs. `phase-workflow`, `writing-a-ticket` and the rest |
+| run, built-in-browser, computer-use, shopify-use-shopify-cli, shopify-admin | 14 | None |
 
 ### Verdict
 
@@ -55,8 +70,9 @@ Each ethic scores 1 to 5.
 
 | Option | People care | Repo care | Fair share | Total |
 |---|---|---|---|---|
-| **A. Stay, with Pi as a second harness** | 5. Users without Claude Code get CDD | 3. Each gap names its fallback | 4. Only the gaps get built | **12** |
+| A. Stay, with Pi as a second harness | 5. Users without Claude Code get CDD | 3. Each gap names its fallback | 4. Only the gaps get built | **12** |
 | B. Move to Pi | 2. The owner loses phone pushes and the worktree guard | 3. Five example extensions to keep | 1. Subagents, questions and worktrees get rebuilt | 6 |
-| C. Stay, with no Pi | 2. Users without Claude Code lose CDD | 5. Nothing new to tend | 5. Nothing to build | 12 |
+| C. Stay, with no Pi | 2. Users without Claude Code lose CDD | 5. Nothing new to tend | 5. Nothing to build | **12** |
 
-A ties C and keeps the phase goal. A live run in Pi waits for 001-003.
+A and C tie. A keeps the phase goal and C drops it, so the owner picks. A
+live run in Pi waits for 001-003.

@@ -2,7 +2,6 @@
 
 | Group | Ticket | Waits on |
 |---|---|---|
-| 4 | [001-005 — Read a doc by name — **Ad hoc**](001-005-read-a-doc-by-name.md) | 001-004 |
 | 4 | [001-006 — Claim the next ticket — **Ad hoc**](001-006-claim-the-next-ticket.md) | 001-004 |
 | 4 | [001-007 — Merge a signed-off branch — **Ad hoc**](001-007-merge-a-signed-off-branch.md) | 001-004 |
 | 5 | [001-009 — Skills run cdd — **Ad hoc**](001-009-skills-run-cdd.md) | 001-005, 001-006, 001-007 |

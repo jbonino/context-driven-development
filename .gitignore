@@ -7,3 +7,4 @@ __pycache__/
 # Article drafts and posting notes
 articles/foundations-article.md
 articles/posting-plan.md
+.venv/

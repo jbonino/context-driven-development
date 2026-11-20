@@ -8,10 +8,10 @@ place with its path printed. `uv run cdd check` runs the checks, as
 
 ## Acceptance criteria
 
-- `test_decision_cdd_new` holds **`cdd new`**: a ticket, a retro entry, a playbook and a foundations land in place. Each case in its table fails.
-- `test_decision_each_script` holds **Each script**: `pyproject.toml` declares `cdd`, and `cdd` holds each Where path.
-- `test_decision_cdd_check` holds **`cdd check`**: it prints and exits as `check.py` does, and `cdd check caps` as `check-caps.py` does.
-- `cdd mine {n}` runs `mine-transcripts.py` for phase n.
+- [`cdd new`](../architecture.md#component-doc-commands)
+- [`cdd check`](../architecture.md#component-doc-commands)
+- [Each script](../architecture.md#system-scripts)
+- [The session scripts](../architecture.md#system-scripts), for `cdd mine` alone
 
 ## Workflow steps
 

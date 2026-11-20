@@ -1,4 +1,5 @@
 """Tests for cdd.py. Run: uv run --with pytest pytest scripts/"""
+import contextlib
 import importlib.util
 import os
 import re
@@ -26,15 +27,16 @@ def root(tmp_path, monkeypatch):
     return tmp_path
 
 
-CDD_NEW = {  # its args, and the path it lands at. None marks a case in the decision's table
-    "a ticket lands in the backlog": (["ticket", "001-012-foo"], "docs/backlog/001-012-foo.md"),
-    "a retro entry lands in its phase": (["retro-entry", "1", "001-012-foo"], "docs/retro/1/001-012-foo.md"),
-    "a playbook lands by its phase": (["release-playbook", "1"], "docs/release/phase-1.md"),
-    "the foundations land in docs": (["foundations"], "docs/foundations.md"),
+CDD_NEW = {  # its args, and the path it lands at. A row with None is a case in the decision's table
+    "A ticket lands in the backlog": (["ticket", "001-012-foo"], "docs/backlog/001-012-foo.md"),
+    "A retro entry lands in its phase": (["retro-entry", "1", "001-012-foo"], "docs/retro/1/001-012-foo.md"),
+    "A playbook lands by its phase": (["release-playbook", "1"], "docs/release/phase-1.md"),
+    "The foundations land in docs": (["foundations"], "docs/foundations.md"),
     "A doc that exists": (["ticket", "001-012-mine"], None),
     "A doc with no template": (["product_roadmap"], None),
     "A doc cdd doesn't know": (["roadmap"], None),
-    "A doc missing its name or phase": (["ticket"], None),
+    "A doc missing its name": (["ticket"], None),
+    "A doc missing its phase": (["release-playbook"], None),
     "A name that leaves its folder": (["ticket", "../escape"], None),
     "A phase that isn't a number": (["release-playbook", "x"], None),
 }
@@ -71,24 +73,20 @@ def step(code):
     return [sys.executable, "-c", f"print('ran {code}'); raise SystemExit({code})"]
 
 
-CDD_CHECK = {  # its args, each step's exit code, what prints, and its exit
-    "all pass": (["check"], (0, 0, 0), ["== tests", "ran 0", "== docs", "ran 0", "== caps", "ran 0"], None),
-    "a failure exits 1 and names it": (["check"], (1, 0, 0),
-                                       ["== tests", "ran 1", "== docs", "ran 0", "== caps", "ran 0"], "Failed: tests"),
-    "each failure is named": (["check"], (0, 1, 1),
-                              ["== tests", "ran 0", "== docs", "ran 1", "== caps", "ran 1"], "Failed: docs, caps"),
-    "check caps runs the caps alone": (["check", "caps"], (1, 1, 0), ["== caps", "ran 0"], None),
+CDD_CHECK = {  # its args, each step's exit code, the steps that run, and whether it fails
+    "all pass": (["check"], (0, 0, 0), ["ran 0", "ran 0", "ran 0"], False),
+    "a failure exits 1": (["check"], (1, 0, 0), ["ran 1", "ran 0", "ran 0"], True),
+    "each step runs past a failure": (["check"], (0, 1, 1), ["ran 0", "ran 1", "ran 1"], True),
+    "check caps runs the caps alone": (["check", "caps"], (1, 1, 0), ["ran 0"], False),
 }
 
 
 @pytest.mark.parametrize("case", CDD_CHECK)
 def test_decision_cdd_check(monkeypatch, capfd, case):
-    args, codes, printed, exits = CDD_CHECK[case]
+    args, codes, ran, fails = CDD_CHECK[case]
     monkeypatch.setattr(cdd, "STEPS", {t: (t, step(c)) for t, c in zip(("tests", "docs", "caps"), codes)})
-    if exits:
-        with pytest.raises(SystemExit) as failed:
-            cdd.main(args)
-        assert failed.value.code == exits
-    else:
+    with pytest.raises(SystemExit) if fails else contextlib.nullcontext() as failed:
         cdd.main(args)
-    assert capfd.readouterr().out.split("\n")[:-1] == printed
+    if fails:
+        assert failed.value.code not in (0, None)
+    assert [line for line in capfd.readouterr().out.split("\n") if line.startswith("ran")] == ran

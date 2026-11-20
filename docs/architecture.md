@@ -193,9 +193,10 @@ Editing prose
 | A doc that exists | It would overwrite the doc |
 | A doc with no template | There's nothing to copy |
 | A doc cdd doesn't know | It has no place |
-| A doc missing its name or phase | Its place has a blank |
+| A doc missing its name | Its place has a blank |
+| A doc missing its phase | Its place has a blank |
 | A name that leaves its folder | Its place is outside the doc's folder |
-| A phase that isn't a number | Its place has no phase |
+| A phase that isn't a number | A phase is a number |
 
 - **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. A heading in a fence opens none.
 

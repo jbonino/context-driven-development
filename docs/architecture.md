@@ -186,7 +186,17 @@ Editing prose
 ### Component: Doc commands
 
 - **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1 and a warning 0.
-- **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails unless the doc has a template, its args name its place, and nothing is there yet.
+- **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on each case below.
+
+| Case | Fails because |
+|---|---|
+| A doc that exists | It would overwrite the doc |
+| A doc with no template | There's nothing to copy |
+| A doc cdd doesn't know | It has no place |
+| A doc missing its name or phase | Its place has a blank |
+| A name that leaves its folder | Its place is outside the doc's folder |
+| A phase that isn't a number | Its place has no phase |
+
 - **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. A heading in a fence opens none.
 
 ### Component: Branch commands

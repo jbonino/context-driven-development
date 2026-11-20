@@ -8,7 +8,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - `check.py` runs `cdd check`, so the steps live in one place.
 - `pyproject.toml` builds `cdd` with hatchling. `uv run` makes a `.venv`. Git ignores it. `uv.lock` is committed.
 - **Each script**'s test also checks that `cdd` holds each Where path, and that a bare `cdd` prints its usage.
-- The tests found four failure cases. A doc `cdd` doesn't know, a doc missing its name, a name that leaves its folder, and a phase that isn't a number. **`cdd new`**'s second sentence now folds them, for the owner's call.
+- The tests found four failure cases. A doc `cdd` doesn't know, a doc missing its name, a name that leaves its folder, and a phase that isn't a number. **`cdd new`** holds them in a table of cases.
 - `cdd mine` has no test. The session scripts' baseline line covers it.
 
 **Code review**
@@ -29,4 +29,4 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - Verdict: With fixes.
 
 **Changed after sign-off**
-- None
+- Round 1. **`cdd new`**'s failures became a table of cases, since one sentence packed three facts into "its args name its place". The ticket's criterion follows. Planning miss: `architecture.md`.

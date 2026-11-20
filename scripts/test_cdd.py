@@ -26,17 +26,17 @@ def root(tmp_path, monkeypatch):
     return tmp_path
 
 
-CDD_NEW = {  # its args, and the path it lands at or None where it fails
+CDD_NEW = {  # its args, and the path it lands at. None marks a case in the decision's table
     "a ticket lands in the backlog": (["ticket", "001-012-foo"], "docs/backlog/001-012-foo.md"),
     "a retro entry lands in its phase": (["retro-entry", "1", "001-012-foo"], "docs/retro/1/001-012-foo.md"),
     "a playbook lands by its phase": (["release-playbook", "1"], "docs/release/phase-1.md"),
     "the foundations land in docs": (["foundations"], "docs/foundations.md"),
-    "a doc that exists fails": (["ticket", "001-012-mine"], None),
-    "a doc with no template fails": (["product_roadmap"], None),
-    "a doc cdd doesn't know fails": (["roadmap"], None),
-    "a doc missing its name fails": (["ticket"], None),
-    "a name that leaves its folder fails": (["ticket", "../escape"], None),
-    "a phase that isn't a number fails": (["release-playbook", "x"], None),
+    "A doc that exists": (["ticket", "001-012-mine"], None),
+    "A doc with no template": (["product_roadmap"], None),
+    "A doc cdd doesn't know": (["roadmap"], None),
+    "A doc missing its name or phase": (["ticket"], None),
+    "A name that leaves its folder": (["ticket", "../escape"], None),
+    "A phase that isn't a number": (["release-playbook", "x"], None),
 }
 
 

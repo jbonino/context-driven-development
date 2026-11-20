@@ -24,7 +24,7 @@ a plan that delivers a product and learns from each cycle.
 | Feature | Scenarios grouped by shared context | One Gherkin `Feature`. Its Background holds the shared context. Its scenarios sit directly under it or under a Rule | By a verb phrase for what happens at the fork |
 | Rule | One fact a feature's scenarios illustrate. Optional | A Gherkin `Rule` holding the scenarios that illustrate it, two at least | By the fact as a sentence |
 | Decision | How one part is built | A sentence in the architecture under the system or component it settles. One that's hard to undo carries a why footnote that names the options it beat | By its subject, in bold at the sentence's start |
-| Component | One part that gets built | A heading under its system that holds its decisions. Its opening line names each design feature it builds | By a noun for what it does |
+| Component | One part that gets built | A heading under its system that holds its decisions. Its opening line names each design feature it builds. Features are the only way the architecture names the design | By a noun for what it does |
 | System | Components grouped by what they run on | A section of the architecture | By a noun for what its components run on |
 | Phase | One cycle of plan, deliver, and learn over a set of tickets | A goal in the roadmap | — |
 | Plan | What a phase or an ad hoc blocker signs off before building. Its goal and design and architecture and tickets. The retro measures delivery against it | A snapshot of those docs at sign-off | — |

@@ -159,6 +159,7 @@ Editing prose
 
 - **A doc's links** name only the foundations and the docs above it, per the table below. A link in code names nothing.
 - **A link** resolves to a file and its anchor to a heading's GitHub slug.
+- **A rename** carries a name to its tests, links and baselines. History keeps the old name.
 
 | Doc | May link |
 |---|---|
@@ -169,7 +170,8 @@ Editing prose
 
 ### Component: Caps
 
-- **A form past its cap** warns, with its cap read from the table below. An outline under three Examples rows warns too.[^why-a-cap-warns]
+- **A form past its cap** warns, with its cap read from the table below.[^why-a-cap-warns]
+- **A short outline**, under three Examples rows, warns that it may read better as scenarios.
 - **A ticket's caps** come from the rules of Splitting the work and Signing off a change. Its new scenarios are the titles its branch adds since its plan's tag, renames included, less those main gains from other tickets.
 
 | form | cap | upstream |

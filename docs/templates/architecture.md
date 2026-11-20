@@ -66,7 +66,7 @@ Copy this to the architecture. Delete this comment.
 | Checkpoints | The design's checkpoints, with what shows each in the repo |
 | System | What its components run on. A Developer knows from it whether to open a skill, a script or an app |
 | Component | A noun for what it builds. Its opening line names each design feature it builds, verbatim. One that builds none opens with its decisions. It holds 4 decisions at most |
-| Subject | A bold subject opens each bullet. Rows that share columns make a table |
+| Subject | A bold subject opens each bullet. A decision states one fact. Its cases, if any, sit in a table under it |
 | Why | One footnote per decision that's hard to undo, naming every option it beat |
 
 A decision names the design alone. It names no file paths, functions,

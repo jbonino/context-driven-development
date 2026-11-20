@@ -210,7 +210,8 @@ def branch_scenarios():
     base = git("merge-base", "main", "HEAD")
     if not tag or not base or git("branch", "--show-current") in ("main", None, ""):
         return []
-    return branch_adds(git("show", f"{tag}:{DESIGN}") or "", git("show", f"{base}:{DESIGN}") or "", read(DESIGN))
+    at = lambda ref: git("show", f"{ref}:{DESIGN}") or git("show", f"{ref}:{cdd.before_the_move(DESIGN)}") or ""
+    return branch_adds(at(tag), at(base), read(DESIGN))
 
 
 def main():

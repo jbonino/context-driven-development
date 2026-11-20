@@ -38,19 +38,21 @@ How Context Driven Development is built, shaped around [design.md](design_docume
 
 | Doc | Path |
 |---|---|
-| Foundations | `docs/foundations.md` |
-| Design | `docs/design_document.md` |
-| Architecture | `docs/architecture.md` |
-| Roadmap | `docs/product_roadmap.md` |
-| Deferred | `docs/deferred/`, a file per entry named for its title |
-| Ticket | `docs/backlog/`, a file per ticket |
-| Backlog README | `docs/backlog/README.md` |
-| Feedback | `docs/feedback.md` |
-| Release playbook | `docs/release/phase-{n}.md` |
-| Retro | `docs/retro/{n}/` |
-| Saved sessions | `docs/retro/raw/`, gitignored |
-| Templates | `docs/templates/` |
+| Forms | `forms/forms.md` |
+| Foundations | `apps/cdd/foundations.md` |
+| Design | `apps/cdd/docs/design_document.md` |
+| Architecture | `apps/cdd/docs/architecture.md` |
+| Roadmap | `apps/cdd/docs/product_roadmap.md` |
+| Deferred | `apps/cdd/docs/deferred/`, a file per entry named for its title |
+| Ticket | `apps/cdd/docs/backlog/`, a file per ticket |
+| Backlog README | `apps/cdd/docs/backlog/README.md` |
+| Feedback | `apps/cdd/docs/feedback.md` |
+| Release playbook | `apps/cdd/docs/release/phase-{n}.md` |
+| Retro | `apps/cdd/docs/retro/{n}/` |
+| Saved sessions | `apps/cdd/docs/retro/raw/`, gitignored |
+| Templates | `forms/templates/` |
 
+- **An app** sits in `apps/{app}/`, with its foundations, docs, scripts and published pages. `forms/` holds what every app shares: the forms, the templates and the checks.
 - **A finished playbook** and **a taken-up deferred entry** are deleted by name. Git keeps them.
 - **A plan's sign-off** is a git tag.[^why-a-plan-is-a-git-tag]
 - **A claimed ticket** is its branch.
@@ -145,7 +147,7 @@ Editing prose
 ## System: Scripts
 
 - **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
-- **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario or rule already covers sits in it with that one's name.
+- **A baseline** is `forms/checks/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario or rule already covers sits in it with that one's name.
 - **The session scripts** run as `cdd save`, which saves the sessions before a merge, and `cdd mine {n}`, which mines a phase's at its close.
 
 ### Component: Homes

@@ -1,4 +1,4 @@
-"""Tests for check-docs.py. Run: uv run --with pytest pytest scripts/
+"""Tests for check-docs.py. Run: uv run --with pytest pytest forms/checks/
 
 Each test proves one decision. Its cases are rows, each named for what it
 shows, so a failure names its case.
@@ -65,18 +65,18 @@ def test_decision_a_rule_s_scenarios(case):
 
 
 def test_decision_a_deferred_thing():
-    files = {"docs/deferred/skill-evals.md": md("""
+    files = {"apps/cdd/docs/deferred/skill-evals.md": md("""
                  # skill-evals
 
                  **Revisit when** cheap.
                  """),
-             "docs/design_document.md": md("""
+             "apps/cdd/docs/design_document.md": md("""
                  Intro.
 
                  Skill evals would test each skill.
                  """)}
     assert cd.deferred_outside(files) == [
-        "docs/design_document.md describes skill-evals outside its deferred file: Skill evals would test each skill."]
+        "apps/cdd/docs/design_document.md describes skill-evals outside its deferred file: Skill evals would test each skill."]
 
 
 DESIGN = cd.parse(md("""
@@ -152,7 +152,7 @@ def test_decision_a_test_s_name(case):
     assert cd.source_tests({test}, {"scenario": {"Old thing"}}) == problems
 
 
-FILES = {"docs/design_document.md": md("""
+FILES = {"apps/cdd/docs/design_document.md": md("""
              ## Feature: Old
 
              ```gherkin
@@ -160,19 +160,19 @@ FILES = {"docs/design_document.md": md("""
              ```
              [x](#feature-old) Old things.
              """),
-         "scripts/test_x.py": "def test_scenario_old_thing():\n",
-         "scripts/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
-         "docs/retro/1/a.md": "Old thing\n"}
+         "forms/checks/test_x.py": "def test_scenario_old_thing():\n",
+         "forms/checks/scenario-baseline.txt": "# A skill runs it\nFeature: Old: Old thing\n",
+         "apps/cdd/docs/retro/1/a.md": "Old thing\n"}
 RENAME = {  # old name, new name, a file, and what it holds after
-    "the test follows": ("Old thing", "New thing", "scripts/test_x.py", "def test_scenario_new_thing():\n"),
-    "the prose follows": ("Old thing", "New thing", "docs/design_document.md", FILES["docs/design_document.md"]
+    "the test follows": ("Old thing", "New thing", "forms/checks/test_x.py", "def test_scenario_new_thing():\n"),
+    "the prose follows": ("Old thing", "New thing", "apps/cdd/docs/design_document.md", FILES["apps/cdd/docs/design_document.md"]
                           .replace("Scenario: Old thing", "Scenario: New thing")),
-    "the baseline line follows": ("Old thing", "New thing", "scripts/scenario-baseline.txt",
+    "the baseline line follows": ("Old thing", "New thing", "forms/checks/scenario-baseline.txt",
                                   "# A skill runs it\nFeature: Old: New thing\n"),
-    "history keeps the old name": ("Old thing", "New thing", "docs/retro/1/a.md", None),
-    "a link follows its heading": ("Feature: Old", "Feature: New", "docs/design_document.md",
-                                   FILES["docs/design_document.md"].replace("Old", "New", 1).replace("#feature-old", "#feature-new")),
-    "a name the docs lack renames nothing": ("Nothing here", "X", "docs/design_document.md", None),
+    "history keeps the old name": ("Old thing", "New thing", "apps/cdd/docs/retro/1/a.md", None),
+    "a link follows its heading": ("Feature: Old", "Feature: New", "apps/cdd/docs/design_document.md",
+                                   FILES["apps/cdd/docs/design_document.md"].replace("Old", "New", 1).replace("#feature-old", "#feature-new")),
+    "a name the docs lack renames nothing": ("Nothing here", "X", "apps/cdd/docs/design_document.md", None),
 }
 
 
@@ -183,13 +183,13 @@ def test_decision_a_rename(case):
 
 
 KNOWN_GAP = {  # a check over a baseline, and what it gives
-    "a line with its reason": (lambda: cd.baseline("scripts/w.txt", "Closing — a skill runs it\n"), ({"Closing"}, [])),
-    "a # line gives the reason for all": (lambda: cd.baseline("scripts/w.txt", "# A skill runs it\nClosing\n"),
+    "a line with its reason": (lambda: cd.baseline("forms/checks/w.txt", "Closing — a skill runs it\n"), ({"Closing"}, [])),
+    "a # line gives the reason for all": (lambda: cd.baseline("forms/checks/w.txt", "# A skill runs it\nClosing\n"),
                                           ({"Closing"}, [])),
-    "a line with no reason": (lambda: cd.baseline("scripts/w.txt", "Closing\n"), ({"Closing"}, [
-        "scripts/w.txt: Closing gives no reason; add \" — {reason}\", or a # line at the file's top"])),
-    "an empty baseline": (lambda: cd.baseline("scripts/w.txt", ""),
-                          (set(), ["scripts/w.txt is empty: delete it and the code that reads it"])),
+    "a line with no reason": (lambda: cd.baseline("forms/checks/w.txt", "Closing\n"), ({"Closing"}, [
+        "forms/checks/w.txt: Closing gives no reason; add \" — {reason}\", or a # line at the file's top"])),
+    "an empty baseline": (lambda: cd.baseline("forms/checks/w.txt", ""),
+                          (set(), ["forms/checks/w.txt is empty: delete it and the code that reads it"])),
     "a line whose gap closed": (lambda: cd.named_tests("workflow", {"Opening"}, {"test_workflow_opening"}, {"Opening"}),
                                 ["Opening  ← tested or gone: remove it from the workflow baseline"]),
 }
@@ -202,30 +202,31 @@ def test_decision_a_known_gap(case):
 
 
 def test_decision_a_deferred_entry():
-    assert cd.deferred_revisits({"docs/deferred/b.md": "# b\n\nWe never revisit.\n"}) == [
-        "docs/deferred/b.md has no Revisit when line"]
+    assert cd.deferred_revisits({"apps/cdd/docs/deferred/b.md": "# b\n\nWe never revisit.\n"}) == [
+        "apps/cdd/docs/deferred/b.md has no Revisit when line"]
 
 
 DOC_S_LINKS = {  # a file, its text, and the failure it gives
-    "the design links the architecture": ("docs/design_document.md", "[x](architecture.md)\n",
-                                          ["docs/design_document.md names architecture.md, which it may not"]),
-    "the architecture links a ticket": ("docs/architecture.md", "[x](backlog/001-001-a.md)\n",
-                                        ["docs/architecture.md names backlog/001-001-a.md, which it may not"]),
-    "the code links the design": ("scripts/check.py", "[x](../docs/design_document.md)\n",
-                                  ["scripts/check.py names ../docs/design_document.md, which it may not"]),
-    "the roadmap links the design": ("docs/product_roadmap.md", "[x](design_document.md)\n",
-                                     ["docs/product_roadmap.md names design_document.md, which it may not"]),
-    "a deferred entry links the architecture": ("docs/deferred/a.md", "[x](../architecture.md)\n",
-                                                ["docs/deferred/a.md names ../architecture.md, which it may not"]),
-    "the backlog README links the design": ("docs/backlog/README.md", "[x](../design_document.md)\n",
-                                            ["docs/backlog/README.md names ../design_document.md, which it may not"]),
-    "the playbook links the design": ("docs/release/phase-1.md", "[x](../design_document.md)\n",
-                                      ["docs/release/phase-1.md names ../design_document.md, which it may not"]),
-    "the architecture links the design": ("docs/architecture.md", "[x](design_document.md)\n", []),
-    "a link in a code block": ("docs/design_document.md", "```\n[x](architecture.md)\n```\n", []),
-    "a link in inline code": ("docs/design_document.md", "`[c](architecture.md)`\n", []),
-    "a link to the web": ("docs/design_document.md", "[w](https://example.com)\n", []),
-    "a link to the foundations": ("docs/design_document.md", "[f](foundations.md)\n", []),
+    "the design links the architecture": ("apps/cdd/docs/design_document.md", "[x](architecture.md)\n",
+                                          ["apps/cdd/docs/design_document.md names architecture.md, which it may not"]),
+    "the architecture links a ticket": ("apps/cdd/docs/architecture.md", "[x](backlog/001-001-a.md)\n",
+                                        ["apps/cdd/docs/architecture.md names backlog/001-001-a.md, which it may not"]),
+    "the code links the design": ("forms/checks/check.py", "[x](../docs/design_document.md)\n",
+                                  ["forms/checks/check.py names ../docs/design_document.md, which it may not"]),
+    "the roadmap links the design": ("apps/cdd/docs/product_roadmap.md", "[x](design_document.md)\n",
+                                     ["apps/cdd/docs/product_roadmap.md names design_document.md, which it may not"]),
+    "a deferred entry links the architecture": ("apps/cdd/docs/deferred/a.md", "[x](../architecture.md)\n",
+                                                ["apps/cdd/docs/deferred/a.md names ../architecture.md, which it may not"]),
+    "the backlog README links the design": ("apps/cdd/docs/backlog/README.md", "[x](../design_document.md)\n",
+                                            ["apps/cdd/docs/backlog/README.md names ../design_document.md, which it may not"]),
+    "the playbook links the design": ("apps/cdd/docs/release/phase-1.md", "[x](../design_document.md)\n",
+                                      ["apps/cdd/docs/release/phase-1.md names ../design_document.md, which it may not"]),
+    "the architecture links the design": ("apps/cdd/docs/architecture.md", "[x](design_document.md)\n", []),
+    "a link in a code block": ("apps/cdd/docs/design_document.md", "```\n[x](architecture.md)\n```\n", []),
+    "a link in inline code": ("apps/cdd/docs/design_document.md", "`[c](architecture.md)`\n", []),
+    "a link to the web": ("apps/cdd/docs/design_document.md", "[w](https://example.com)\n", []),
+    "a link to the foundations": ("apps/cdd/docs/design_document.md", "[f](../foundations.md)\n", []),
+    "a link to the forms": ("apps/cdd/docs/design_document.md", "[f](../../../forms/forms.md)\n", []),
 }
 
 
@@ -291,7 +292,7 @@ def test_decision_a_workflow_with_steps_to_carry():
 
 SKILL_S_PATHS = {  # a skill line, and whether it names a path
     "a cdd verb": ("Read the roadmap and run `cdd read design`.", False),
-    "a script path": ("Run `uv run --script scripts/check.py`.", True),
+    "a script path": ("Run `uv run --script forms/checks/check.py`.", True),
     "a link to a doc": ("Read [the design](../../../docs/design_document.md).", True),
     "a backticked file": ("Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`.", True),
     "a web link and an anchor": ("See [the guide](https://example.com) and [above](#above).", False),

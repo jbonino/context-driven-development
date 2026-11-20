@@ -1,9 +1,9 @@
 # Context Driven Development
-Humans please read this [article](https://jbonino.github.io/context-driven-development/articles/)
+Humans please read this [article](https://jbonino.github.io/context-driven-development/apps/cdd/publish/articles/)
 
-1. read [foundations](docs/foundations.md).
-1. read [design](docs/design_document.md).
-1. read [architecture](docs/architecture.md).
+1. read [forms](forms/forms.md) and [foundations](apps/cdd/foundations.md).
+1. read [design](apps/cdd/docs/design_document.md).
+1. read [architecture](apps/cdd/docs/architecture.md).
 
 ## Setup
 
@@ -23,5 +23,5 @@ The CDD skills load from `.claude/skills/` with no install.
 |---|---|
 | `uv run cdd check` | Runs the scripts' tests, then the checks. Fails on a fact out of place or a broken link. Warns on a form past its cap |
 | `uv run cdd check rename "{old}" "{new}"` | Renames a scenario, feature, workflow, journey or rule, with its links and tests |
-| `scripts/save-transcripts.sh` | Saves this repo's Claude Code and Copilot sessions to `docs/retro/raw/`, gitignored. Run it before each merge |
-| `uv run --script scripts/mine-transcripts.py {n}` | Mines phase `n`'s saved sessions for the phase-close retro |
+| `uv run cdd save` | Saves this repo's Claude Code and Copilot sessions to `apps/cdd/docs/retro/raw/`, gitignored. Run it before each merge |
+| `uv run cdd mine {n}` | Mines phase `n`'s saved sessions for the phase-close retro |

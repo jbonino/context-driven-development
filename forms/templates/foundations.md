@@ -4,8 +4,8 @@ Every role reads this first. The rest is read by need.
 
 ## What
 
-<!-- What the team makes. A table of each form its docs take, with its
-term, meaning, form and naming. -->
+<!-- What the team makes, in a sentence or two. Its docs take the forms in
+forms/forms.md. -->
 
 ## Why
 

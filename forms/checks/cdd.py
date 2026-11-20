@@ -16,40 +16,48 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.dirname(os.path.dirname(HERE))
+APP = os.path.join(ROOT, "apps/cdd")
+SESSION = os.path.join(APP, "scripts")
 USAGE = __doc__.split("\n\n", 1)[1].rstrip()
 
 # Each doc's path, keyed by its template's name. {n} is a phase. {name} is a file's name.
 DOCS = {
-    "foundations": "docs/foundations.md",
-    "design_document": "docs/design_document.md",
-    "architecture": "docs/architecture.md",
-    "product_roadmap": "docs/product_roadmap.md",
-    "deferred": "docs/deferred/{name}.md",
-    "ticket": "docs/backlog/{name}.md",
-    "backlog-README": "docs/backlog/README.md",
-    "feedback": "docs/feedback.md",
-    "release-playbook": "docs/release/phase-{n}.md",
-    "retro": "docs/retro/{n}/retro.md",
-    "retro-entry": "docs/retro/{n}/{name}.md",
+    "forms": "forms/forms.md",
+    "foundations": "apps/cdd/foundations.md",
+    "design_document": "apps/cdd/docs/design_document.md",
+    "architecture": "apps/cdd/docs/architecture.md",
+    "product_roadmap": "apps/cdd/docs/product_roadmap.md",
+    "deferred": "apps/cdd/docs/deferred/{name}.md",
+    "ticket": "apps/cdd/docs/backlog/{name}.md",
+    "backlog-README": "apps/cdd/docs/backlog/README.md",
+    "feedback": "apps/cdd/docs/feedback.md",
+    "release-playbook": "apps/cdd/docs/release/phase-{n}.md",
+    "retro": "apps/cdd/docs/retro/{n}/retro.md",
+    "retro-entry": "apps/cdd/docs/retro/{n}/{name}.md",
 }
-FOLDERS = {"raw": "docs/retro/raw/", "templates": "docs/templates/"}
+FOLDERS = {"raw": "apps/cdd/docs/retro/raw/", "templates": "forms/templates/"}
+
+
+def before_the_move(path):
+    """Where a doc sat before 001-010 moved CDD under apps/cdd/, for the history before it."""
+    return "docs/" + path.removeprefix("apps/cdd/").removeprefix("docs/")
 
 
 def folder(doc):
-    """The folder a doc sits in, like docs/backlog/ for a ticket."""
+    """The folder a doc sits in, like apps/cdd/docs/backlog/ for a ticket."""
     return os.path.dirname(DOCS[doc].split("{")[0]) + "/"
 
 
 ARG = {"n": re.compile(r"\d+"), "name": re.compile(r"[^/\\]+")}
 
 
-def script(name, *args):
-    return ["uv", "run", "--script", os.path.join(HERE, name), *args]
+def script(name, *args, home=HERE):
+    return ["uv", "run", "--script", os.path.join(home, name), *args]
 
 
 STEPS = {
-    "tests": ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", HERE]),
+    "tests": ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", HERE, SESSION]),
     "docs": ("Each fact in its place", script("check-docs.py")),
     "caps": ("Each form under its cap. Warns, never fails", script("check-caps.py")),
 }
@@ -215,7 +223,7 @@ def branch(kind, args):
     print(tree)
 
 
-SAVE = ["bash", os.path.join(HERE, "save-transcripts.sh")]
+SAVE = ["bash", os.path.join(SESSION, "save-transcripts.sh")]
 
 
 def main_checkout():
@@ -334,7 +342,7 @@ def main(argv=None):
             title, command = STEPS["docs"]
             check({"rename": (title, [*command, "rename", was, now])})
         case ["mine", n, *rest]:
-            sys.exit(subprocess.run(script("mine-transcripts.py", n, *rest), cwd=ROOT).returncode)
+            sys.exit(subprocess.run(script("mine-transcripts.py", n, *rest, home=SESSION), cwd=ROOT).returncode)
         case _:
             print(USAGE, file=sys.stderr)
             sys.exit(2)

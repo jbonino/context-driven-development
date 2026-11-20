@@ -1,6 +1,6 @@
 # Context Driven Development — Design
 
-Read [foundations.md](foundations.md) first.
+Read [foundations.md](../foundations.md) first.
 - [Context Driven Development — Design](#context-driven-development--design)
   - [Checkpoints](#checkpoints)
   - [Journey: A phase from feedback to retro](#journey-a-phase-from-feedback-to-retro)

@@ -11,7 +11,7 @@ import tomllib
 import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.dirname(os.path.dirname(HERE))
 spec = importlib.util.spec_from_file_location("cdd", os.path.join(HERE, "cdd.py"))
 cdd = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cdd)
@@ -21,18 +21,19 @@ TEMPLATES = ("ticket", "retro-entry", "release-playbook", "foundations")
 
 @pytest.fixture
 def root(tmp_path, monkeypatch):
-    os.makedirs(tmp_path / "docs/templates")
+    os.makedirs(tmp_path / "forms/templates")
+    os.makedirs(tmp_path / "apps/cdd/docs")
     for name in TEMPLATES:
-        (tmp_path / f"docs/templates/{name}.md").write_text(f"# {name}\n")
+        (tmp_path / f"forms/templates/{name}.md").write_text(f"# {name}\n")
     monkeypatch.setattr(cdd, "ROOT", str(tmp_path))
     return tmp_path
 
 
 CDD_NEW = {  # its args, and the path it lands at. A row with None is a case in the decision's table
-    "A ticket lands in the backlog": (["ticket", "001-012-foo"], "docs/backlog/001-012-foo.md"),
-    "A retro entry lands in its phase": (["retro-entry", "1", "001-012-foo"], "docs/retro/1/001-012-foo.md"),
-    "A playbook lands by its phase": (["release-playbook", "1"], "docs/release/phase-1.md"),
-    "The foundations land in docs": (["foundations"], "docs/foundations.md"),
+    "A ticket lands in the backlog": (["ticket", "001-012-foo"], "apps/cdd/docs/backlog/001-012-foo.md"),
+    "A retro entry lands in its phase": (["retro-entry", "1", "001-012-foo"], "apps/cdd/docs/retro/1/001-012-foo.md"),
+    "A playbook lands by its phase": (["release-playbook", "1"], "apps/cdd/docs/release/phase-1.md"),
+    "The foundations land in their app": (["foundations"], "apps/cdd/foundations.md"),
     "A doc that exists": (["ticket", "001-012-mine"], None),
     "A doc with no template": (["product_roadmap"], None),
     "A doc cdd doesn't know": (["roadmap"], None),
@@ -46,8 +47,8 @@ CDD_NEW = {  # its args, and the path it lands at. A row with None is a case in 
 @pytest.mark.parametrize("case", CDD_NEW)
 def test_decision_cdd_new(root, capsys, case):
     args, path = CDD_NEW[case]
-    (root / "docs/backlog").mkdir()
-    (root / "docs/backlog/001-012-mine.md").write_text("mine\n")
+    (root / "apps/cdd/docs/backlog").mkdir(parents=True)
+    (root / "apps/cdd/docs/backlog/001-012-mine.md").write_text("mine\n")
     if path:
         cdd.main(["new", *args])
         assert (root / path).exists() and (root / path).read_text() == f"# {args[0]}\n"
@@ -56,13 +57,13 @@ def test_decision_cdd_new(root, capsys, case):
         with pytest.raises(SystemExit) as failed:
             cdd.main(["new", *args])
         assert failed.value.code not in (0, None)
-        assert (root / "docs/backlog/001-012-mine.md").read_text() == "mine\n"
+        assert (root / "apps/cdd/docs/backlog/001-012-mine.md").read_text() == "mine\n"
 
 
 def test_decision_each_script():
     with open(os.path.join(ROOT, "pyproject.toml"), "rb") as handle:
         assert tomllib.load(handle)["project"].get("scripts", {}).get("cdd") == "cdd:main"
-    where = open(os.path.join(ROOT, "docs/architecture.md"), encoding="utf-8").read()
+    where = open(os.path.join(ROOT, "apps/cdd/docs/architecture.md"), encoding="utf-8").read()
     table = where.split("### Where", 1)[1].split("\n\n", 2)[1]
     for path in re.findall(r"^\|[^|]+\| `([^`]+)`", table, re.M):
         assert any(held.startswith(path) for held in [*cdd.DOCS.values(), *cdd.FOLDERS.values()]), path
@@ -73,17 +74,17 @@ def test_decision_each_script():
 
 
 def where_paths():
-    where = open(os.path.join(ROOT, "docs/architecture.md"), encoding="utf-8").read()
+    where = open(os.path.join(ROOT, "apps/cdd/docs/architecture.md"), encoding="utf-8").read()
     table = where.split("### Where", 1)[1].split("\n\n", 2)[1]
     return re.findall(r"^\|[^|]+\| `([^`]+)`", table, re.M)
 
 
 def strings_in_scripts():
-    """(script, string) for each string a script in scripts/ holds, less cdd.py, the tests and docstrings."""
-    for name in sorted(os.listdir(HERE)):
-        if name == "cdd.py" or name.startswith("test_") or not name.endswith((".py", ".sh")):
+    """(script, string) for each string a check or session script holds, less cdd.py, the tests and docstrings."""
+    for name in sorted(os.path.join(home, n) for home in (HERE, cdd.SESSION) for n in os.listdir(home)):
+        if name.endswith("/cdd.py") or os.path.basename(name).startswith("test_") or not name.endswith((".py", ".sh")):
             continue
-        text = open(os.path.join(HERE, name), encoding="utf-8").read()
+        text = open(name, encoding="utf-8").read()
         if name.endswith(".sh"):
             for line in text.splitlines():
                 if not line.lstrip().startswith("#"):
@@ -98,9 +99,9 @@ def strings_in_scripts():
 
 SESSION_SCRIPTS = {  # its args, and the command it runs
     "cdd save hands the script main's saved sessions' folder": (
-        ["save"], lambda main: [*cdd.SAVE, os.path.join(main, "docs/retro/raw/")]),
+        ["save"], lambda main: [*cdd.SAVE, os.path.join(main, "apps/cdd/docs/retro/raw/")]),
     "cdd mine mines a phase's": (
-        ["mine", "1"], lambda main: cdd.script("mine-transcripts.py", "1")),
+        ["mine", "1"], lambda main: cdd.script("mine-transcripts.py", "1", home=cdd.SESSION)),
 }
 
 
@@ -174,8 +175,8 @@ CDD_READ = {  # its args, and what it prints or the names its failure lists
         DESIGN[DESIGN.index("## Feature: Splitting"):DESIGN.index("## Feature: Next")]),
     "A whole doc prints": (["design_document"], DESIGN),
     "Each of a phase's retro files prints": (
-        ["retro-entry", "1"], "== docs/retro/1/a.md\nA\n\n== docs/retro/1/b.md\nB\n"),
-    "Each ticket prints without the backlog README": (["ticket"], "== docs/backlog/t.md\nT\n"),
+        ["retro-entry", "1"], "== apps/cdd/docs/retro/1/a.md\nA\n\n== apps/cdd/docs/retro/1/b.md\nB\n"),
+    "Each ticket prints without the backlog README": (["ticket"], "== apps/cdd/docs/backlog/t.md\nT\n"),
     "A heading only inside a fence": (["design_document", "Only in a fence"], HEADINGS),
     "A heading that doesn't exist": (["design_document", "Feature: Missing"], HEADINGS),
     "A doc name with no place": (["design"], list(cdd.DOCS)),
@@ -188,14 +189,14 @@ CDD_READ = {  # its args, and what it prints or the names its failure lists
 @pytest.mark.parametrize("case", CDD_READ)
 def test_decision_cdd_read(root, capsys, case):
     args, expected = CDD_READ[case]
-    (root / "docs/design_document.md").write_text(DESIGN)
-    os.makedirs(root / "docs/retro/1")
-    (root / "docs/retro/1/a.md").write_text("A\n")
-    (root / "docs/retro/1/b.md").write_text("B\n")
-    (root / "docs/retro/1/notes.txt").write_text("not a doc\n")
-    os.makedirs(root / "docs/backlog")
-    (root / "docs/backlog/t.md").write_text("T\n")
-    (root / "docs/backlog/README.md").write_text("order\n")
+    (root / "apps/cdd/docs/design_document.md").write_text(DESIGN)
+    os.makedirs(root / "apps/cdd/docs/retro/1")
+    (root / "apps/cdd/docs/retro/1/a.md").write_text("A\n")
+    (root / "apps/cdd/docs/retro/1/b.md").write_text("B\n")
+    (root / "apps/cdd/docs/retro/1/notes.txt").write_text("not a doc\n")
+    os.makedirs(root / "apps/cdd/docs/backlog")
+    (root / "apps/cdd/docs/backlog/t.md").write_text("T\n")
+    (root / "apps/cdd/docs/backlog/README.md").write_text("order\n")
     if isinstance(expected, str):
         cdd.main(["read", *args])
         assert capsys.readouterr().out == expected
@@ -229,10 +230,10 @@ def repo(tmp_path, monkeypatch):
     origin, here = tmp_path / "origin.git", tmp_path / "here"
     git(tmp_path, "init", "-q", "--bare", "-b", "main", str(origin))
     git(tmp_path, "clone", "-q", str(origin), str(here))
-    os.makedirs(here / "docs/backlog")
-    (here / "docs/backlog/README.md").write_text(BACKLOG)
+    os.makedirs(here / "apps/cdd/docs/backlog")
+    (here / "apps/cdd/docs/backlog/README.md").write_text(BACKLOG)
     for n in ("001-001-one", "001-002-two", "001-003-three", "001-004-four"):
-        (here / f"docs/backlog/{n}.md").write_text(f"# {n}\n")
+        (here / f"apps/cdd/docs/backlog/{n}.md").write_text(f"# {n}\n")
     git(here, "add", ".")
     git(here, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "backlog")
     git(here, "push", "-q", "origin", "main")
@@ -338,12 +339,12 @@ def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
     monkeypatch.setattr(cdd, "SAVE", ["true"])
     git(repo, "config", "user.name", "t")
     git(repo, "config", "user.email", "t@t")
-    (repo / "docs/backlog/001-003-three.md").write_text("# 001-003 — Three\n")
+    (repo / "apps/cdd/docs/backlog/001-003-three.md").write_text("# 001-003 — Three\n")
     commit(repo, "titles")
     git(repo, "push", "-q", "origin", "main")
     branch = merge_args[0]
     tree = claimed(repo, kind, args, capsys)
-    tickets = sorted(os.listdir(repo / "docs/backlog"))
+    tickets = sorted(os.listdir(repo / "apps/cdd/docs/backlog"))
     if wrong == "conflict":
         (repo / "work.txt").write_text("main's work\n")
         commit(repo, "clash")
@@ -373,12 +374,22 @@ def test_decision_cdd_merge(repo, capsys, monkeypatch, case):
     head = git(repo, "log", "-1", "--merges", "--format=%s", "origin/main").strip()
     assert head == message
     assert git(repo, "show", "origin/main:work.txt") == "the branch's work\n"
-    held = sorted(git(repo, "ls-tree", "--name-only", "origin/main", "docs/backlog/").split())
-    readme = git(repo, "show", "origin/main:docs/backlog/README.md")
+    held = sorted(git(repo, "ls-tree", "--name-only", "origin/main", "apps/cdd/docs/backlog/").split())
+    readme = git(repo, "show", "origin/main:apps/cdd/docs/backlog/README.md")
     if kind == "ticket":
-        assert "docs/backlog/001-003-three.md" not in held and "001-003-three" not in readme
+        assert "apps/cdd/docs/backlog/001-003-three.md" not in held and "001-003-three" not in readme
     else:
-        assert held == [f"docs/backlog/{t}" for t in tickets] and readme == BACKLOG
+        assert held == [f"apps/cdd/docs/backlog/{t}" for t in tickets] and readme == BACKLOG
     assert not os.path.exists(tree)
     assert not git(repo, "branch", "--list", branch).strip()
     assert not git(repo, "ls-remote", "--heads", "origin", branch).strip()
+
+
+def test_decision_an_app():
+    for held in ("apps/cdd/foundations.md", "apps/cdd/docs", "apps/cdd/scripts", "apps/cdd/publish",
+                 "forms/forms.md", "forms/templates", "forms/checks"):
+        assert os.path.exists(os.path.join(ROOT, held)), held
+    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles", "presentations"],
+                             capture_output=True, text=True).stdout
+    assert tracked == ""
+    assert all(p.startswith(("apps/cdd/", "forms/")) for p in [*cdd.DOCS.values(), *cdd.FOLDERS.values()])

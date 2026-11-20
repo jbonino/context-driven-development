@@ -32,4 +32,4 @@ for dir in "$HOME/.claude/projects/$slug" "$HOME/.claude/projects/$slug"--claude
   done
 done
 echo "$count Claude Code sessions in ${out#$root/}"
-uv run --script "$root/scripts/copilot_to_claude.py" "$root" "$out"
+uv run --script "$(dirname "$0")/copilot_to_claude.py" "$root" "$out"

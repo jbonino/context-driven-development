@@ -21,18 +21,20 @@ ROOT = cdd.ROOT
 DESIGN = cdd.DOCS["design_document"]
 ARCHITECTURE = cdd.DOCS["architecture"]
 FOUNDATIONS = cdd.DOCS["foundations"]
+FORMS = cdd.DOCS["forms"]
 ROADMAP = cdd.DOCS["product_roadmap"]
 README = cdd.DOCS["backlog-README"]
 DEFERRED, BACKLOG, RELEASE, RETRO = (cdd.folder(d) for d in ("deferred", "ticket", "release-playbook", "retro"))
 KINDS = ("journey", "workflow", "scenario", "rule", "decision")
-HISTORY = ("docs/done/", RETRO, DEFERRED, cdd.DOCS["feedback"])
-FIXTURES = ("scripts/test_check_docs.py", "scripts/test_check_caps.py")
+HISTORY = (RETRO, DEFERRED, cdd.DOCS["feedback"])
+FIXTURES = ("forms/checks/test_check_docs.py", "forms/checks/test_check_caps.py")
+CODE = ("forms/checks", "apps/cdd/scripts")
 
 HEADING = re.compile(r"^(#+) (.+)$")
 SCENARIO = re.compile(r"^\s*Scenario(?: Outline)?: (.+)$")
 GHERKIN_RULE = re.compile(r"^\s*Rule: (.+)$")
 LINK = re.compile(r"\]\(([^)\s]+)\)")
-TICKET_FILE = re.compile(r"^docs/(?:backlog|done)/\d{3}-\d{3}[a-z]?-[\w-]+\.md$")
+TICKET_FILE = re.compile(r"^apps/[\w-]+/docs/backlog/\d{3}-\d{3}[a-z]?-[\w-]+\.md$")
 
 
 def lines_outside_code(text):
@@ -219,7 +221,7 @@ def deferred_outside(files):
 
 def may_name(path):
     """What a file may name, by its row in A file that names one it may not."""
-    if path in (DESIGN, ROADMAP) or (path.startswith("scripts/") and not path.endswith(".md")):
+    if path in (DESIGN, ROADMAP) or (path.startswith(CODE) and not path.endswith(".md")):
         return lambda t: False
     if path == ARCHITECTURE or (path.startswith(DEFERRED) and not path.endswith("README.md")):
         return lambda t: t == DESIGN
@@ -238,7 +240,7 @@ def links(text):
 
 
 def stream_names(files):
-    """A file links only the foundations and what its row may name."""
+    """A file links only the forms, the foundations and what its row may name."""
     problems = []
     for path, text in sorted(files.items()):
         allowed = may_name(path)
@@ -249,7 +251,7 @@ def stream_names(files):
             if not file or re.match(r"[a-z]+:", target):
                 continue
             resolved = os.path.normpath(os.path.join(os.path.dirname(path), file))
-            if resolved not in (path, FOUNDATIONS) and not allowed(resolved):
+            if resolved not in (path, FORMS, FOUNDATIONS) and not allowed(resolved):
                 problems.append(f"{path} names {target}, which it may not")
     return problems
 
@@ -422,14 +424,14 @@ def text_files(top, suffixes):
 
 def load():
     """Everything the checks read, once."""
-    docs = text_files("docs", ".md") | text_files(".claude/skills", ".md")
+    docs = text_files("forms", ".md") | text_files("apps", ".md") | text_files(".claude/skills", ".md")
     docs |= {name: read(name) for name in ("CLAUDE.md", "README.md")}
-    code = text_files("scripts", (".py", ".sh"))
+    code = {p: t for top in CODE for p, t in text_files(top, (".py", ".sh")).items()}
     return docs, code
 
 
 def baseline_path(kind):
-    return f"scripts/{kind}-baseline.txt"
+    return f"forms/checks/{kind}-baseline.txt"
 
 
 def baselines():
@@ -447,7 +449,7 @@ def check(docs, code):
     design, architecture = parse(docs[DESIGN]), parse(docs[ARCHITECTURE])
     tickets = {p: t for p, t in docs.items() if p.startswith(BACKLOG) and p != README}
     tests = {name for path, text in code.items()
-             if path.startswith("scripts/test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
+             if os.path.basename(path).startswith("test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
     found, problems = baselines()
     named = {"journey": design["journeys"], "workflow": design["workflows"],
              "scenario": {n for _, n in design["scenarios"]}, "rule": rules(design, architecture, tickets),
@@ -470,7 +472,7 @@ def check(docs, code):
     problems += stream_names(docs | {p: t for p, t in code.items() if p not in FIXTURES})
     problems += components(design, docs[ARCHITECTURE])
     problems += workflow_skills(docs[DESIGN], {p.split("/")[2] for p in docs if p.startswith(SKILLS)})
-    linked = {p: t for p, t in docs.items() if not p.startswith(("docs/done/", RETRO))}
+    linked = {p: t for p, t in docs.items() if not p.startswith(RETRO)}
     problems += broken_links(linked, lambda path: os.path.exists(os.path.join(ROOT, path)), read)
     return problems
 

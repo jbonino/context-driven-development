@@ -2,8 +2,7 @@
 
 | Group | Ticket | Waits on |
 |---|---|---|
-| 1 | [001-008 — Test a system's decisions — **Ad hoc**](001-008-test-a-system-s-decisions.md) | — |
-| 2 | [001-011 — Components in the architecture — **Ad hoc**](001-011-components-in-the-architecture.md) | 001-008 |
+| 2 | [001-011 — Components in the architecture — **Ad hoc**](001-011-components-in-the-architecture.md) | — |
 | 3 | [001-004 — Start a doc from its template — **Ad hoc**](001-004-start-a-doc-from-its-template.md) | 001-011 |
 | 4 | [001-005 — Read a doc by name — **Ad hoc**](001-005-read-a-doc-by-name.md) | 001-004 |
 | 4 | [001-006 — Claim the next ticket — **Ad hoc**](001-006-claim-the-next-ticket.md) | 001-004 |

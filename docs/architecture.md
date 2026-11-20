@@ -89,7 +89,7 @@ Placing feedback · Splitting the work · Signing off a change · Running the pl
 - **A feature here** runs inside a workflow's skill.[^why-two-systems]
 - **A workflow with steps to carry** runs on the skill of its name.[^why-one-skill-per-workflow]
 - **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one.
-- **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-doc]
+- **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
 - **A helper** serves several workflows and carries no workflow's name.
 
@@ -158,7 +158,7 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill ran a step.
 
-[^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
+[^why-a-skill-names-no-path]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 
 
 [^why-two-systems]: A system says what its features run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave Keeping each fact in its place between two.

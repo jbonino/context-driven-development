@@ -26,3 +26,17 @@ sessions under `docs/retro/raw/`, mined at phase close.
 **Changed after sign-off**
 - Round 1. **A skill** split into **A skill**, **A skill's paths** and **An app's things**, so the test's name matches the one sentence it checks. Planning miss: the ticket.
 - Round 1. **An app's things** became **A product's things**, which a skill may name. Planning miss: `architecture.md`.
+
+**Past its caps**
+- Skills holds 6 decisions, past 4. The owner kept it.
+
+**Sign-off review**
+
+| Severity | Finding | Outcome | Planning miss |
+|---|---|---|---|
+| Minor | The footnote's id still said "no doc" | Fixed. It says "no path" | — |
+| Minor | A product's things has no why footnote | Left. Its "since" gives the reason, and it's easy to undo | — |
+| Minor | The parts fixture still uses the subject "A skill" | Left. A skill is still a decision | — |
+| Minor | The 001-008 ticket says "app's file" | Left. The ticket goes at merge | — |
+
+- Verdict: Yes.

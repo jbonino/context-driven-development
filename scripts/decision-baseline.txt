@@ -1,0 +1,37 @@
+A skill's paths — waits on 001-009, since today's skills name paths
+A skill — a skill runs it. Its test waits for evals
+A product's things — a skill runs it. Its test waits for evals
+A baseline — a file per kind. Its test waits, since no check reads the file names
+A form past its cap — Feature: Keeping each fact in its place: One more than the cap warns
+A home — Rule: Each part has its home
+A link — Feature: Keeping each fact in its place: A link to a missing file fails the check
+A system — Feature: Keeping each fact in its place: A design feature no system lists fails the check
+A known gap — Rule: Each part has its home
+A test's name — Feature: Keeping each fact in its place: A part with no home fails the check, for a test with no source it names
+Each script — waits on 001-004 for cdd
+cdd check — waits on 001-004 for cdd
+cdd new — waits on 001-004
+cdd read — waits on 001-005
+cdd next-ticket — waits on 001-006
+cdd branch — waits on 001-007
+cdd merge — waits on 001-007
+The session scripts — run by a skill at a merge and a close. Their tests wait for evals, per the deferred skill evals
+A test's kind — review holds it; a check can't tell what an assertion proves
+A plan's sign-off — a git tag that a skill makes. Its test waits for evals
+A claimed ticket — a branch that a skill makes. Its test waits for evals
+A finished playbook — a skill deletes it. Its test waits for evals
+A feature here — a skill runs it. Its test waits for evals
+A workflow with steps to carry — a skill runs it. Its test waits for evals
+A helper — a skill runs it. Its test waits for evals
+An entry — a skill runs it. Its test waits for evals
+A deferred entry — Feature: Keeping each fact in its place: A part with no home fails the check
+A ticket — a skill runs it. Its test waits for evals
+A spike — a skill runs it. Its test waits for evals
+A ticket's hand-off — a skill runs it. Its test waits for evals
+The reviewer — a skill runs it. Its test waits for evals
+A deferred scenario — a skill runs it. Its test waits for evals
+The playbook — a skill runs it. Its test waits for evals
+The deploy — a skill runs it. Its test waits for evals
+A failed step's fix — a skill runs it. Its test waits for evals
+A miss's kind — a skill runs it. Its test waits for evals
+The red rule — a skill runs it. Its test waits for evals

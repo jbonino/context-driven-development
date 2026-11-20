@@ -7,7 +7,7 @@ mechanics. No skill names a path.
 
 ## Acceptance criteria
 
-- No skill names a doc's, script's or app's path, or an app's things, or says "in the foundations" to point at a form.
+- No skill names a doc's, script's or app's path, or says "in the foundations" to point at a form.
 - Branching from main and merging to main each run their `cdd` verb.
 - Working a ticket claims with `cdd next-ticket` and `cdd branch`.
 - A skill that starts a doc runs `cdd new`, and one that reads part of a doc runs `cdd read`.
@@ -27,6 +27,6 @@ mechanics. No skill names a path.
 
 - Waits on 001-004, 001-005, 001-006 and 001-007.
 - Rename the architecture template's Foundations section to Shared.
-- Take `test_decision_a_skill` out of the baseline.
+- Take `test_decision_a_skill_s_paths` out of the baseline.
 - Planning ad hoc drops "Raise its points and ticket count". The README holds no totals.
 - - Delete `scripts/check.py` once nothing runs it.

@@ -26,6 +26,8 @@ PARTS = {  # part and home: the check, and the failure it gives
     "a test with the source it names": (
         lambda: cd.source_tests({"test_scenario_nobody_wrote"}, {"scenario": set()}),
         "test_scenario_nobody_wrote names no scenario"),
+    "a decision with a test named for it": (lambda: cd.named_tests("decision", {"A skill"}, set(), set()),
+                                            "Decision: A skill has no test_decision_a_skill"),
     "a deferred entry with a Revisit when line": (
         lambda: cd.deferred_revisits({"docs/deferred/b.md": "# b\n\nWe never revisit.\n"}),
         "docs/deferred/b.md has no Revisit when line"),
@@ -126,3 +128,19 @@ def test_rule_every_link_resolves():
     files = {"docs/a.md": "# CDD — Design\n\n## Feature: Notes\n\n## Tech\n\n## Tech\n\n"
                           "## See [x](y.md)\n\n[a](#cdd--design) [b](#feature-notes) [c](#tech-1) [d](b.md#{feature}) [e](#see-x)\n"}
     assert cd.broken_links(files, lambda path: True) == []
+
+
+def test_decision_a_skill_s_paths():
+    """A skill names no path: no link and no backticked path. Plain words pass."""
+    text = ("Read the roadmap and run `cdd read design`.\n"
+            "Run `uv run --script scripts/check.py`.\n"
+            "Read [the design](../../../docs/design_document.md).\n"
+            "Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`.\n"
+            "See [the guide](https://example.com) and [above](#above).\n"
+            "Run `cdd` or and/or `main`.\n"
+            "```\nscripts/check.py `x/y`\n```\n")
+    assert cd.skill_paths({".claude/skills/x/SKILL.md": text}) == [
+        ".claude/skills/x/SKILL.md names a path: Run `uv run --script scripts/check.py`.",
+        ".claude/skills/x/SKILL.md names a path: Read [the design](../../../docs/design_document.md).",
+        ".claude/skills/x/SKILL.md names a path: Edit `CLAUDE.md`, then invoke `superpowers:brainstorming`."]
+    assert cd.skill_paths({"docs/a.md": "Run `scripts/check.py`.\n"}) == []

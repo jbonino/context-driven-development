@@ -251,7 +251,7 @@ def stream_names(files):
 SPAN = re.compile(r"`([^`]+)`")
 PATH = re.compile(r"/|\.(?:md|py|sh|json|ya?ml|toml|txt|js|html)\b")
 SKILLS = ".claude/skills/"
-SKILL_GAP = "A skill"
+SKILL_GAP = "A skill's paths"
 
 
 def skill_paths(files):

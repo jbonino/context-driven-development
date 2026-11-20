@@ -130,7 +130,7 @@ def test_rule_every_link_resolves():
     assert cd.broken_links(files, lambda path: True) == []
 
 
-def test_decision_a_skill():
+def test_decision_a_skill_s_paths():
     """A skill names no path: no link and no backticked path. Plain words pass."""
     text = ("Read the roadmap and run `cdd read design`.\n"
             "Run `uv run --script scripts/check.py`.\n"

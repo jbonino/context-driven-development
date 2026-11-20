@@ -27,6 +27,6 @@ mechanics. No skill names a path.
 
 - Waits on 001-004, 001-005, 001-006 and 001-007.
 - Rename the architecture template's Foundations section to Shared.
-- Take `test_decision_a_skill` out of the baseline.
+- Take `test_decision_a_skill_s_paths` out of the baseline.
 - Planning ad hoc drops "Raise its points and ticket count". The README holds no totals.
 - - Delete `scripts/check.py` once nothing runs it.

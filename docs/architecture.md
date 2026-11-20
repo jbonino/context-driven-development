@@ -88,7 +88,9 @@ Placing feedback · Splitting the work · Signing off a change · Running the pl
 
 - **A feature here** runs inside a workflow's skill.[^why-two-systems]
 - **A workflow with steps to carry** runs on the skill of its name.[^why-one-skill-per-workflow]
-- **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one. It names no path and no app's things, since every app runs it.[^why-a-skill-names-no-doc]
+- **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one.
+- **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-doc]
+- **An app's things** go unnamed in a skill, since every app runs it.
 - **A helper** serves several workflows and carries no workflow's name.
 
 ### Feature: Placing feedback

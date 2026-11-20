@@ -4,7 +4,7 @@ The judgments that need fresh context. Everything else is in the raw
 sessions under `docs/retro/raw/`, mined at phase close.
 
 **Deviations from the plan and design**
-- `test_decision_a_skill` has a test, so its baseline line can't mean "no test". Here it means the checks don't yet hold the real skills to it. The line fails once no skill names a path, or once the decision is gone.
+- `test_decision_a_skill_s_paths` has a test, so its baseline line can't mean "no test". Here it means the checks don't yet hold the real skills to it. The line fails once no skill names a path, or once the decision is gone.
 - The design's A part with no home fails the check gains a row: a decision with no test named for it.
 
 **Code review**
@@ -24,4 +24,4 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - Verdict: With fixes.
 
 **Changed after sign-off**
-- None.
+- Round 1. **A skill** split into **A skill**, **A skill's paths** and **An app's things**, so the test's name matches the one sentence it checks. Planning miss: the ticket.

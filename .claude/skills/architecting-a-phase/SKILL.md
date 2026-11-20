@@ -26,8 +26,7 @@ Start: **Design signed off**. End: **Architecture signed off**.
      already there joins it.
 1. **Write the decisions each changed component needs, under its
    heading.**
-   - A component holds 4 decisions at most. A heading names no workflow,
-     journey or feature.
+   - A heading names no workflow, journey or feature.
    - Facts flow down. A decision names only the design.
    - Run `uv run --script scripts/check-docs.py` until it passes, and
      `uv run --script scripts/check-caps.py`. Bring each cap warning to

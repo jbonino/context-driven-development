@@ -88,7 +88,7 @@ workflow to run next.
 ## System: Skills
 
 - **A feature here** runs inside a workflow's skill.[^why-two-systems]
-- **A workflow with steps to carry**, one whose step links a feature, runs on the skill of its name.[^why-one-skill-per-workflow]
+- **A workflow with steps to carry** runs on the skill of its name. Such a workflow has a step that links a feature.[^why-one-skill-per-workflow]
 - **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one.
 - **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
@@ -148,10 +148,10 @@ Editing prose
 
 ### Component: Checks
 
-- **A home** is found by name. Each journey, workflow, scenario, rule and decision has a test of its name or a baseline line. A rule holds over two scenarios. A deferred thing is described in its own file alone. A design feature sits on one component's opening line, and a component sits under a system.[^why-a-test-s-name-says-its-kind-and-source]
+- **A home** is found by name. Each journey, workflow, scenario, rule and decision has a test of its name or a baseline line. A rule holds over two scenarios. A deferred thing is described in its own file alone. A design feature sits on one component's opening line. A component sits under a system.[^why-a-test-s-name-says-its-kind-and-source]
 - **A doc's links** name only the foundations and the docs above it. The design, the roadmap and the code name none. The architecture and a deferred entry name the design. The backlog README names its tickets, and the playbook the tickets and the architecture.
 - **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
-- **A form past its cap** warns, and so does an outline under three Examples rows. A form's cap is read from the table below, and a ticket's from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
+- **A form past its cap** warns. So does an outline under three Examples rows. A form's cap is read from the table below. A ticket's comes from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
 
 | form | cap | upstream |
 |---|---|---|

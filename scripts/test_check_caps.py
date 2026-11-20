@@ -68,8 +68,8 @@ Caps
 
 ## Contents
 
-- [Skills](#skills)
-- [Feature: Caps](#feature-caps)
+- [System: Skills](#system-skills)
+- [Component: Caps](#component-caps)
 """
 
 WARNINGS = {
@@ -83,12 +83,11 @@ WARNINGS = {
 }
 
 
-@pytest.mark.parametrize("form", WARNINGS)
-def test_decision_a_form_past_its_cap(form):
+def test_decision_a_form_past_its_cap():
     """A cap is read from the architecture's table, so a form at its cap is
     quiet. An outline under three rows warns too."""
     warned = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
-    assert [w for w in warned if w == WARNINGS[form]] == [WARNINGS[form]]
+    assert all(w in warned for w in WARNINGS.values())
     assert len(warned) == 6
     assert not any("Short" in w or "Contents" in w for w in warned)
     design = ("```gherkin\n  Scenario Outline: Two\n    Given <a>\n\n    Examples:\n      | a |\n      | 1 |\n"

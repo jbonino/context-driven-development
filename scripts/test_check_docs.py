@@ -33,34 +33,33 @@ PARTS = {  # part and home: the check, and the failure it gives
 
 DESIGN = cd.parse("### Feature: Notes\n\n```gherkin\nScenario: A\n```\n\n"
                   "### Feature: Caps\n\n```gherkin\nScenario: B\n```\n")
-COMPONENTS = {  # an architecture, and the failure it gives
-    "a design feature on a component's opening line": (
+PARTS |= {  # an architecture's part and home
+    "a design feature on a component's opening line": (lambda: cd.components(DESIGN,
         "## Shared\n\n### Stack\n\n## System: Skills\n\nRuns as skills.\n\n"
-        "### Component: Notebook\n\nNotes\n\n- **A note** is dated.\n\n### Component: Checks\n\n- **A check** fails.\n",
+        "### Component: Notebook\n\nNotes\n\n- **A note** is dated.\n\n### Component: Checks\n\n- **A check** fails.\n"),
         "design's Feature: Caps sits on no component's opening line in the architecture"),
-    "a design feature on one component alone": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Component: Pad\n\nNotes\n",
+    "a design feature on one component alone": (lambda: cd.components(DESIGN,
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Component: Pad\n\nNotes\n"),
         "design's Feature: Notes sits on 2 components' opening lines in the architecture"),
-    "a component under a system": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Shared\n\n### Component: Loose\n",
+    "an opening line's name in the design": (lambda: cd.components(DESIGN,
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps · Typo\n"),
+        "architecture's Typo names no feature in the design"),
+    "a component under a system": (lambda: cd.components(DESIGN,
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Shared\n\n### Component: Loose\n"),
         "architecture's Component: Loose sits under no system"),
-    "a heading under a system that is a component": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Tracing\n",
+    "a heading under a system that is a component": (lambda: cd.components(DESIGN,
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Tracing\n"),
         "architecture's Tracing under System: Skills is no component"),
-    "a heading that names no workflow": (
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Workflow: Tracing\n",
-        "architecture's Workflow: Tracing names a workflow, journey or feature. A component's opening line names a feature"),
+    "a top heading that is Shared, a system or Why": (lambda: cd.components(DESIGN,
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Workflow: Tracing\n"),
+        "architecture's Workflow: Tracing is no system. A top heading is Shared, a system or Why"),
 }
 
 
-@pytest.mark.parametrize("part", list(PARTS) + list(COMPONENTS))
+@pytest.mark.parametrize("part", PARTS)
 def test_decision_a_home(part):
-    if part in PARTS:
-        check, failure = PARTS[part]
-        assert check() == [failure]
-    else:
-        architecture, failure = COMPONENTS[part]
-        assert cd.components(DESIGN, architecture) == [failure]
+    check, failure = PARTS[part]
+    assert check() == [failure]
 
 
 def test_decision_a_test_s_name():

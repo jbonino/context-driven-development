@@ -4,8 +4,8 @@
 # dependencies = []
 # ///
 """Warns where a form passes its soft cap, so the owner decides whether to
-redesign upstream. A form's cap is read from the Examples of the outline
-in the architecture's caps table, a ticket's points from Splitting the work's rule, and its new
+redesign upstream. A form's cap is read from the architecture's caps table.
+A ticket's points come from Splitting the work's rule, and its new
 scenarios from Signing off a change's. A warning never fails: the script
 exits 0.
 

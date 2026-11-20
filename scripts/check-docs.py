@@ -248,6 +248,7 @@ def stream_names(files):
     return problems
 
 
+STEP = re.compile(r"^(?:\d+\. |\| \d+ \|)")
 SPAN = re.compile(r"`([^`]+)`")
 PATH = re.compile(r"/|\.(?:md|py|sh|json|ya?ml|toml|txt|js|html)\b")
 SKILLS = ".claude/skills/"
@@ -270,35 +271,40 @@ def skill_paths(files):
     return problems
 
 
+TOP = ("Shared", "Why")
+
+
 def components(design, architecture):
-    """A heading under a system is a component, and a component sits under a
-    system. No heading names a workflow, journey or feature. Each design
-    feature sits on one component's opening line, split by " · "."""
-    problems, listed, system, opening = [], {}, None, False
+    """A top heading is Shared, a system or Why. A heading under a system is
+    a component, and a component sits under a system. Each design feature
+    sits on one component's opening line, split by " · ", and that line
+    names only design features."""
+    problems, listed, top, opening = [], {}, None, False
     for line, fenced in lines_outside_code(architecture):
         heading = None if fenced else HEADING.match(line)
         if heading:
             level, title = len(heading.group(1)), heading.group(2).strip()
             opening = False
-            if title.startswith(("Workflow: ", "Journey: ", "Feature: ")):
-                problems.append(f"architecture's {title} names a workflow, journey or feature. "
-                                "A component's opening line names a feature")
-            elif level == 2:
-                system = title if title.startswith("System: ") else None
+            if level == 2:
+                top = title
+                if title not in TOP and not title.startswith("System: "):
+                    problems.append(f"architecture's {title} is no system. A top heading is Shared, a system or Why")
             elif level == 3 and title.startswith("Component: "):
                 opening = True
-                if not system:
+                if not (top or "").startswith("System: "):
                     problems.append(f"architecture's {title} sits under no system")
-            elif level == 3 and system:
-                problems.append(f"architecture's {title} under {system} is no component")
+            elif level == 3 and (top or "").startswith("System: "):
+                problems.append(f"architecture's {title} under {top} is no component")
         elif opening and line.strip():
             if not line.startswith("- "):
                 for name in line.split(" · "):
                     listed[f"Feature: {name.strip()}"] = listed.get(f"Feature: {name.strip()}", 0) + 1
             opening = False
-    for feature in sorted(design["features"]):
+    for feature in sorted(design["features"] | set(listed)):
         count = listed.get(feature, 0)
-        if count == 0:
+        if feature not in design["features"]:
+            problems.append(f"architecture's {feature[len('Feature: '):]} names no feature in the design")
+        elif count == 0:
             problems.append(f"design's {feature} sits on no component's opening line in the architecture")
         elif count > 1:
             problems.append(f"design's {feature} sits on {count} components' opening lines in the architecture")
@@ -313,7 +319,7 @@ def workflow_skills(design, skills):
         if heading:
             title = heading.group(2).strip()
             workflow = title[len("Workflow: "):] if title.startswith("Workflow: ") else None
-        elif workflow and re.match(r"\d+\. .*\]\(#feature-", line) and workflow not in carried:
+        elif workflow and STEP.match(line) and "](#feature-" in line and workflow not in carried:
             carried.append(workflow)
     return [f"Workflow: {w} links a feature, and no skill {skill} runs it"
             for w in carried if (skill := slug(w).replace("_", "-")) not in skills]

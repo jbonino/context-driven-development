@@ -48,7 +48,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 | Minor | 001-009's System named Skills alone | Fixed. It names both | — |
 | Minor | A decision has no anchor of its own | Fixed. The template links its component's or system's heading | — |
 | Minor | Passing and failing rows were cased unevenly | Fixed | — |
-| Minor | Foundations' Ticket row names only scenarios as criteria | Left for the owner | — |
+| Minor | Foundations' Ticket row names only scenarios as criteria | Fixed. It names its scenarios and its decisions | `foundations.md` |
 
 - Verdict: With fixes.
 
@@ -58,3 +58,4 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - Round 2. **Each script** drops "alone". check-docs.py, check-caps.py, mine-transcripts.py and save-transcripts.sh still name paths. The criterion restated the decision and kept half of it. Planning miss: the ticket, and the ticket template, which has no criterion row for a decision.
 - Round 3. The ticket template gains a Decision criterion row. A criterion links its decision and never restates it. Planning miss: the ticket template.
 - Round 3. 001-009 takes the move of four scripts' paths into `cdd`, and `cdd save`. It grows to 8 points. Planning miss: the ticket's estimate.
+- Sign-off. The owner kept each case in **`cdd new`**'s table apart, rather than folding two pairs.

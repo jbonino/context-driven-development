@@ -28,7 +28,7 @@ a plan that delivers a product and learns from each cycle.
 | System | Components grouped by what they run on | A section of the architecture | By a noun for what its components run on |
 | Phase | One cycle of plan, deliver, and learn over a set of tickets | A goal in the roadmap | — |
 | Plan | What a phase or an ad hoc blocker signs off before building. Its goal and design and architecture and tickets. The retro measures delivery against it | A snapshot of those docs at sign-off | — |
-| Ticket | One part of a plan small enough to deliver and review alone | Acceptance criteria that name its feature's scenarios and an estimate in Fibonacci points and a model | For its feature. A ticket of steps alone takes its workflow's name |
+| Ticket | One part of a plan small enough to deliver and review alone | Acceptance criteria that name its feature's scenarios and its decisions and an estimate in Fibonacci points and a model | For its feature. A ticket of steps alone takes its workflow's name |
 | Retro | What a cycle learned. The phase's close reads it | A file per cycle | — |
 
 ```mermaid

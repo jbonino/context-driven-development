@@ -26,7 +26,7 @@ mechanics. No skill names a path.
 ## Build notes
 
 - Waits on 001-004, 001-005, 001-006 and 001-007.
-- Rename the architecture template's Foundations section to Base.
+- In the architecture and its template, rename Foundations to Shared and start each system heading with `System:`.
+- Turn each system's paragraph into decisions, each with its bold subject.
 - Planning ad hoc drops "Raise its points and ticket count". The README holds no totals.
-- Delete the empty done and in-progress folders.
-- Delete `scripts/check.py` once nothing runs it.
+- - Delete `scripts/check.py` once nothing runs it.

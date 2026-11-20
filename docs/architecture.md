@@ -2,7 +2,7 @@
 
 How Context Driven Development is built, shaped around [design.md](design_document.md).
 
-- [Base](#base)
+- [Shared](#shared)
   - [Stack](#stack)
   - [Where](#where)
   - [Testing strategy](#testing-strategy)
@@ -16,13 +16,13 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Feature: Going red first](#feature-going-red-first)
 - [Scripts](#scripts)
   - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
-  - [Feature: Starting a doc from its form](#feature-starting-a-doc-from-its-form)
+  - [Feature: Starting a doc from its template](#feature-starting-a-doc-from-its-template)
   - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
   - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
   - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
 - [Why](#why)
 
-## Base
+## Shared
 
 ### Stack
 
@@ -62,8 +62,8 @@ A plan's sign-off is a git tag.[^why-a-plan-is-a-git-tag] A claimed ticket is it
 | Workflow | Each step's outcome | `workflow_{workflow}` |
 | Scenario | Its Then, one test for each Examples row | `scenario_{scenario}` |
 | Rule | The fact across its scenarios, beyond what their Thens prove | `rule_{rule}` |
+| Decision | Its sentence | `decision_{subject}` |
 
-- **A decision** takes no test. Its feature's scenarios cover it.
 - **A test's name** runs its kind's prefix, then its source's title: `test_scenario_a_third_scenario_the_phase_s_goal_can_spare_waits`.
 - **A test's kind** is the only part it asserts. Review moves a stray assertion.[^why-a-test-asserts-only-its-kind]
 - **A known gap** sits in a baseline line with its reason, as does each workflow and scenario a skill runs. The check fails on a line whose reason is gone.[^why-a-known-gap-sits-in-a-baseline]
@@ -90,12 +90,10 @@ workflow to run next.
 
 Placing feedback · Splitting the work · Signing off a change · Running the playbook · Deciding a planning miss · Going red first · Editing prose
 
-Every feature here runs inside a workflow's skill.[^why-two-systems] A
-workflow with steps to carry runs on the skill of its name.[^why-one-skill-per-workflow]
-A skill holds its workflow's steps and the facts they act on. It names a
-doc by what it is and runs `cdd` to read, start or claim one.[^why-a-skill-names-no-doc] A helper
-serves several workflows and carries no workflow's name.
-Every app runs the same skills, so a skill names no app's things.
+- **A feature here** runs inside a workflow's skill.[^why-two-systems]
+- **A workflow with steps to carry** runs on the skill of its name.[^why-one-skill-per-workflow]
+- **A skill** holds its workflow's steps and the facts they act on. It names a doc by what it is and runs `cdd` to read, start or claim one. It names no path and no app's things, since every app runs it.[^why-a-skill-names-no-doc]
+- **A helper** serves several workflows and carries no workflow's name.
 
 ### Feature: Placing feedback
 
@@ -129,13 +127,12 @@ Every app runs the same skills, so a skill names no app's things.
 
 ## Scripts
 
-Keeping each fact in its place · Starting a doc from its form · Reading a doc by name · Claiming the next ticket · Merging a signed-off branch
+Keeping each fact in its place · Starting a doc from its template · Reading a doc by name · Claiming the next ticket · Merging a signed-off branch
 
-Each script runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command] `cdd check` runs the checks, and `cdd check caps` the caps alone. `cdd mine {n}` mines a phase's sessions. A failure exits 1. A warning exits 0.
-A baseline is `scripts/{kind}-baseline.txt`, one per Testing strategy kind.
-
-The session scripts run here too. One saves the Claude Code and Copilot sessions
-before a merge. One mines a phase's sessions at its close.
+- **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
+- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1. A warning exits 0.
+- **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario already covers sits in it with that scenario's name.
+- **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
 
 ### Feature: Keeping each fact in its place
 
@@ -144,14 +141,14 @@ before a merge. One mines a phase's sessions at its close.
 - **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
 - **A home** is found by name. A test matches its source by its prefix and title. A deferred thing matches its file's title. An architecture heading matches a design heading.[^why-a-test-s-name-says-its-kind-and-source]
 
-### Feature: Starting a doc from its form
+### Feature: Starting a doc from its template
 
-- **A form's template** is the file in Templates named for it. Foundations is one, for each product's own.
+- **A doc's template** is the file in Templates named for it. Each app starts its own foundations from one.
 
 ### Feature: Reading a doc by name
 
 - **A section** runs from its heading to the next heading of its level or higher. A heading in a fence opens none.
-- **A form kept as a file each** reads as each of its files in name order.
+- **A doc kept as a file each** reads as each of its files in name order.
 
 ### Feature: Claiming the next ticket
 

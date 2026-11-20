@@ -25,7 +25,7 @@ Read [foundations.md](foundations.md) first.
     - [Feature: Running the playbook](#feature-running-the-playbook)
     - [Feature: Deciding a planning miss](#feature-deciding-a-planning-miss)
     - [Feature: Editing prose](#feature-editing-prose)
-    - [Feature: Starting a doc from its form](#feature-starting-a-doc-from-its-form)
+    - [Feature: Starting a doc from its template](#feature-starting-a-doc-from-its-template)
     - [Feature: Reading a doc by name](#feature-reading-a-doc-by-name)
     - [Feature: Claiming the next ticket](#feature-claiming-the-next-ticket)
     - [Feature: Merging a signed-off branch](#feature-merging-a-signed-off-branch)
@@ -166,7 +166,7 @@ Start: **Architecture signed off**
 1. Check each scenario for how a bug could break it ([Signing off a change](#feature-signing-off-a-change))
 1. Check that a ticket carries each model attribute the architecture adds ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
 1. Order the tickets in the backlog README with their parallel groups
-1. Write the release playbook in run order ([Starting a doc from its form](#feature-starting-a-doc-from-its-form))
+1. Write the release playbook in run order ([Starting a doc from its template](#feature-starting-a-doc-from-its-template))
 1. Write the ticket pass's retro entry and sign off the plan with the Product Owner. Merge it to main ([Editing prose](#feature-editing-prose))
 
 End: **Plan signed off**
@@ -332,7 +332,6 @@ Feature: Keeping each fact in its place
         | a deferred entry     | the design                                            |
         | the backlog README   | its own tickets                                       |
         | the release playbook | the tickets and the architecture's systems            |
-        | a skill              | nothing. It names a doc by what it is                 |
 
     Scenario: An architecture heading with no design heading fails the check
       Given the architecture heads decisions with a workflow or feature the design doesn't have
@@ -365,7 +364,7 @@ Feature: Keeping each fact in its place
       And the owner decides whether to split it into scenarios
 
     Scenario Outline: One more than the cap warns
-      Given a <form> at its cap of <cap>
+      Given a <doc> at its cap of <cap>
       When one more is added
       Then the checks warn
       And the owner decides whether to redesign <upstream>
@@ -600,66 +599,66 @@ Feature: Editing prose
     Then each line that breaks a sentence rule is a finding
 ```
 
-### Feature: Starting a doc from its form
+### Feature: Starting a doc from its template
 
 ```gherkin
-Feature: Starting a doc from its form
-  A skill names the form and the doc's name. The command knows where both live.
+Feature: Starting a doc from its template
+  The Developer names the doc and its name. The command knows where its template and its place are.
 
   Scenario Outline: A new doc lands in its place from its template
-    Given the <form> form has a template
-    When a skill starts <name>
+    Given the <doc> has a template
+    When the Developer starts <name>
     Then the doc is the template, at <place>
     And the command prints its path
 
     Examples:
-      | form             | name                 | place                                  |
+      | doc              | name                 | place                                  |
       | ticket           | 001-010-foo          | the backlog, as 001-010-foo.md         |
       | retro entry      | phase 1, phase-design | phase 1's retro, as phase-design.md   |
       | release playbook | phase 1              | the release folder, as phase-1.md      |
       | foundations      | garden               | garden's foundations.md                |
 
   Scenario: A doc that already exists stays as it is
-    Given a doc of that form and name already exists
-    When a skill starts it again
+    Given that doc already exists
+    When the Developer starts it again
     Then the command fails and the doc is unchanged
 
-  Scenario: A form with no template fails
-    Given a form name that has no template
-    When a skill starts a doc of it
-    Then the command fails and lists the forms that have one
+  Scenario: A doc with no template fails
+    Given a doc name that has no template
+    When the Developer starts one
+    Then the command fails and lists the docs that have one
 ```
 
 ### Feature: Reading a doc by name
 
 ```gherkin
 Feature: Reading a doc by name
-  A skill reads part of a doc by what the doc is and the heading it wants.
+  The Developer reads part of a doc by what the doc is and the heading it wants.
 
-  Scenario Outline: A doc prints as much as the skill names
+  Scenario Outline: A doc prints as much as the Developer names
     Given <names>
-    When the skill reads it
+    When the Developer reads it
     Then the command prints <prints>
 
     Examples:
       | names                                   | prints                          |
       | a doc and one of its headings           | that heading's section and no more |
       | a doc and no heading                    | the whole doc                   |
-      | a form kept as a file each, and a phase | each of that phase's files whole |
+      | a doc kept as a file each, and a phase  | each of that phase's files whole |
 
   Scenario: A heading inside a gherkin fence is no section
     Given a heading that sits only inside a gherkin fence
-    When the skill reads it
+    When the Developer reads it
     Then the command fails and lists the doc's headings
 
   Scenario: A heading the doc lacks fails
     Given a heading the doc doesn't have
-    When the skill reads it
+    When the Developer reads it
     Then the command fails and lists the doc's headings
 
   Scenario: A doc name with no place fails
     Given a doc name the Where table doesn't hold
-    When the skill reads it
+    When the Developer reads it
     Then the command fails and lists the names it holds
 ```
 

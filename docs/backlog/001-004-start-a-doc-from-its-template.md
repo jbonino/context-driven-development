@@ -1,6 +1,6 @@
-# 001-004 — Start a doc from its form — **Ad hoc**
+# 001-004 — Start a doc from its template — **Ad hoc**
 
-**Feature.** [Starting a doc from its form](../design_document.md#feature-starting-a-doc-from-its-form) · **System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
+**Feature.** [Starting a doc from its template](../design_document.md#feature-starting-a-doc-from-its-template) · **System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
 
 A skill runs `uv run cdd new ticket 001-010-foo` and gets the ticket in
 its place with its path printed. `uv run cdd check` runs the checks, as
@@ -8,13 +8,13 @@ its place with its path printed. `uv run cdd check` runs the checks, as
 
 ## Acceptance criteria
 
-- [Starting a doc from its form](../design_document.md#feature-starting-a-doc-from-its-form)
+- [Starting a doc from its template](../design_document.md#feature-starting-a-doc-from-its-template)
 - `cdd check` prints and exits as `scripts/check.py` does. `cdd check caps` does the same for `check-caps.py`.
 - `cdd mine {n}` runs `mine-transcripts.py` for phase n.
 
 ## Workflow steps
 
-- [Writing the tickets](../design_document.md#workflow-writing-the-tickets) step 5: the playbook starts from its form
+- [Writing the tickets](../design_document.md#workflow-writing-the-tickets) step 5: the playbook starts from its template
 
 ## Build notes
 

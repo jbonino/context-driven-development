@@ -62,13 +62,13 @@ Three ethics (borrowed from permaculture) are used to score choices.
 
 Users have accountabilities and responsibilities. A Role is a group of those. Agents can be used to help for any role.
 
-| Role | Hands over | Reads |
-|---|---|---|
-| **Customer** | Feedback on what shipped | The product |
-| **Product Owner** (the owner) | What's next and sign-off | The retros and the roadmap |
-| **Designer** | What to build and why | The roadmap's phase and the design |
-| **Developer** | How it's built. Working and tested code | The design and the architecture. Or a ticket and the sections it names |
-| **Agent** | Plays any role. The person in that role stays accountable | What its role reads |
+| Role | Hands over | Reads | Accountable for |
+|---|---|---|---|
+| **Customer** | Feedback on what shipped | The product | — |
+| **Product Owner** (the owner) | What's next and sign-off | The retros and the roadmap | The foundations and the roadmap |
+| **Designer** | What to build and why | The roadmap's phase and the design | The design |
+| **Developer** | How it's built. Working and tested code | The design and the architecture. Or a ticket and the sections it names | The architecture, the tickets and the code |
+| **Agent** | Plays any role. The person in that role stays accountable | What its role reads | — |
 
 ## Where
 

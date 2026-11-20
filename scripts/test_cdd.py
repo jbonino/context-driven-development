@@ -197,7 +197,7 @@ def claim_on_origin(repo, branch):
 CDD_NEXT_TICKET = {  # branches on origin, and what it prints or the waits its failure lists
     "The first ticket whose waits are merged": ([], "001-001-one"),
     "A ticket with a branch on origin is skipped": (["feature/001-001-one"], "001-003-three"),
-    "A ticket that waits is skipped": (["feature/001-001-one", "feature/001-003-three"], None),
+    "With none open it says what each waits on": (["feature/001-001-one", "feature/001-003-three"], None),
 }
 
 

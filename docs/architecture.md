@@ -210,8 +210,8 @@ Editing prose
 
 ### Component: Branch commands
 
-- **`cdd next-ticket`** names the first ticket in the backlog README whose waits are gone from it, so merged, and that has no branch on origin. With none open, it says what each waits on.
-- **`cdd branch`** claims a branch named by its kind below by pushing it to origin, then opens its worktree under `.claude/worktrees/`. One already on origin lost the race and the failure names the next open ticket, and one already here is reused.
+- **`cdd next-ticket`** names the first ticket in origin's backlog README whose waits are merged, gone from it, and that has no branch on origin. With none open, it says what each waits on.
+- **`cdd branch`** claims the branch its kind names below by pushing origin's main to it, then opens its worktree under `.claude/worktrees/`. A branch already on origin lost the race and names the next open ticket, and one already here is reused.
 
 | Kind | Args | Branch |
 |---|---|---|

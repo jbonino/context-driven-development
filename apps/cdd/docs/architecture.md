@@ -98,7 +98,7 @@ workflow to run next.
 - **A skill's paths** are left to `cdd`. A skill names none.[^why-a-skill-names-no-path]
 - **A product's things** may be named in a skill, since a fresh session loads that one file.
 - **A helper** serves several workflows and carries no workflow's name.
-- **A skill's harness** is Claude Code first. In Pi, a Claude Code tool with no built-in runs on its fallback in [001-002's findings](backlog/001-002-pi-spike.md#findings).[^why-claude-code-first]
+- **A skill's harness** is Claude Code first. In Pi, a skill names a fallback for each Claude Code tool Pi lacks.[^why-claude-code-first]
 
 ### Component: Feedback
 

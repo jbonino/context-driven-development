@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 USAGE = __doc__.split("\n\n", 1)[1].rstrip()
 
-# Each doc's path, keyed by its template's name. {n} is a phase, {name} a file's name.
+# Each doc's path, keyed by its template's name. {n} is a phase. {name} is a file's name.
 DOCS = {
     "foundations": "docs/foundations.md",
     "design_document": "docs/design_document.md",
@@ -26,33 +26,33 @@ DOCS = {
     "release-playbook": "docs/release/phase-{n}.md",
     "retro": "docs/retro/{n}/retro.md",
     "retro-entry": "docs/retro/{n}/{name}.md",
-    "raw": "docs/retro/raw/",
-    "templates": "docs/templates/",
 }
+FOLDERS = {"raw": "docs/retro/raw/", "templates": "docs/templates/"}
+ARG = {"n": re.compile(r"\d+"), "name": re.compile(r"[^/\\]+")}
 
 
 def script(name, *args):
     return ["uv", "run", "--script", os.path.join(HERE, name), *args]
 
 
-STEPS = [
-    ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", HERE]),
-    ("Each fact in its place", script("check-docs.py")),
-    ("Each form under its cap. Warns, never fails", script("check-caps.py")),
-]
+STEPS = {
+    "tests": ("The scripts' tests", ["uv", "run", "-q", "--with", "pytest", "pytest", "-q", HERE]),
+    "docs": ("Each fact in its place", script("check-docs.py")),
+    "caps": ("Each form under its cap. Warns, never fails", script("check-caps.py")),
+}
 
 
 def new(doc, args):
     """Copy the doc's template to its path and print the path."""
-    if doc not in DOCS or doc in ("raw", "templates"):
-        sys.exit(f"cdd doesn't know {doc}. It knows: {', '.join(d for d in DOCS if d not in ('raw', 'templates'))}")
+    if doc not in DOCS:
+        sys.exit(f"cdd doesn't know {doc}. It knows {', '.join(DOCS)}")
     fields = re.findall(r"{(\w+)}", DOCS[doc])
-    if len(args) != len(fields):
+    if len(args) != len(fields) or not all(ARG[f].fullmatch(a) and a != ".." for f, a in zip(fields, args)):
         sys.exit(f"cdd new {doc} takes {' '.join('{' + f + '}' for f in fields) or 'nothing more'}")
     path = DOCS[doc].format(**dict(zip(fields, args)))
-    template = os.path.join(ROOT, DOCS["templates"], f"{doc}.md")
+    template = os.path.join(ROOT, FOLDERS["templates"], f"{doc}.md")
     if not os.path.exists(template):
-        sys.exit(f"{doc} has no template in {DOCS['templates']}")
+        sys.exit(f"{doc} has no template in {FOLDERS['templates']}")
     target = os.path.join(ROOT, path)
     if os.path.exists(target):
         sys.exit(f"{path} exists")
@@ -65,7 +65,7 @@ def new(doc, args):
 def check(steps):
     """Run each step. A failure exits 1 naming it. A warning prints and exits 0."""
     failed = []
-    for title, command in steps:
+    for title, command in steps.values():
         print(f"== {title}", flush=True)
         if subprocess.run(command, cwd=ROOT).returncode:
             failed.append(title)
@@ -81,7 +81,7 @@ def main(argv=None):
         case ["check"]:
             check(STEPS)
         case ["check", "caps"]:
-            check(STEPS[2:])
+            check({"caps": STEPS["caps"]})
         case ["mine", n, *rest]:
             sys.exit(subprocess.run(script("mine-transcripts.py", n, *rest), cwd=ROOT).returncode)
         case _:

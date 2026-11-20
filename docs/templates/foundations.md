@@ -4,8 +4,8 @@ Every role reads this first. The rest is read by need.
 
 ## What
 
-<!-- What the team makes, and each form its docs take: a table of term,
-meaning, form and naming. -->
+<!-- What the team makes. A table of each form its docs take, with its
+term, meaning, form and naming. -->
 
 ## Why
 
@@ -13,7 +13,7 @@ meaning, form and naming. -->
 
 ## Who
 
-<!-- Each role: what it hands over, what it reads, and what it's
+<!-- A table of each role. It says what the role hands over, reads and is
 accountable for. -->
 
 ## Where

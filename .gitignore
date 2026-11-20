@@ -2,9 +2,9 @@
 docs/retro/raw/
 __pycache__/
 .pytest_cache/
+.venv/
 .claude/worktrees/
 
 # Article drafts and posting notes
 articles/foundations-article.md
 articles/posting-plan.md
-.venv/

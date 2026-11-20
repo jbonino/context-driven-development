@@ -35,6 +35,8 @@ CDD_NEW = {  # its args, and the path it lands at or None where it fails
     "a doc with no template fails": (["product_roadmap"], None),
     "a doc cdd doesn't know fails": (["roadmap"], None),
     "a doc missing its name fails": (["ticket"], None),
+    "a name that leaves its folder fails": (["ticket", "../escape"], None),
+    "a phase that isn't a number fails": (["release-playbook", "x"], None),
 }
 
 
@@ -60,7 +62,7 @@ def test_decision_each_script():
     where = open(os.path.join(ROOT, "docs/architecture.md"), encoding="utf-8").read()
     table = where.split("### Where", 1)[1].split("\n\n", 2)[1]
     for path in re.findall(r"^\|[^|]+\| `([^`]+)`", table, re.M):
-        assert any(held.startswith(path) for held in cdd.DOCS.values()), path
+        assert any(held.startswith(path) for held in [*cdd.DOCS.values(), *cdd.FOLDERS.values()]), path
     usage = subprocess.run(["uv", "run", "-q", "--project", ROOT, "cdd"], capture_output=True, text=True)
     assert usage.returncode == 2 and "uv run cdd" in usage.stderr
 
@@ -82,7 +84,7 @@ CDD_CHECK = {  # its args, each step's exit code, what prints, and its exit
 @pytest.mark.parametrize("case", CDD_CHECK)
 def test_decision_cdd_check(monkeypatch, capfd, case):
     args, codes, printed, exits = CDD_CHECK[case]
-    monkeypatch.setattr(cdd, "STEPS", [(t, step(c)) for t, c in zip(("tests", "docs", "caps"), codes)])
+    monkeypatch.setattr(cdd, "STEPS", {t: (t, step(c)) for t, c in zip(("tests", "docs", "caps"), codes)})
     if exits:
         with pytest.raises(SystemExit) as failed:
             cdd.main(args)

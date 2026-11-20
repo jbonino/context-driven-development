@@ -9,7 +9,7 @@ mechanics. No skill names a path.
 
 - No skill names a doc's, script's or app's path, or an app's things, or says "in the foundations" to point at a form.
 - Branching from main and merging to main each run their `cdd` verb.
-- Working a ticket claims with `cdd next` and `cdd branch`.
+- Working a ticket claims with `cdd next-ticket` and `cdd branch`.
 - A skill that starts a doc runs `cdd new`, and one that reads part of a doc runs `cdd read`.
 - The checks run as `cdd check`, the caps as `cdd check caps`, and mining as `cdd mine`.
 - Closing a phase and scoping a phase delete a finished playbook or a taken-up deferred entry by name.

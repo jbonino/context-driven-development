@@ -2,7 +2,7 @@
 
 **Feature.** [Claiming the next ticket](../design_document.md#feature-claiming-the-next-ticket) · **System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — reads the backlog README and origin, then pushes · **Model.** Sonnet 5.5, medium — edge cases with branches on origin
 
-`uv run cdd next` names the next open ticket. `uv run cdd branch
+`uv run cdd next-ticket` names the next open ticket. `uv run cdd branch
 ticket 001-004` claims it and opens its worktree, as branching from main
 does by hand.
 

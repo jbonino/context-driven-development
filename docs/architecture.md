@@ -144,9 +144,9 @@ Editing prose
 
 ## System: Scripts
 
-- **Each script** runs as `uv run cdd <verb>`. `cdd` holds each doc's path, from Where.[^why-one-command]
+- **Each script** runs as `uv run cdd <verb>`. `cdd` alone holds each doc's path, from Where.[^why-one-command]
 - **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario or rule already covers sits in it with that one's name.
-- **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
+- **The session scripts** run as `cdd save`, which saves the sessions before a merge, and `cdd mine {n}`, which mines a phase's at its close.
 
 ### Component: Homes
 
@@ -185,7 +185,7 @@ Editing prose
 
 ### Component: Doc commands
 
-- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1.
+- **`cdd check`** runs the checks, `cdd check caps` the caps alone, and `cdd check rename {old} {new}` a rename alone. A failure exits 1.
 - **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on each case below.
 
 | Case | Fails because |

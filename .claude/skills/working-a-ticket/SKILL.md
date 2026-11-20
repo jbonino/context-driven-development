@@ -9,23 +9,21 @@ Start: **Plan signed off**. End: **Ready for review**.
 
 1. **Claim the next open ticket on its own branch, and read the sections
    it names.**
-   - Suggest `/clear` after other work.
-   - Pick the earliest group in `docs/backlog/README.md` with an open
-     ticket, one with no branch or worktree of its name in
-     `git branch -a` or `git worktree list`. A group's tickets can run in
-     separate chats.
-   - Invoke `branching-from-main` for the ticket's branch.
+   - Suggest clearing the chat after other work.
+   - Run `uv run cdd next-ticket` for the next open ticket. A group's
+     tickets can run in separate chats.
+   - Invoke `branching-from-main`, which runs `uv run cdd branch ticket
+     {number}`.
    - Stop for the owner's review, unless the args say to go on. Give the
      Estimate's model, a Remote Control reminder, the wireframes, and the
      acceptance criteria with the ticket's link.
-   - Read a small doc whole. Otherwise `grep -n` it and `sed -n` the
-     matches.
-   - The phase's goal, under **Now** in `docs/product_roadmap.md`.
+   - Read each section with `uv run cdd read {doc} "{heading}"`.
+   - The phase's goal, under **Now** in the roadmap.
    - The design's workflows and features the ticket names, and the
      architecture's **Testing strategy** and its **System**'s Rules.
-   - The one or two latest `docs/retro/{phase}/` entries.
-   - The **Release rules** atop `docs/release/phase-{n}.md`. They win over
-     the ticket's Release plan.
+   - The one or two latest retro entries of the phase.
+   - The **Release rules** atop the phase's release playbook. They win
+     over the ticket's Release plan.
    - If the approach is unclear, invoke `superpowers:brainstorming`.
 1. **Write each of the ticket's tests until it fails
    on its assertion.**
@@ -38,8 +36,7 @@ Start: **Plan signed off**. End: **Ready for review**.
    - Write it into its scenario's Examples or the design, then any
      decision it changes. A new feature or workflow is a ticket, per
      `planning-ad-hoc`.
-   - Count the ticket's new scenarios with
-     `uv run --script scripts/check-caps.py`. A third goes to the owner.
+   - Count the ticket's new scenarios with `uv run cdd check caps`. A third goes to the owner.
      One the phase's goal needs redesigns the ticket. One it can spare goes under **Past its caps** in the retro
      entry.
    - A case a rule covers becomes a proposed rule in the ticket's Gherkin,
@@ -51,15 +48,15 @@ Start: **Plan signed off**. End: **Ready for review**.
 1. **Write the code until each test passes.**
    For a page change, run the app locally and screenshot it.
 1. **Update each doc the change touches.**
-   - Fold the Release plan into `docs/release/phase-{n}.md` per the
-     playbook template. Add its lines unchecked. `releasing` checks them
+   - Fold the Release plan into the phase's release playbook, shaped like
+     the playbook template. Add its lines unchecked. `releasing` checks them
      after the branch merges.
-   - Edit `docs/architecture.md` where a decision changed.
+   - Edit the architecture where a decision changed.
    - Write the retro entry, per `writing-a-retro-entry`, with its
      **Deviations from the plan and design**.
    - Run `editing-prose` over the branch's prose.
 1. **Run the checks until they pass.**
-   - Run `uv run --script scripts/check.py` once, in the background. After a fix,
+   - Run `uv run cdd check` once, in the background. After a fix,
      run only the tests it touched.
 1. **Another Developer reviews the change.**
    - Invoke `superpowers:requesting-code-review` over the branch. Ask the

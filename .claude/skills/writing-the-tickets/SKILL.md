@@ -8,11 +8,12 @@ description: Use when the architecture is signed off and the phase's tickets nee
 Start: **Architecture signed off**. End: **Plan signed off**.
 
 1. **Split the planned work until each ticket is one feature on one system
-   and 5 points or less.** Read the changed features and workflows in
-   `docs/design_document.md`, and their decisions in `docs/architecture.md`.
-   Splitting the work in the design says how.
-   Each ticket copies `docs/templates/ticket.md`
-   into `docs/backlog/`, named `{phase}-{number}-{short-name}.md`. Fill every slot and delete the comment. Its
+   and 5 points or less.** Read the changed features and workflows with
+   `uv run cdd read design_document "{heading}"`, and their decisions with
+   `uv run cdd read architecture "{heading}"`. Splitting the work in the
+   design says how. Start each ticket with
+   `uv run cdd new ticket {phase}-{number}-{short-name}`. Fill every slot
+   and delete the comment. Its
    acceptance criteria link each scenario to its feature. A wireframe
    stays in its feature. Its Workflow steps names each step it builds and
    that step's outcome.
@@ -23,11 +24,11 @@ Start: **Architecture signed off**. End: **Plan signed off**.
    the owner decides.
 1. **Grep the backlog until each model attribute the architecture adds sits
    in a ticket.**
-1. **Order the tickets in `docs/backlog/README.md` in groups that run side
+1. **Order the tickets in the backlog README in groups that run side
    by side.** Each group names what it waits on. A spike leads the tickets
    that need it.
-1. **Copy `docs/templates/release-playbook.md`
-   to `docs/release/phase-{n}.md`, and write its steps in run order.** Ask
+1. **Start the release playbook with `uv run cdd new release-playbook {n}`,
+   and write its steps in run order.** Ask
    the owner whether it releases once every ticket is done, or ticket by
    ticket, and which smoke test each stage runs.
 1. **Write the retro entry and sign off the plan.**
@@ -35,5 +36,5 @@ Start: **Architecture signed off**. End: **Plan signed off**.
    1. Invoke `superpowers:requesting-code-review`. Ask the reviewer to read
       the tickets' new rows and scenarios by journey, and add any a step
       lacks for step 2's ways.
-   1. Write `docs/retro/{n}/phase-tickets.md`, per `writing-a-retro-entry`.
+   1. Write the `phase-tickets` retro entry, per `writing-a-retro-entry`.
    1. Get the owner's sign-off, then invoke `merging-to-main`.

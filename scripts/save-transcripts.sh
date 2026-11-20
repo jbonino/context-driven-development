@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Copies every Claude Code and Copilot session of this repo, worktrees and
-# subagents included, into docs/retro/raw/ (gitignored) for the phase-close retro to mine.
+# subagents included, into the folder it's given (gitignored) for the phase-close retro to mine.
+# Run: uv run cdd save
 # Claude Code deletes transcripts after 30 days, so run it at least that often.
 # Base64 images are stripped. A session changed since its last copy is copied again.
 set -euo pipefail
 root="$(dirname "$(git -C "$(dirname "$0")" rev-parse --path-format=absolute --git-common-dir)")"
 slug="$(printf '%s' "$root" | sed 's/[^A-Za-z0-9]/-/g')"
-out="$root/docs/retro/raw"
+out="${1:?Run uv run cdd save}"
 mkdir -p "$out"
 
 save() { # save <transcript> <dest.jsonl.gz>

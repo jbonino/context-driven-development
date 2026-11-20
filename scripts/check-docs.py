@@ -6,20 +6,26 @@
 """Checks that each fact holds its place: each part has its home, each doc
 names only what's above it, and every link resolves.
 
-Run: uv run --script scripts/check-docs.py. Exits 1 and lists each problem.
-Rename: uv run --script scripts/check-docs.py rename "{old}" "{new}"
+Run: uv run cdd check. Exits 1 and lists each problem.
+Rename: uv run cdd check rename "{old}" "{new}"
 """
 import difflib
 import os
 import re
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DESIGN = "docs/design_document.md"
-ARCHITECTURE = "docs/architecture.md"
-FOUNDATIONS = "docs/foundations.md"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cdd  # noqa: E402
+
+ROOT = cdd.ROOT
+DESIGN = cdd.DOCS["design_document"]
+ARCHITECTURE = cdd.DOCS["architecture"]
+FOUNDATIONS = cdd.DOCS["foundations"]
+ROADMAP = cdd.DOCS["product_roadmap"]
+README = cdd.DOCS["backlog-README"]
+DEFERRED, BACKLOG, RELEASE, RETRO = (cdd.folder(d) for d in ("deferred", "ticket", "release-playbook", "retro"))
 KINDS = ("journey", "workflow", "scenario", "rule", "decision")
-HISTORY = ("docs/done/", "docs/retro/", "docs/deferred/", "docs/feedback.md")
+HISTORY = ("docs/done/", RETRO, DEFERRED, cdd.DOCS["feedback"])
 FIXTURES = ("scripts/test_check_docs.py", "scripts/test_check_caps.py")
 
 HEADING = re.compile(r"^(#+) (.+)$")
@@ -187,7 +193,7 @@ def source_tests(tests, sources):
 def deferred_revisits(files):
     """Each deferred entry says when to revisit it."""
     return [f"{path} has no Revisit when line" for path, text in sorted(files.items())
-            if path.startswith("docs/deferred/") and not path.endswith("README.md") and "**Revisit when**" not in text]
+            if path.startswith(DEFERRED) and not path.endswith("README.md") and "**Revisit when**" not in text]
 
 
 def deferred_outside(files):
@@ -195,7 +201,7 @@ def deferred_outside(files):
     file's title, dashes read as spaces. History and a link to it pass."""
     titles = {}
     for path, text in files.items():
-        if path.startswith("docs/deferred/") and not path.endswith("README.md"):
+        if path.startswith(DEFERRED) and not path.endswith("README.md"):
             title = next((m.group(2).strip() for line in text.splitlines() if (m := HEADING.match(line))), None)
             if title:
                 titles[os.path.basename(path)] = title
@@ -213,13 +219,13 @@ def deferred_outside(files):
 
 def may_name(path):
     """What a file may name, by its row in A file that names one it may not."""
-    if path in (DESIGN, "docs/product_roadmap.md") or (path.startswith("scripts/") and not path.endswith(".md")):
+    if path in (DESIGN, ROADMAP) or (path.startswith("scripts/") and not path.endswith(".md")):
         return lambda t: False
-    if path == ARCHITECTURE or (path.startswith("docs/deferred/") and not path.endswith("README.md")):
+    if path == ARCHITECTURE or (path.startswith(DEFERRED) and not path.endswith("README.md")):
         return lambda t: t == DESIGN
-    if path == "docs/backlog/README.md":
-        return lambda t: bool(TICKET_FILE.match(t)) and t.startswith("docs/backlog/")
-    if path.startswith("docs/release/"):
+    if path == README:
+        return lambda t: bool(TICKET_FILE.match(t)) and t.startswith(BACKLOG)
+    if path.startswith(RELEASE):
         return lambda t: bool(TICKET_FILE.match(t)) or t == ARCHITECTURE
     return None
 
@@ -368,7 +374,7 @@ def rename(files, old, new):
     lack renames nothing."""
     design = parse(files.get(DESIGN, ""))
     architecture = parse(files.get(ARCHITECTURE, ""))
-    tickets = {p: t for p, t in files.items() if p.startswith("docs/backlog/") and not p.endswith("README.md")}
+    tickets = {p: t for p, t in files.items() if p.startswith(BACKLOG) and p != README}
     by_kind = {"journey": design["journeys"], "workflow": design["workflows"],
                "scenario": {n for _, n in design["scenarios"]}, "rule": rules(design, architecture, tickets)}
     tests = {f"test_{k}_{slug(old)}": f"test_{k}_{slug(new)}" for k, names in by_kind.items() if old in names}
@@ -439,7 +445,7 @@ def baselines():
 
 def check(docs, code):
     design, architecture = parse(docs[DESIGN]), parse(docs[ARCHITECTURE])
-    tickets = {p: t for p, t in docs.items() if p.startswith("docs/backlog/") and not p.endswith("README.md")}
+    tickets = {p: t for p, t in docs.items() if p.startswith(BACKLOG) and p != README}
     tests = {name for path, text in code.items()
              if path.startswith("scripts/test_") for name in re.findall(r"^def (test_\w+)", text, re.M)}
     found, problems = baselines()
@@ -464,7 +470,7 @@ def check(docs, code):
     problems += stream_names(docs | {p: t for p, t in code.items() if p not in FIXTURES})
     problems += components(design, docs[ARCHITECTURE])
     problems += workflow_skills(docs[DESIGN], {p.split("/")[2] for p in docs if p.startswith(SKILLS)})
-    linked = {p: t for p, t in docs.items() if not p.startswith(("docs/done/", "docs/retro/"))}
+    linked = {p: t for p, t in docs.items() if not p.startswith(("docs/done/", RETRO))}
     problems += broken_links(linked, lambda path: os.path.exists(os.path.join(ROOT, path)), read)
     return problems
 

@@ -1,6 +1,6 @@
 ---
 name: releasing
-description: Use when the owner says to release, deploy or ship, and when working through a playbook in docs/release/
+description: Use when the owner says to release, deploy or ship, and when working through a phase's release playbook
 ---
 
 # Releasing
@@ -8,7 +8,7 @@ description: Use when the owner says to release, deploy or ship, and when workin
 Start: **Signed off**. End: **Released**, every box in
 the phase's playbook checked.
 
-Work `docs/release/phase-{n}.md`. The deploy runs through the team's own
+Work the phase's release playbook, from `uv run cdd read release-playbook {n}`. The deploy runs through the team's own
 process. The playbook lists the setup and checks each ticket's Release plan
 names. Its **Release rules** name the smoke test.
 
@@ -28,7 +28,7 @@ names. Its **Release rules** name the smoke test.
      command that deletes data, say what it removes and from where. Show
      each command's output and run the line's check.
    - On a failed check, stop. The owner decides on a retry. Write the
-     verified fix into its system's section of `docs/architecture.md` and
+     verified fix into its system's section of the architecture and
      go on from that line.
    - The owner may skip a line that can't run. Check its box and add
      `Skipped:` with why and what stood in.

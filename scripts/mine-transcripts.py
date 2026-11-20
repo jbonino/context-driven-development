@@ -3,7 +3,7 @@
 # requires-python = ">=3.13"
 # dependencies = []
 # ///
-"""Mine one phase's saved sessions in docs/retro/raw/ for the phase-close retro.
+"""Mine one phase's saved sessions for the phase-close retro.
 
 Maps each transcript line to a ticket by its ``gitBranch`` and reports, per
 ticket: cost, time sinks, files read and never edited, slow commands, and
@@ -15,9 +15,9 @@ tickets, the owner's retro notes, text repeated across the workflow's files,
 and the order of acts, which shows steps a skill makes run twice or out of
 turn. Usage:
 
-    uv run --script scripts/mine-transcripts.py 004 [--top 10]
+    uv run cdd mine 1 [--top 10]
 
-Run scripts/save-transcripts.sh first. It saves Claude Code and Copilot sessions.
+Run uv run cdd save first. It saves Claude Code and Copilot sessions.
 """
 import argparse
 import base64
@@ -28,11 +28,17 @@ import os
 import re
 import struct
 import subprocess
+import sys
 from collections import defaultdict
 from datetime import datetime
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.path.join(ROOT, "docs/retro/raw")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cdd  # noqa: E402
+
+ROOT = cdd.ROOT
+RAW = os.path.join(ROOT, cdd.FOLDERS["raw"])
+PLANNED = [cdd.DOCS[d] for d in ("foundations", "design_document", "architecture", "product_roadmap")]
+RETRO = cdd.folder("retro")
 
 # Cache reads bill at 0.1x input, cache writes at 1.25x, output at 5x.
 WEIGHTS = {"input_tokens": 1.0, "cache_creation_input_tokens": 1.25,
@@ -124,8 +130,8 @@ def result_tokens(block):
 
 SLOW_SECONDS = 60
 BIG_CONTEXT = 150_000
-DOCS = re.compile(r"/docs/((?:foundations|design_document|architecture|product_roadmap)\.md"
-                  r"|(?:product_roadmap|release|deferred)/[^/]+\.md)$")
+DOCS = re.compile("/(" + "|".join(map(re.escape, PLANNED)) + "|(?:"
+                  + "|".join(re.escape(cdd.folder(d)) for d in ("release-playbook", "deferred")) + r")[^/]+\.md)$")
 ACTS = [("server-", r"\bkill\b|pkill"),
         ("shot", r"shoo?ts?\.(js|sh)|screenshot"), ("test", r"pytest|vitest|pnpm test|turbo test"),
         ("deploy", r"deploy"),
@@ -298,7 +304,7 @@ def mine(phase):
                         s["acts"].append(act)
                     doc = DOCS.search(target)
                     if doc:
-                        s["docs"][doc.group(1) or doc.group(2)][0 if name == "Read" else 1] += name in ("Read", "Edit", "Write")
+                        s["docs"][doc.group(1)][0 if name == "Read" else 1] += name in ("Read", "Edit", "Write")
                     if name == "Read" and target:
                         s["reads"][target] += 1
                     elif name in ("Edit", "Write", "NotebookEdit") and target:
@@ -394,7 +400,7 @@ def retro_facts(text):
 
 
 def retro_of(phase, ticket):
-    for path in glob.glob(os.path.join(ROOT, "docs/retro", phase, f"{ticket}*.md")):
+    for path in glob.glob(os.path.join(ROOT, RETRO, phase, f"{ticket}*.md")):
         if re.match(rf"{re.escape(ticket)}(\.md|-)", os.path.basename(path)):
             return open(path).read()
     return ""
@@ -618,9 +624,9 @@ def trigger(subject):
 
 def redesigns(phase):
     """Sections of the design and architecture docs changed after the phase's design was signed off."""
-    docs = ["docs/foundations.md", "docs/design_document.md", "docs/architecture.md"]
+    docs = PLANNED[:3]
     since = git("log", "--diff-filter=A", "--format=%aI", "--",
-                f"docs/retro/{phase}/phase-tickets.md").split()
+                cdd.DOCS["retro-entry"].format(n=phase, name="phase-tickets")).split()
     log = git("log", "--reverse", "--no-merges", "--format=%H\t%s",
               *([f"--since={since[-1]}"] if since else []), "--", *docs)
     touched = defaultdict(set)   # section → tickets that changed it so far
@@ -666,7 +672,7 @@ NOTE_HEADS = re.compile(r"^\*\*(Owner's calls|Owner feedback|For the phase close
 def owner_notes(phase):
     """Every note the owner left in the phase's retro entries, for the close to group by theme."""
     print("\n## The owner's notes in the retro entries")
-    for path in sorted(glob.glob(os.path.join(ROOT, "docs/retro", phase, "*.md"))):
+    for path in sorted(glob.glob(os.path.join(ROOT, RETRO, phase, "*.md"))):
         text = open(path).read()
         notes = []
         for head in NOTE_HEADS.finditer(text):
@@ -679,7 +685,7 @@ def owner_notes(phase):
 
 def splits(phase):
     # A signed-off ticket moves to docs/done/ or leaves the backlog.
-    deleted = git("log", "--diff-filter=D", "--name-only", "--format=", "--", f"docs/backlog/{phase}-*.md")
+    deleted = git("log", "--diff-filter=D", "--name-only", "--format=", "--", cdd.DOCS["ticket"].format(name=f"{phase}-*"))
     names = set([os.path.basename(p) for p in glob.glob(os.path.join(ROOT, "docs/done", f"{phase}-*.md"))]
              + [os.path.basename(p) for p in deleted.split()])
     split = defaultdict(list)
@@ -694,8 +700,8 @@ def splits(phase):
 def repeated_text():
     """Sentences that say the same thing in two or more of the workflow's files."""
     paths = (glob.glob(os.path.join(ROOT, ".claude/skills/**/*.md"), recursive=True)
-             + glob.glob(os.path.join(ROOT, "docs/templates/*.md"))
-             + [os.path.join(ROOT, p) for p in ("CLAUDE.md", "docs/architecture.md")])
+             + glob.glob(os.path.join(ROOT, cdd.FOLDERS["templates"], "*.md"))
+             + [os.path.join(ROOT, p) for p in ("CLAUDE.md", cdd.DOCS["architecture"])])
     where = defaultdict(set)  # an 8-word run → files holding it; reworded copies still share runs
     for path in paths:
         words = re.sub(r"[`*_\[\]()|>#-]", " ", open(path).read()).lower().split()

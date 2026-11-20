@@ -9,15 +9,20 @@ A ticket's points come from Splitting the work's rule, and its new
 scenarios from Signing off a change's. A warning never fails: the script
 exits 0.
 
-Run: uv run --script scripts/check-caps.py
+Run: uv run cdd check caps
 """
 import os
 import re
 import subprocess
+import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DESIGN = "docs/design_document.md"
-ARCHITECTURE = "docs/architecture.md"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cdd  # noqa: E402
+
+ROOT = cdd.ROOT
+DESIGN = cdd.DOCS["design_document"]
+ARCHITECTURE = cdd.DOCS["architecture"]
+BACKLOG = cdd.folder("ticket")
 HEADING = re.compile(r"^#+ (.+)$")
 STEP = re.compile(r"^(?:\d+\. |\| \d+ \|)")
 FEATURE_LINK = re.compile(r"\]\(#(feature-[^)]*)\)")
@@ -212,9 +217,7 @@ def main():
     design = read(DESIGN)
     warnings = form_warnings(DESIGN, design, ARCHITECTURE, read(ARCHITECTURE))
     warnings += short_outlines(DESIGN, design)
-    backlog = os.path.join(ROOT, "docs", "backlog")
-    tickets = {f"docs/backlog/{n}": read(f"docs/backlog/{n}") for n in sorted(os.listdir(backlog))
-               if n.endswith(".md") and n != "README.md"}
+    tickets = {BACKLOG + n: read(BACKLOG + n) for n in cdd.docs_in(BACKLOG.rstrip("/"))}
     warnings += point_warnings(tickets, point_cap(design))
     warnings += new_scenario_warnings(branch_scenarios(), new_scenario_cap(design))
     for warning in warnings:

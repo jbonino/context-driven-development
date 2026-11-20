@@ -389,9 +389,9 @@ def test_decision_an_app():
     for held in ("apps/cdd/foundations.md", "apps/cdd/docs", "apps/cdd/scripts", "apps/cdd/publish",
                  "forms/forms.md", "forms/templates", "forms/checks", "forms/cdd.py"):
         assert os.path.exists(os.path.join(ROOT, held)), held
-    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles/images", "presentations"],
+    tracked = subprocess.run(["git", "-C", ROOT, "ls-files", "docs", "scripts", "articles", "presentations"],
                              capture_output=True, text=True).stdout
-    assert tracked == ""
+    assert tracked == "articles/index.html\n"  # the essay's old address, which redirects
     assert all(p.startswith(("apps/cdd/", "forms/")) for p in [*cdd.DOCS.values(), *cdd.FOLDERS.values()])
 
 

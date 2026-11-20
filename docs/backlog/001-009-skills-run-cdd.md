@@ -7,7 +7,7 @@ mechanics. No skill names a path.
 
 ## Acceptance criteria
 
-- No skill names a doc's or script's path, or says "in the foundations" to point at a form.
+- No skill names a doc's, script's or app's path, or an app's things, or says "in the foundations" to point at a form.
 - Branching from main and merging to main each run their `cdd` verb.
 - Working a ticket claims with `cdd next` and `cdd branch`.
 - A skill that starts a doc runs `cdd new`, and one that reads part of a doc runs `cdd read`.

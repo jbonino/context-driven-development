@@ -94,8 +94,8 @@ Every feature here runs inside a workflow's skill.[^why-two-systems] A
 workflow with steps to carry runs on the skill of its name.[^why-one-skill-per-workflow]
 A skill holds its workflow's steps and the facts they act on. It names a
 doc by what it is and runs `cdd` to read, start or claim one.[^why-a-skill-names-no-doc] A helper
-serves several workflows and carries no workflow's name. A skill
-bridges CDD and the product, so it may name the product's things.[^why-a-skill-names-the-product]
+serves several workflows and carries no workflow's name.
+Every app runs the same skills, so a skill names no app's things.
 
 ### Feature: Placing feedback
 
@@ -175,9 +175,8 @@ Why each decision that's hard to undo holds, and the options it beat.
 
 [^why-one-skill-per-workflow]: Each step of a workflow has one role. A fresh session loads one skill. Talking with the customer and writing it down needs none. **Other considerations:** A skill for every workflow, which wraps two plain steps in a file to load. One skill playing five workflows, which hid which skill ran a step.
 
-[^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
+[^why-a-skill-names-no-doc]: A fresh session reads one file and acts. A doc that moves changes `cdd` alone, not each skill. A skill's steps may part from its workflow's where practice teaches better. The retros catch the skill steps an agent skipped. **Other considerations:** A skill naming each doc's path, which every move edits. A skill naming its product's things, which serves one app alone. Each step linking to the design's step, which costs a second read. A check that a skill copies its workflow's steps, which proves the words and not the work.
 
-[^why-a-skill-names-the-product]: The design and architecture stay unaware of the product, so they serve any product. A fresh session needs the product's facts to act, and the skill is the one file it loads. **Other considerations:** A product-agnostic skill that reads the product's docs for its facts, which costs a second read every run.
 
 [^why-two-systems]: A system says what its features run on. A Developer then knows whether to open a skill or a script. **Other considerations:** One system, which says nothing. Plan and Build, or Planning, Delivery and Checks, which leave Keeping each fact in its place between two.
 

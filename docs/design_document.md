@@ -332,7 +332,7 @@ Feature: Keeping each fact in its place
         | a deferred entry     | the design                                            |
         | the backlog README   | its own tickets                                       |
         | the release playbook | the tickets and the architecture's systems            |
-        | a skill              | the product's own files. It names CDD's docs by what they are |
+        | a skill              | nothing. It names a doc by what it is                 |
 
     Scenario: An architecture heading with no design heading fails the check
       Given the architecture heads decisions with a workflow or feature the design doesn't have

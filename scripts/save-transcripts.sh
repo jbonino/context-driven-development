@@ -7,7 +7,7 @@
 set -euo pipefail
 root="$(dirname "$(git -C "$(dirname "$0")" rev-parse --path-format=absolute --git-common-dir)")"
 slug="$(printf '%s' "$root" | sed 's/[^A-Za-z0-9]/-/g')"
-out="$1"
+out="${1:?Run uv run cdd save}"
 mkdir -p "$out"
 
 save() { # save <transcript> <dest.jsonl.gz>

@@ -15,8 +15,12 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 | Severity | Finding | Outcome | Planning miss |
 |---|---|---|---|
+| Minor | `docs/done/` stays a literal in check-docs | Left. It isn't a Where doc. It's the old home of done tickets, which only history holds | — |
+| Minor | The session-scripts test spells the raw folder out | Left. Spelled out, the test fails if `cdd` moves the folder | — |
+| Minor | The test of **Each script** checks three things | Left. All three are the decision's sentence | — |
+| Minor | save-transcripts.sh gave no usage without its argument | Fixed. It names `uv run cdd save` | — |
 
-- Verdict: {Yes, No or With fixes}.
+- Verdict: Yes.
 
 **Changed after sign-off**
 - None.

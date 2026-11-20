@@ -15,7 +15,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 | Severity | Finding | Outcome | Planning miss |
 |---|---|---|---|
-| Important | **Each script**'s "`cdd` alone" half is untested, since check-docs.py and check-caps.py still name their own paths | Left for the owner. The check rejects a baseline line for a tested decision | the ticket |
+| Important | **Each script**'s "`cdd` alone" half is untested, since check-docs.py and check-caps.py still name their own paths | Fixed in round 2. The decision drops "alone". A Scripts ticket moves the paths and adds it back | the ticket |
 | Important | `test_decision_cdd_new` asserted two failures its decision didn't state | Fixed. The decision folds them, for the owner's call | `architecture.md` |
 | Important | `cdd new ticket ../escape` wrote outside its folder | Fixed. A name holds no slash and isn't `..`, and a phase is a number. Each has a row | the ticket |
 | Minor | `test_decision_each_script` asserts the bare usage | Left. It proves `uv run cdd` resolves | — |
@@ -30,3 +30,5 @@ sessions under `docs/retro/raw/`, mined at phase close.
 
 **Changed after sign-off**
 - Round 1. **`cdd new`**'s failures became a table of cases, since one sentence packed three facts into "its args name its place". The ticket's criterion follows. Planning miss: `architecture.md`.
+- Round 1. **`cdd check`** drops "a warning 0". **A form past its cap** already holds it. Planning miss: `architecture.md`.
+- Round 2. **Each script** drops "alone". check-docs.py, check-caps.py, mine-transcripts.py and save-transcripts.sh still name paths. Moving them is about 3 points on Scripts, so it's a new ticket, since 001-009 is at its cap. The criterion restated the decision and kept half of it. Planning miss: the ticket, and the ticket template, which has no criterion row for a decision.

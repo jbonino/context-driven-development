@@ -2,6 +2,8 @@
 
     uv run cdd new {doc} [{n}] [{name}]              start a doc from its template
     uv run cdd read {doc} [{n}] [{name}] [heading]   print a doc or one section
+    uv run cdd next-ticket                           name the next open ticket
+    uv run cdd branch {kind} {args}                  claim a branch and open its worktree
     uv run cdd check [caps]                          run the checks, or the caps alone
     uv run cdd mine {n} [--top 10]                   mine phase n's saved sessions
 """
@@ -122,6 +124,72 @@ def read(doc, args):
     sys.exit(f"{path} has no heading {heading}. Its headings are {', '.join(t for _, _, t in headings)}")
 
 
+def git(*args):
+    return subprocess.run(["git", "-C", ROOT, *args], capture_output=True, text=True)
+
+
+def backlog():
+    """(ticket's filename, its number, the numbers it waits on) for each row, in order."""
+    with open(os.path.join(ROOT, DOCS["backlog-README"]), encoding="utf-8") as source:
+        rows = re.findall(r"^\|[^|]*\|[^|]*\]\(((\d+-\d+)[^)]*)\.md\)[^|]*\|([^|]*)\|", source.read(), re.M)
+    return [(name, number, re.findall(r"\d+-\d+", waits)) for name, number, waits in rows]
+
+
+def open_ticket():
+    """The first ticket whose waits are merged and that has no branch on origin, and why each other isn't."""
+    rows = backlog()
+    listed = {number for _, number, _ in rows}
+    claimed = git("ls-remote", "--heads", "origin").stdout
+    why = []
+    for name, number, waits in rows:
+        if open_waits := [w for w in waits if w in listed]:
+            why.append(f"{number} waits on {', '.join(open_waits)}")
+        elif f"refs/heads/feature/{name}\n" in claimed:
+            why.append(f"{number} has a branch on origin")
+        else:
+            return name, why
+    return None, why
+
+
+def next_ticket():
+    """Print the next open ticket, or say what each waits on."""
+    name, why = open_ticket()
+    if not name:
+        sys.exit(f"No ticket is open. {'. '.join(why) or 'The backlog is empty'}")
+    print(name)
+
+
+BRANCHES = {"ticket": "feature/{name}", "plan": "design/phase-{n}", "adhoc": "adhoc/{n}-{name}", "chore": "chore/{name}"}
+
+
+def branch(kind, args):
+    """Claim the branch on origin by pushing main under its name, then open its worktree."""
+    fields = re.findall(r"{(\w+)}", BRANCHES.get(kind, ""))
+    if not fields or len(args) != len(fields) or not all(ARG[f].fullmatch(a) and a != ".." for f, a in zip(fields, args)):
+        sys.exit(f"cdd branch takes {' or '.join(f'{k} ' + ' '.join('{' + f + '}' for f in re.findall(r'{(\w+)}', v)) for k, v in BRANCHES.items())}")
+    given = dict(zip(fields, args))
+    if kind == "ticket":
+        found = [name for name, number, _ in backlog() if number == args[0]]
+        if not found:
+            sys.exit(f"The backlog has no ticket {args[0]}")
+        given["name"] = found[0]
+    name = BRANCHES[kind].format(**given)
+    tree = os.path.join(ROOT, ".claude/worktrees", name.split("/", 1)[1])
+    if not git("rev-parse", "--verify", "--quiet", f"refs/heads/{name}").stdout:
+        git("fetch", "-q", "origin", "main")
+        taken = git("ls-remote", "--heads", "origin", name).stdout.strip()
+        if taken or git("push", "-q", f"--force-with-lease=refs/heads/{name}:", "origin", f"FETCH_HEAD:refs/heads/{name}").returncode:
+            next_name, _ = open_ticket()
+            sys.exit(f"{name} is someone else's on origin. The next open ticket is {next_name or 'none'}")
+        git("fetch", "-q", "origin", f"{name}:refs/remotes/origin/{name}")
+        git("branch", "-q", "--track", name, f"origin/{name}")
+    if not os.path.isdir(tree):
+        added = git("worktree", "add", "-q", tree, name)
+        if added.returncode:
+            sys.exit(added.stderr.strip())
+    print(tree)
+
+
 def check(steps):
     """Run each step. A failure exits 1 naming it. A warning prints and exits 0."""
     failed = []
@@ -140,6 +208,10 @@ def main(argv=None):
             new(doc, args)
         case ["read", doc, *args]:
             read(doc, args)
+        case ["next-ticket"]:
+            next_ticket()
+        case ["branch", kind, *args]:
+            branch(kind, args)
         case ["check"]:
             check(STEPS)
         case ["check", "caps"]:

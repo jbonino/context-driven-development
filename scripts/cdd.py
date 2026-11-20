@@ -2,6 +2,8 @@
 
     uv run cdd new {doc} [{n}] [{name}]              start a doc from its template
     uv run cdd read {doc} [{n}] [{name}] [heading]   print a doc or one section
+    uv run cdd next-ticket                           name the next open ticket
+    uv run cdd branch {kind} {args}                  claim a branch and open its worktree
     uv run cdd check [caps]                          run the checks, or the caps alone
     uv run cdd mine {n} [--top 10]                   mine phase n's saved sessions
 """
@@ -122,6 +124,87 @@ def read(doc, args):
     sys.exit(f"{path} has no heading {heading}. Its headings are {', '.join(t for _, _, t in headings)}")
 
 
+def git(*args, check=True):
+    """Run git in ROOT. A failure exits with its error unless check is off."""
+    done = subprocess.run(["git", "-C", ROOT, *args], capture_output=True, text=True)
+    if check and done.returncode:
+        sys.exit(f"git {' '.join(args)} failed: {done.stderr.strip()}")
+    return done
+
+
+def backlog():
+    """(ticket's filename, its number, the numbers it waits on) for each row of origin's main, in order."""
+    git("fetch", "-q", "origin", "main")
+    readme = git("show", f"FETCH_HEAD:{DOCS['backlog-README']}").stdout
+    rows = re.findall(r"^\|[^|]*\|[^|]*\]\(((\d+-\d+)[^)]*)\.md\)[^|]*\|([^|]*)\|", readme, re.M)
+    return [(name, number, re.findall(r"\d+-\d+", waits)) for name, number, waits in rows]
+
+
+def open_ticket():
+    """The first ticket whose waits are merged and that has no branch on origin, and why each other isn't."""
+    rows = backlog()
+    listed = {number for _, number, _ in rows}
+    claimed = git("ls-remote", "--heads", "origin").stdout
+    why = []
+    for name, number, waits in rows:
+        if open_waits := [w for w in waits if w in listed]:
+            why.append(f"{number} waits on {', '.join(open_waits)}")
+        elif f"refs/heads/feature/{name}\n" in claimed:
+            why.append(f"{number} has a branch on origin")
+        else:
+            return name, why
+    return None, why
+
+
+def next_ticket():
+    """Print the next open ticket, or say what each waits on."""
+    name, why = open_ticket()
+    if not name:
+        sys.exit(f"No ticket is open. {'. '.join(why) or 'The backlog is empty'}")
+    print(name)
+
+
+BRANCHES = {"ticket": "feature/{name}", "plan": "design/phase-{n}", "adhoc": "adhoc/{n}-{name}", "chore": "chore/{name}"}
+
+
+def branch(kind, args):
+    """Claim the branch on origin by pushing origin's main under its name, then open its worktree."""
+    fields = re.findall(r"{(\w+)}", BRANCHES.get(kind, ""))
+    if not fields or len(args) != len(fields) or not all(ARG[f].fullmatch(a) and a != ".." for f, a in zip(fields, args)):
+        takes = " or ".join(f"{k} " + " ".join("{" + f + "}" for f in re.findall(r"{(\w+)}", v)) for k, v in BRANCHES.items())
+        sys.exit(f"cdd branch takes {takes}")
+    given = dict(zip(fields, args))
+    if kind == "ticket":
+        found = [name for name, number, _ in backlog() if number == args[0]]
+        if not found:
+            sys.exit(f"The backlog has no ticket {args[0]}")
+        given["name"] = found[0]
+    name = BRANCHES[kind].format(**given)
+    if git("check-ref-format", "--branch", name, check=False).returncode:
+        sys.exit(f"{name} isn't a branch name git takes")
+    tree = os.path.join(ROOT, ".claude/worktrees", name.split("/", 1)[1])
+    if not git("rev-parse", "--verify", "--quiet", f"refs/heads/{name}", check=False).stdout:
+        git("fetch", "-q", "origin", "main")
+        lost = git("ls-remote", "--heads", "origin", name).stdout.strip()
+        if not lost:
+            pushed = git("push", "-q", f"--force-with-lease=refs/heads/{name}:", "origin", f"FETCH_HEAD:refs/heads/{name}", check=False)
+            lost = pushed.returncode and git("ls-remote", "--heads", "origin", name).stdout.strip()
+            if pushed.returncode and not lost:
+                sys.exit(f"git push failed: {pushed.stderr.strip()}")
+        if lost:
+            next_name, _ = open_ticket()
+            sys.exit(f"{name} is someone else's on origin. The next open ticket is {next_name or 'none'}")
+        git("fetch", "-q", "origin", f"{name}:refs/remotes/origin/{name}")
+        git("branch", "-q", "--track", name, f"origin/{name}")
+    if os.path.isdir(tree):
+        held = subprocess.run(["git", "-C", tree, "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
+        if held != name:
+            sys.exit(f"{tree} holds {held or 'no branch'}, not {name}")
+    else:
+        git("worktree", "add", "-q", tree, name)
+    print(tree)
+
+
 def check(steps):
     """Run each step. A failure exits 1 naming it. A warning prints and exits 0."""
     failed = []
@@ -140,6 +223,10 @@ def main(argv=None):
             new(doc, args)
         case ["read", doc, *args]:
             read(doc, args)
+        case ["next-ticket"]:
+            next_ticket()
+        case ["branch", kind, *args]:
+            branch(kind, args)
         case ["check"]:
             check(STEPS)
         case ["check", "caps"]:

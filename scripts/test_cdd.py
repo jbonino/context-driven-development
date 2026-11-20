@@ -156,3 +156,96 @@ def test_decision_cdd_read(root, capsys, case):
         listed = failed.value.code.rsplit(". ", 1)[-1]  # what exists, after the reason if there is one
         assert all(name in listed for name in expected)
         assert not any(fenced in listed for fenced in ("fence", "Still in it", "notes.txt", "##"))
+
+
+def git(cwd, *args):
+    return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True, check=True).stdout
+
+
+BACKLOG = """# Backlog
+
+| Group | Ticket | Waits on |
+|---|---|---|
+| 1 | [001-001 — One](001-001-one.md) | — |
+| 2 | [001-002 — Two](001-002-two.md) | 001-001 |
+| 3 | [001-003 — Three](001-003-three.md) | — |
+| 3 | [001-004 — Four](001-004-four.md) | 001-002, 001-009 |
+"""
+
+
+@pytest.fixture
+def repo(tmp_path, monkeypatch):
+    """A clone of a bare origin, holding the backlog above on main."""
+    origin, here = tmp_path / "origin.git", tmp_path / "here"
+    git(tmp_path, "init", "-q", "--bare", "-b", "main", str(origin))
+    git(tmp_path, "clone", "-q", str(origin), str(here))
+    os.makedirs(here / "docs/backlog")
+    (here / "docs/backlog/README.md").write_text(BACKLOG)
+    for n in ("001-001-one", "001-002-two", "001-003-three", "001-004-four"):
+        (here / f"docs/backlog/{n}.md").write_text(f"# {n}\n")
+    git(here, "add", ".")
+    git(here, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "backlog")
+    git(here, "push", "-q", "origin", "main")
+    monkeypatch.setattr(cdd, "ROOT", str(here))
+    return here
+
+
+def claim_on_origin(repo, branch):
+    git(repo, "push", "-q", "origin", f"main:refs/heads/{branch}")
+
+
+CDD_NEXT_TICKET = {  # branches on origin, and what it prints or the waits its failure lists
+    "The first ticket whose waits are merged": ([], "001-001-one"),
+    "A ticket with a branch on origin is skipped": (["feature/001-001-one"], "001-003-three"),
+    "With none open it says what each waits on": (["feature/001-001-one", "feature/001-003-three"], None),
+}
+
+
+@pytest.mark.parametrize("case", CDD_NEXT_TICKET)
+def test_decision_cdd_next_ticket(repo, capsys, case):
+    claimed, expected = CDD_NEXT_TICKET[case]
+    for branch in claimed:
+        claim_on_origin(repo, branch)
+    if expected:
+        cdd.main(["next-ticket"])
+        assert capsys.readouterr().out.strip() == expected
+    else:
+        with pytest.raises(SystemExit) as failed:
+            cdd.main(["next-ticket"])
+        said = failed.value.code
+        assert isinstance(said, str)
+        assert "001-002 waits on 001-001" in said and "001-004 waits on 001-002." in said + "."
+        assert "001-009" not in said, "a wait gone from the backlog is merged"
+
+
+CDD_BRANCH = {  # its args, the branch it claims, and what came before: a claim on origin or a first run
+    "A ticket": (["ticket", "001-003"], "feature/001-003-three", None),
+    "A phase's plan": (["plan", "2"], "design/phase-2", None),
+    "An ad hoc plan": (["adhoc", "002", "fix-links"], "adhoc/002-fix-links", None),
+    "A chore": (["chore", "tidy"], "chore/tidy", None),
+    "A branch already here is reused": (["chore", "tidy"], "chore/tidy", "here"),
+    "A branch on origin lost the race and names the next open ticket": (
+        ["ticket", "001-001"], "feature/001-001-one", "origin"),
+}
+
+
+@pytest.mark.parametrize("case", CDD_BRANCH)
+def test_decision_cdd_branch(repo, capsys, case):
+    args, branch, before = CDD_BRANCH[case]
+    if before == "origin":
+        claim_on_origin(repo, branch)
+        with pytest.raises(SystemExit) as failed:
+            cdd.main(["branch", *args])
+        assert isinstance(failed.value.code, str) and "001-003-three" in failed.value.code
+        assert not git(repo, "branch", "--list", branch).strip()
+        return
+    if before == "here":
+        cdd.main(["branch", *args])
+        capsys.readouterr()
+    cdd.main(["branch", *args])
+    printed = capsys.readouterr().out.split()
+    assert printed, "cdd branch prints its worktree"
+    tree = printed[-1]
+    assert git(repo, "ls-remote", "--heads", "origin", branch).strip()
+    assert git(tree, "rev-parse", "--abbrev-ref", "HEAD").strip() == branch
+    assert tree == str(repo / ".claude/worktrees" / branch.split("/", 1)[1])

@@ -210,8 +210,16 @@ Editing prose
 
 ### Component: Branch commands
 
-- **`cdd next-ticket`** names the first ticket in the backlog README whose waits are merged and that has no branch on origin. With none open, it says what each waits on.
-- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race.
+- **`cdd next-ticket`** names the first ticket in origin's backlog README whose waits are merged, gone from it, and that has no branch on origin. With none open, it says what each waits on.
+- **`cdd branch`** claims the branch its kind names below by pushing origin's main to it, then opens its worktree under `.claude/worktrees/`. A branch already on origin lost the race and names the next open ticket, and one already here is reused.
+
+| Kind | Args | Branch |
+|---|---|---|
+| A ticket | `ticket {number}` | `feature/{ticket filename, no .md}` |
+| A phase's plan | `plan {n}` | `design/phase-{n}` |
+| An ad hoc plan | `adhoc {number} {short-name}` | `adhoc/{number}-{short-name}` |
+| A chore | `chore {short-name}` | `chore/{short-name}` |
+
 - **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything for a rerun to finish.
 
 ## Why

@@ -2,12 +2,6 @@ A skill's paths — waits on 001-009, since today's skills name paths
 A skill — a skill runs it. Its test waits for evals
 A product's things — a skill runs it. Its test waits for evals
 A baseline — a file per kind. Its test waits, since no check reads the file names
-A form past its cap — Feature: Keeping each fact in its place: One more than the cap warns
-A home — Rule: Each part has its home
-A link — Feature: Keeping each fact in its place: A link to a missing file fails the check
-A system — Feature: Keeping each fact in its place: A design feature no system lists fails the check
-A known gap — Rule: Each part has its home
-A test's name — Feature: Keeping each fact in its place: A part with no home fails the check, for a test with no source it names
 Each script — waits on 001-004 for cdd
 cdd check — waits on 001-004 for cdd
 cdd new — waits on 001-004
@@ -21,10 +15,8 @@ A plan's sign-off — a git tag that a skill makes. Its test waits for evals
 A claimed ticket — a branch that a skill makes. Its test waits for evals
 A finished playbook — a skill deletes it. Its test waits for evals
 A feature here — a skill runs it. Its test waits for evals
-A workflow with steps to carry — a skill runs it. Its test waits for evals
 A helper — a skill runs it. Its test waits for evals
 An entry — a skill runs it. Its test waits for evals
-A deferred entry — Feature: Keeping each fact in its place: A part with no home fails the check
 A ticket — a skill runs it. Its test waits for evals
 A spike — a skill runs it. Its test waits for evals
 A ticket's hand-off — a skill runs it. Its test waits for evals
@@ -35,3 +27,4 @@ The deploy — a skill runs it. Its test waits for evals
 A failed step's fix — a skill runs it. Its test waits for evals
 A miss's kind — a skill runs it. Its test waits for evals
 The red rule — a skill runs it. Its test waits for evals
+A ticket's caps — Rule: A ticket takes two new scenarios at most, and Rule: A ticket is at most one feature on one system and 5 points

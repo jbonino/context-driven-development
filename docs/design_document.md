@@ -18,7 +18,6 @@ Read [foundations.md](foundations.md) first.
   - [Workflow: Planning ad hoc](#workflow-planning-ad-hoc)
   - [Features](#features)
     - [Feature: Placing feedback](#feature-placing-feedback)
-    - [Feature: Keeping each fact in its place](#feature-keeping-each-fact-in-its-place)
     - [Feature: Splitting the work](#feature-splitting-the-work)
     - [Feature: Going red first](#feature-going-red-first)
     - [Feature: Signing off a change](#feature-signing-off-a-change)
@@ -131,7 +130,7 @@ Start: **Phase scoped**
 1. Edit the journeys the goal changes
 1. Edit the workflows the goal changes and the checkpoints they start and end at
 1. Name each branch of a changed step as a scenario and group them into features by shared context. Titles only
-1. Write each scenario's Gherkin and each feature's rules with the Product Owner ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
+1. Write each scenario's Gherkin and each feature's rules with the Product Owner
 1. Wireframe each screen a feature changes with its copy
 1. Write the design pass's retro entry and sign off the design with the Product Owner ([Editing prose](#feature-editing-prose))
 
@@ -144,9 +143,9 @@ Responsible: Developer · Accountable: Product Owner
 Start: **Design signed off**
 
 1. Brainstorm with the Product Owner until a build meets the design's changes and the phase's goal
-1. Edit the architecture's base the design changes
-1. Place each new feature under the system it runs on. Name a new system where none fits
-1. Write the decisions each changed workflow and feature needs, under a heading of its own name ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
+1. Edit the architecture's Shared section the design changes
+1. Place each new feature on the opening line of a component, under the system it runs on. Name a new component or system where none fits
+1. Write the decisions each changed component needs, under its heading
 1. Give each decision that's hard to undo a why. Name the options it beat
 1. Write the architecture pass's retro entry and sign off the architecture with the Product Owner ([Editing prose](#feature-editing-prose))
 
@@ -160,7 +159,7 @@ Start: **Architecture signed off**
 
 1. Split the planned work into tickets. Each names its scenarios and the workflow steps it builds ([Splitting the work](#feature-splitting-the-work))
 1. Check each scenario for how a bug could break it ([Signing off a change](#feature-signing-off-a-change))
-1. Check that a ticket carries each model attribute the architecture adds ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
+1. Check that a ticket carries each model attribute the architecture adds
 1. Order the tickets in the backlog README with their parallel groups
 1. Write the release playbook in run order
 1. Write the ticket pass's retro entry and sign off the plan with the Product Owner. Merge it to main ([Editing prose](#feature-editing-prose))
@@ -178,7 +177,7 @@ Start: **Plan signed off**
 1. Add each case the tests find to the design as a row or a new scenario ([Signing off a change](#feature-signing-off-a-change))
 1. Write the code until each test passes
 1. Add the ticket's lines to the release playbook and write its retro entry. Update any other docs the change touches ([Editing prose](#feature-editing-prose))
-1. Run the checks until they pass ([Keeping each fact in its place](#feature-keeping-each-fact-in-its-place))
+1. Run the checks until they pass
 1. Another Developer reviews the change and the Developer fixes what it finds. Its findings join the ticket's retro entry ([Editing prose](#feature-editing-prose))
 1. Hand off what shipped to the Product Owner with how to walk it and what waits on them
 
@@ -282,97 +281,6 @@ Feature: Placing feedback
     Given the Product Owner is scoping a phase
     When an entry no longer holds
     Then git alone keeps it
-```
-
-### Feature: Keeping each fact in its place
-
-```gherkin
-Feature: Keeping each fact in its place
-  Each fact holds its place down the stream.
-
-  Rule: Each part has its home
-
-    Scenario Outline: A part with no home fails the check
-      Given <part> with no <home>
-      When the Developer runs the checks
-      Then the checks fail on the part
-
-      Examples:
-        | part                                | home                                      |
-        | a rule                              | two scenarios under it                    |
-        | a journey                           | test named for it                         |
-        | a workflow                          | test named for it                         |
-        | a scenario                          | test named for it                         |
-        | a rule                              | test named for it                         |
-        | a decision                          | test named for it                         |
-        | a test                              | source it names                           |
-        | a deferred entry                    | `Revisit when` line                       |
-
-    Scenario: A deferred thing described outside its file fails
-      Given a doc other than its deferred/ file describes a deferred thing
-      When the Developer runs the checks
-      Then the checks fail on that line
-
-  Rule: A doc names only what's above it
-
-    Scenario Outline: A file that names one it may not fails the check
-      Given <file> names a doc other than the foundations or <may>
-      When the Developer runs the checks
-      Then the checks fail on that line
-
-      Examples:
-        | file                 | may                                                   |
-        | the design           | nothing                                               |
-        | the architecture     | the design                                            |
-        | the code             | nothing                                               |
-        | the roadmap          | nothing                                               |
-        | a deferred entry     | the design                                            |
-        | the backlog README   | its own tickets                                       |
-        | the release playbook | the tickets and the architecture's systems            |
-
-    Scenario: An architecture heading with no design heading fails the check
-      Given the architecture heads decisions with a workflow or feature the design doesn't have
-      When the Developer runs the checks
-      Then the checks fail on the heading
-
-    Scenario: A design feature no system lists fails the check
-      Given a design feature that sits on no system's opening line in the architecture
-      When the Developer runs the checks
-      Then the checks fail on the feature
-
-  Rule: Every link resolves
-
-    Scenario: A link to a missing file fails the check
-      Given a doc links to a file that doesn't exist
-      When the Developer runs the checks
-      Then the checks fail on the link
-
-    Scenario: A link to a missing heading fails the check
-      Given a doc links to an anchor no heading in its file makes
-      When the Developer runs the checks
-      Then the checks fail on the link
-
-  Rule: Each form stays under its cap
-
-    Scenario: An outline under three rows warns
-      Given a scenario outline with two Examples rows
-      When the Developer runs the checks
-      Then the checks warn
-      And the owner decides whether to split it into scenarios
-
-    Scenario Outline: One more than the cap warns
-      Given a <doc> at its cap of <cap>
-      When one more is added
-      Then the checks warn
-      And the owner decides whether to redesign <upstream>
-
-      Examples:
-        | form                 | cap                    | upstream              |
-        | journey              | 7 workflows            | the journey           |
-        | workflow             | 8 steps                | its journey           |
-        | workflow step        | 1 feature              | the step              |
-        | feature              | 8 scenarios or 4 rules | its workflows         |
-        | architecture section | 4 decisions            | its feature or system |
 ```
 
 ### Feature: Splitting the work

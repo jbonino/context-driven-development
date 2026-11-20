@@ -1,6 +1,6 @@
 # 001-004 — Start a doc from its template — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 3 — a new entry point, and `check` moves under it · **Model.** Sonnet 5.5, medium — a small CLI over files
 
 A user runs `uv run cdd new ticket 001-012-foo` and gets the ticket in its
 place with its path printed. `uv run cdd check` runs the checks, as

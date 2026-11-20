@@ -1,6 +1,6 @@
 # 001-007 — Merge a signed-off branch — **Ad hoc**
 
-**System.** [Scripts](../architecture.md#scripts) · **Estimate.** 3 — merge, save sessions, delete the ticket, clean up · **Model.** Sonnet 5.5, medium — edge cases with conflicts and cleanup
+**System.** [Scripts](../architecture.md#system-scripts) · **Estimate.** 3 — merge, save sessions, delete the ticket, clean up · **Model.** Sonnet 5.5, medium — edge cases with conflicts and cleanup
 
 `uv run cdd merge {branch}` does what merging to main does by hand. It saves
 the sessions, merges, deletes the ticket, pushes, and removes the worktree

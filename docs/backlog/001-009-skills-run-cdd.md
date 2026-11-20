@@ -1,6 +1,6 @@
 # 001-009 — Skills run cdd — **Ad hoc**
 
-**System.** [Skills](../architecture.md#skills) · **Estimate.** 5 — all 13 skills and a template get read and their paths go · **Model.** Sonnet 5.5, medium — many small edits, each by rule
+**System.** [Skills](../architecture.md#system-skills) · **Estimate.** 5 — all 13 skills and a template get read and their paths go · **Model.** Sonnet 5.5, medium — many small edits, each by rule
 
 Each skill names docs by what they are and runs `cdd` for the
 mechanics. No skill names a path.

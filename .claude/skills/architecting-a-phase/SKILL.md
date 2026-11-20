@@ -15,17 +15,18 @@ Start: **Design signed off**. End: **Architecture signed off**.
      `sed -n` the systems the diff touches.
    - Invoke `superpowers:brainstorming`. Score each option put to the
      owner against the ethics and principles it touches.
-1. **Edit the architecture's Foundations the design changes.** These are
+1. **Edit the architecture's Shared section the design changes.** These are
    the stack, Where, the constraints, and the testing strategy's levels
    and runners.
-1. **List each new feature on the opening line of the system it runs on.**
-   - Name a new system where none fits, from
+1. **List each new feature on the opening line of the component that
+   builds it, under the system it runs on.**
+   - Name a new component or system where none fits, from
      `docs/templates/architecture.md`.
    - Merge up the chain. A new system that shares its tech with one
      already there joins it.
-1. **Write the decisions each changed workflow and feature needs, under a
-   heading of its own name.**
-   - A workflow or feature with no decision takes no heading.
+1. **Write the decisions each changed component needs, under its
+   heading.**
+   - A heading names no workflow, journey or feature.
    - Facts flow down. A decision names only the design.
    - Run `uv run --script scripts/check-docs.py` until it passes, and
      `uv run --script scripts/check-caps.py`. Bring each cap warning to

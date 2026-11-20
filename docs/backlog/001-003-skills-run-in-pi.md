@@ -1,6 +1,6 @@
 # 001-003 — The skills run in Pi
 
-**System.** [Skills](../architecture.md#skills) · **Estimate.** 5 — every skill gets read, and each Claude Code-only step gets a fallback · **Model.** Sonnet 5.5, medium — the spike's table settles each call
+**System.** [Skills](../architecture.md#system-skills) · **Estimate.** 5 — every skill gets read, and each Claude Code-only step gets a fallback · **Model.** Sonnet 5.5, medium — the spike's table settles each call
 
 A user who can't use Claude Code runs every CDD skill in Pi, with no step
 that only works in Claude Code.

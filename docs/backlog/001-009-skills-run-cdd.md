@@ -1,6 +1,6 @@
 # 001-009 — Skills run cdd — **Ad hoc**
 
-**System.** [Skills](../architecture.md#system-skills) · **Estimate.** 5 — all 13 skills and a template get read and their paths go · **Model.** Sonnet 5.5, medium — many small edits, each by rule
+**System.** [Skills](../architecture.md#system-skills) · **Estimate.** 8 — all 13 skills and a template get read and their paths go, and four scripts' paths move into `cdd` · **Model.** Sonnet 5.5, medium — many small edits, each by rule
 
 Each skill names docs by what they are and runs `cdd` for the
 mechanics. No skill names a path.
@@ -14,6 +14,8 @@ mechanics. No skill names a path.
 - The checks run as `cdd check`, the caps as `cdd check caps`, and mining as `cdd mine`.
 - Closing a phase and scoping a phase delete a finished playbook or a taken-up deferred entry by name.
 - Reviewing a ticket names the scenario baseline by name.
+- [Each script](../architecture.md#system-scripts) gains back "`cdd` alone holds each doc's path". `test_decision_each_script` fails on a script other than `cdd` that names a Where path.
+- Merging to main runs `cdd save`.
 
 ## Workflow steps
 
@@ -29,4 +31,7 @@ mechanics. No skill names a path.
 - Rename the architecture template's Foundations section to Shared.
 - Take `test_decision_a_skill_s_paths` out of the baseline.
 - Planning ad hoc drops "Raise its points and ticket count". The README holds no totals.
-- - Delete `scripts/check.py` once nothing runs it.
+- Delete `scripts/check.py` once nothing runs it.
+- check-docs.py, check-caps.py and mine-transcripts.py import their paths from `cdd`.
+- `cdd save` runs save-transcripts.sh with the raw sessions' path as its argument. The script resolves it against the main checkout, not the worktree.
+- **Each script** becomes "`cdd` alone holds each doc's path, from Where."

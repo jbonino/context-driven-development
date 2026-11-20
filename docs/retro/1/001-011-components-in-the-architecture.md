@@ -6,7 +6,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 **Deviations from the plan and design**
 - The caps table moved from the design's outline to the architecture, under **A form past its cap**. The caps script reads it there.
 - Each Skills feature heading became a component named for what it builds: Feedback, Tickets, Review, Playbook, Retro, Red tests and Prose.
-- Checks holds 4 decisions: A home, A doc's links, A link and A form past its cap. The old **A system** decision folded into **A home**.
+- The old **A system** decision folded into **A design feature**, under Homes.
 - **A workflow with steps to carry** is now one whose step links a feature. The customer workflows link none, so they need no skill.
 - A component that builds no design feature opens with its decisions. Checks and both command components do.
 - Architecting a phase, in the design and its skill, now places a feature on a component.
@@ -23,7 +23,7 @@ sessions under `docs/retro/raw/`, mined at phase close.
 | Minor | The test-name test also asserts rename | Left. Rename keeps a test's name on its source | — |
 | Minor | The caps test repeated its shared assertions per row | Fixed. One test | — |
 | Minor | The caps script's docstring was garbled | Fixed | — |
-| Minor | A home holds five facts, two repeating Foundations and editing-prose | Left. Checks is at its cap of 4 | — |
+| Minor | A home holds five facts, two repeating Foundations and editing-prose | Fixed in round 1. Split across Homes, Links and Caps | — |
 | Minor | Three decisions joined clauses with commas | Fixed. Split into sentences | — |
 | Minor | The architecting skill restated the component cap | Fixed. Dropped | — |
 | Minor | No word counts show the prose cut ran | Left. The architecture grew by its new headings and the moved caps table | — |
@@ -35,4 +35,6 @@ sessions under `docs/retro/raw/`, mined at phase close.
 - The Skills system holds 6 decisions, past 4. The owner kept it in 001-008.
 
 **Changed after sign-off**
-- None
+- Round 1. A decision holds 2 sentences at most, and the caps check warns past that. Foundations' Decision row says so. Planning miss: `foundations.md`.
+- Round 1. Checks split into Homes, Links and Caps, so no decision runs past 2 sentences. A home became four decisions. A rule holding two scenarios stays in Foundations alone. Planning miss: the ticket.
+- Round 1. Four `cdd` decisions joined sentences to fit 2. Planning miss: `architecture.md`.

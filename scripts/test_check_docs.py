@@ -10,56 +10,65 @@ cd = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cd)
 
 
-PARTS = {  # part and home: the check, and the failure it gives
-    "a rule with two scenarios under it": (lambda: cd.rule_scenarios(
-        "design.md", "```gherkin\nFeature: Notes\n  Rule: One alone\n\n    Scenario: Only\n```\n"),
-        "design.md: Rule: One alone holds over 1 scenario; a rule needs two"),
-    "a journey with a test named for it": (lambda: cd.named_tests("journey", {"A day"}, set(), set()),
-                                           "Journey: A day has no test_journey_a_day"),
-    "a workflow with a test named for it": (lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
-                                            "Workflow: Closing has no test_workflow_closing"),
-    "a scenario with a test named for it": (
-        lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
-        "Feature: Notes's scenario Only has no test_scenario_only, and no open ticket cites it"),
-    "a rule with a test named for it": (lambda: cd.named_tests("rule", {"One alone"}, set(), set()),
-                                        "Rule: One alone has no test_rule_one_alone"),
-    "a decision with a test named for it": (lambda: cd.named_tests("decision", {"A skill"}, set(), set()),
-                                            "Decision: A skill has no test_decision_a_skill"),
-    "a deferred thing in its own file": (
-        lambda: cd.deferred_outside({"docs/deferred/skill-evals.md": "# skill-evals\n\n**Revisit when** cheap.\n",
-                                     "docs/design_document.md": "Intro.\n\nSkill evals would test each skill.\n"}),
-        "docs/design_document.md describes skill-evals outside its deferred file: Skill evals would test each skill."),
+TESTED = {  # a source, and the failure it gives with no test
+    "journey": (lambda: cd.named_tests("journey", {"A day"}, set(), set()), "Journey: A day has no test_journey_a_day"),
+    "workflow": (lambda: cd.named_tests("workflow", {"Closing"}, set(), set()),
+                 "Workflow: Closing has no test_workflow_closing"),
+    "scenario": (lambda: cd.scenario_tests([("Feature: Notes", "Only")], set(), {}, set()),
+                 "Feature: Notes's scenario Only has no test_scenario_only, and no open ticket cites it"),
+    "rule": (lambda: cd.named_tests("rule", {"One alone"}, set(), set()), "Rule: One alone has no test_rule_one_alone"),
+    "decision": (lambda: cd.named_tests("decision", {"A skill"}, set(), set()),
+                 "Decision: A skill has no test_decision_a_skill"),
 }
+
+
+@pytest.mark.parametrize("source", TESTED)
+def test_decision_a_test_s_home(source):
+    check, failure = TESTED[source]
+    assert check() == [failure]
+
+
+def test_decision_a_rule_s_scenarios():
+    assert cd.rule_scenarios("design.md", "```gherkin\nFeature: Notes\n  Rule: One alone\n\n    Scenario: Only\n```\n") == [
+        "design.md: Rule: One alone holds over 1 scenario; a rule needs two"]
+
+
+def test_decision_a_deferred_thing():
+    files = {"docs/deferred/skill-evals.md": "# skill-evals\n\n**Revisit when** cheap.\n",
+             "docs/design_document.md": "Intro.\n\nSkill evals would test each skill.\n"}
+    assert cd.deferred_outside(files) == [
+        "docs/design_document.md describes skill-evals outside its deferred file: Skill evals would test each skill."]
+
 
 DESIGN = cd.parse("### Feature: Notes\n\n```gherkin\nScenario: A\n```\n\n"
                   "### Feature: Caps\n\n```gherkin\nScenario: B\n```\n")
-PARTS |= {  # an architecture's part and home
-    "a design feature on a component's opening line": (lambda: cd.components(DESIGN,
+COMPONENTS = {  # an architecture, and the failure it gives
+    "on a component's opening line": (
         "## Shared\n\n### Stack\n\n## System: Skills\n\nRuns as skills.\n\n"
-        "### Component: Notebook\n\nNotes\n\n- **A note** is dated.\n\n### Component: Checks\n\n- **A check** fails.\n"),
+        "### Component: Notebook\n\nNotes\n\n- **A note** is dated.\n\n### Component: Checks\n\n- **A check** fails.\n",
         "design's Feature: Caps sits on no component's opening line in the architecture"),
-    "a design feature on one component alone": (lambda: cd.components(DESIGN,
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Component: Pad\n\nNotes\n"),
+    "on one component alone": (
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Component: Pad\n\nNotes\n",
         "design's Feature: Notes sits on 2 components' opening lines in the architecture"),
-    "an opening line's name in the design": (lambda: cd.components(DESIGN,
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps · Typo\n"),
+    "an opening line names only design features": (
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps · Typo\n",
         "architecture's Typo names no feature in the design"),
-    "a component under a system": (lambda: cd.components(DESIGN,
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Shared\n\n### Component: Loose\n"),
+    "a component under a system": (
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Shared\n\n### Component: Loose\n",
         "architecture's Component: Loose sits under no system"),
-    "a heading under a system that is a component": (lambda: cd.components(DESIGN,
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Tracing\n"),
+    "a heading under a system is a component": (
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n### Tracing\n",
         "architecture's Tracing under System: Skills is no component"),
-    "a top heading that is Shared, a system or Why": (lambda: cd.components(DESIGN,
-        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Workflow: Tracing\n"),
+    "a top heading is Shared, a system or Why": (
+        "## System: Skills\n\n### Component: Notebook\n\nNotes · Caps\n\n## Workflow: Tracing\n",
         "architecture's Workflow: Tracing is no system. A top heading is Shared, a system or Why"),
 }
 
 
-@pytest.mark.parametrize("part", PARTS)
-def test_decision_a_home(part):
-    check, failure = PARTS[part]
-    assert check() == [failure]
+@pytest.mark.parametrize("case", COMPONENTS)
+def test_decision_a_design_feature(case):
+    architecture, failure = COMPONENTS[case]
+    assert cd.components(DESIGN, architecture) == [failure]
 
 
 def test_decision_a_test_s_name():

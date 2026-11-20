@@ -65,6 +65,11 @@ Caps
 | workflow step        | 1 feature              | the step              |
 | feature              | 2 scenarios or 1 rules | its workflows         |
 | architecture section | 1 decisions            | its component or system |
+| decision             | 2 sentences            | the decision          |
+
+### Component: Long
+
+- **A long one** holds `a.b`. It says more.[^why-x] And more again.
 
 ## Contents
 
@@ -78,6 +83,8 @@ WARNINGS = {
     "workflow step": "design: Workflow: Long steps step 2 has 2 features, past its cap of 1. "
                      "The owner decides whether to redesign the step",
     "feature": "design: Feature: Caps has 3 scenarios, past its cap of 2. The owner decides whether to redesign its workflows",
+    "decision": "architecture: Component: Long: A long one has 3 sentences, past its cap of 2. "
+                "The owner decides whether to redesign the decision",
     "architecture section": "architecture: Component: Caps has 2 decisions, past its cap of 1. "
                             "The owner decides whether to redesign its component or system",
 }
@@ -88,7 +95,7 @@ def test_decision_a_form_past_its_cap():
     quiet. An outline under three rows warns too."""
     warned = cc.form_warnings("design", DESIGN, "architecture", ARCHITECTURE)
     assert all(w in warned for w in WARNINGS.values())
-    assert len(warned) == 6
+    assert len(warned) == 7
     assert not any("Short" in w or "Contents" in w for w in warned)
     design = ("```gherkin\n  Scenario Outline: Two\n    Given <a>\n\n    Examples:\n      | a |\n      | 1 |\n"
               "      | 2 |\n\n  Scenario Outline: Three\n    Given <a>\n\n    Examples:\n      | a |\n"

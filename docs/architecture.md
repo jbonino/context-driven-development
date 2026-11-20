@@ -16,7 +16,9 @@ How Context Driven Development is built, shaped around [design.md](design_docume
   - [Component: Red tests](#component-red-tests)
   - [Component: Prose](#component-prose)
 - [System: Scripts](#system-scripts)
-  - [Component: Checks](#component-checks)
+  - [Component: Homes](#component-homes)
+  - [Component: Links](#component-links)
+  - [Component: Caps](#component-caps)
   - [Component: Doc commands](#component-doc-commands)
   - [Component: Branch commands](#component-branch-commands)
 - [Why](#why)
@@ -146,12 +148,29 @@ Editing prose
 - **A baseline** is `scripts/{kind}-baseline.txt`, one per Testing strategy kind. A decision a scenario already covers sits in it with that scenario's name.
 - **The session scripts** save the sessions before a merge, and `cdd mine {n}` mines a phase's at its close.
 
-### Component: Checks
+### Component: Homes
 
-- **A home** is found by name. Each journey, workflow, scenario, rule and decision has a test of its name or a baseline line. A rule holds over two scenarios. A deferred thing is described in its own file alone. A design feature sits on one component's opening line. A component sits under a system.[^why-a-test-s-name-says-its-kind-and-source]
-- **A doc's links** name only the foundations and the docs above it. The design, the roadmap and the code name none. The architecture and a deferred entry name the design. The backlog README names its tickets, and the playbook the tickets and the architecture.
-- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path. Doc paths and tag formats pass.
-- **A form past its cap** warns. So does an outline under three Examples rows. A form's cap is read from the table below. A ticket's comes from the rules of Splitting the work and Signing off a change. A ticket's new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets. A rename counts as new.[^why-a-cap-warns]
+- **A test's home** is the source its name gives. Each journey, workflow, scenario, rule and decision has a test or a baseline line.[^why-a-test-s-name-says-its-kind-and-source]
+- **A rule's scenarios** count each Examples row of an outline as one.
+- **A deferred thing** is described in its own file alone, found by its file's title.
+- **A design feature** sits on one component's opening line, which names only design features. A component sits under a system, and a top heading is Shared, a system or Why.
+
+### Component: Links
+
+- **A doc's links** name only the foundations and the docs above it, per the table below.
+- **A link** resolves to a file, and its anchor to a heading's GitHub slug. Naming one below means a link to it or a code file's path, and doc paths and tag formats pass.
+
+| Doc | May link |
+|---|---|
+| The design, the roadmap and the code | Nothing |
+| The architecture and a deferred entry | The design |
+| The backlog README | Its own tickets |
+| The release playbook | The tickets and the architecture's systems |
+
+### Component: Caps
+
+- **A form past its cap** warns, with its cap read from the table below. An outline under three Examples rows warns too.[^why-a-cap-warns]
+- **A ticket's caps** come from the rules of Splitting the work and Signing off a change. Its new scenarios are the titles its branch adds since its plan's tag, less those main gains from other tickets, and a rename counts as new.
 
 | form | cap | upstream |
 |---|---|---|
@@ -160,18 +179,19 @@ Editing prose
 | workflow step | 1 feature | the step |
 | feature | 8 scenarios or 4 rules | its workflows |
 | architecture section | 4 decisions | its component or system |
+| decision | 2 sentences | the decision |
 
 ### Component: Doc commands
 
-- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1. A warning exits 0.
+- **`cdd check`** runs the checks, and `cdd check caps` the caps alone. A failure exits 1, and a warning exits 0.
 - **`cdd new`** puts a doc's template, the file in Templates with the doc's name, in its place and prints the path. It fails on a doc that exists or a doc with no template.
-- **`cdd read`** prints a doc's section, from its heading to the next of its level or higher. With no heading it prints the doc, and for a doc kept as a file each, each of a phase's files. A heading in a fence opens none.
+- **`cdd read`** prints a doc's section, from its heading to the next of its level or higher, or with no heading the whole doc or each of a phase's files. A heading in a fence opens none.
 
 ### Component: Branch commands
 
 - **`cdd next-ticket`** names the first ticket in the backlog README whose waits are merged and that has no branch on origin. With none open, it says what each waits on.
-- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race. A branch already here is reused.
-- **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything. A rerun finishes what's left.
+- **`cdd branch`** claims a branch by pushing it to origin, named by its kind, then opens its worktree. A push that fails lost the race, and a branch already here is reused.
+- **`cdd merge`** saves the sessions, merges with the branch's name and title, deletes its ticket if it has one, and cleans up only once main is pushed. A conflict or a rejected push leaves everything, and a rerun finishes what's left.
 
 ## Why
 

@@ -10,7 +10,8 @@ each fact in its place leaves the design and becomes the Checks component.
 
 - Each system heading reads `## System: {name}`, and each heading under it `### Component: {name}`.
 - The checks fail on a design feature that no component names, and on a component heading under no system.
-- Keeping each fact in its place is gone from the design. Its rules are decisions under `### Component: Checks`, each with a `decision_` test or a baseline line.
+- Keeping each fact in its place is gone from the design. Its rules are decisions under `### Component: Homes`, `### Component: Links` and `### Component: Caps`, each with a `decision_` test or a baseline line.
+- The caps check warns on a decision past 2 sentences.
 - The `cdd` decisions sit under `### Component: Doc commands` and `### Component: Branch commands`. Each component holds 4 decisions at most.
 - Features are the only bridge. `test_decision_a_workflow_with_steps_to_carry` fails on a workflow with steps and no skill of its name.
 - The Checkpoints table sits under Shared. No architecture heading names a workflow or journey.

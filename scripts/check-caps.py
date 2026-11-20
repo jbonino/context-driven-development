@@ -106,6 +106,26 @@ def sections(text):
     return found
 
 
+def decision_sentences(lines):
+    """Each decision's subject and its count of sentences. A decision is a
+    bullet that opens in bold, with its wrapped lines."""
+    found = []
+    for line in lines:
+        if line.startswith("- **"):
+            found.append([line])
+        elif found and line.startswith("  ") and line.strip():
+            found[-1].append(line.strip())
+        elif found and found[-1] is not None:
+            found.append(None)
+    result = []
+    for bullet in filter(None, found):
+        raw = " ".join(bullet)[2:]
+        text = re.sub(r"\[\^[^\]]*\]", "", re.sub(r"`[^`]*`", "x", raw))
+        subject = re.match(r"\*\*(.+?)\*\*", raw)
+        result.append((subject.group(1) if subject else raw, len(re.findall(r"(?<=[.!?])(?!\S)", text))))
+    return result
+
+
 def counts(design, architecture):
     """Each form's count by unit, as (doc, form, name, unit, count)."""
     found = []
@@ -124,6 +144,8 @@ def counts(design, architecture):
     for heading, lines in sections(architecture).items():
         found.append(("architecture", "architecture section", heading, "decisions",
                       sum(line.startswith("- **") for line in lines)))
+        found += [("architecture", "decision", f"{heading}: {subject}", "sentences", n)
+                  for subject, n in decision_sentences(lines)]
     return found
 
 
